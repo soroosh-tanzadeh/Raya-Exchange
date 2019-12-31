@@ -13,7 +13,7 @@ class CreateTableVerifications extends Migration
      */
     public function up()
     {
-        Schema::create('table_verifications', function (Blueprint $table) {
+        Schema::create('verifications', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->timestamps();
         });
