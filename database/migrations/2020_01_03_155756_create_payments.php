@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTableVerifications extends Migration
+class CreatePayments extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateTableVerifications extends Migration
      */
     public function up()
     {
-        Schema::create('verifications', function (Blueprint $table) {
+        Schema::create('payments', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string("code");
             $table->integer("user_id");
-            $table->bigInteger("expires_on");
+            $table->string("amount");
+            $table->string('transId');
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateTableVerifications extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('table_verifications');
+        Schema::dropIfExists('payments');
     }
 }

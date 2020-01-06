@@ -42,8 +42,10 @@
 <script src="/assets/vendors/jquery.flot.tooltip/js/jquery.flot.tooltip.min.js"></script>
 <script src="/assets/vendors/Flot/jquery.flot.time.js"></script><!-- CORE SCRIPTS-->
 <script src="/assets/js/app.min.js"></script><!-- PAGE LEVEL SCRIPTS-->
+<script src="/assets/vendors/chart.js/dist/Chart.js"></script>
 <script src="/assets/js/dashboard-script.js"></script>
 <script src="/assets/js/scripts.js" type="text/javascript"></script>
 <script src="/assets/vendors/DataTables/datatables.min.js" type="text/javascript"></script>
-</body>
-</html>
+<script src="/assets/vendors/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="/assets/vendors/jquery-steps/build/jquery.steps.min.js"></script><!-- CORE SCRIPTS-->
+<script src="/assets/js/app.min.js"></script><!-- PAGE LEVEL SCRIPTS-->

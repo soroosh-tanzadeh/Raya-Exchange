@@ -1,0 +1,40 @@
+*   Trying 104.27.174.10...
+* TCP_NODELAY set
+* Connected to api.simpleswap.io (104.27.174.10) port 443 (#0)
+* ALPN, offering http/1.1
+* Cipher selection: ALL:!EXPORT:!EXPORT40:!EXPORT56:!aNULL:!LOW:!RC4:@STRENGTH
+* successfully set certificate verify locations:
+*   CAfile: /etc/pki/tls/certs/ca-bundle.crt
+  CApath: none
+* SSL connection using TLSv1.2 / ECDHE-ECDSA-AES128-GCM-SHA256
+* ALPN, server accepted to use http/1.1
+* Server certificate:
+*  subject: C=US; ST=CA; L=San Francisco; O=Cloudflare, Inc.; CN=sni.cloudflaressl.com
+*  start date: Nov  1 00:00:00 2019 GMT
+*  expire date: Oct  9 12:00:00 2020 GMT
+*  subjectAltName: host "api.simpleswap.io" matched cert's "*.simpleswap.io"
+*  issuer: C=US; ST=CA; L=San Francisco; O=CloudFlare, Inc.; CN=CloudFlare Inc ECC CA-2
+*  SSL certificate verify ok.
+> POST /v1/create_exchange?api_key=f88fac65-3fe1-4191-846b-129be7966bb0 HTTP/1.1
+Host: api.simpleswap.io
+Accept: */*
+Content-Type:  application/json; charset=utf-8
+Connection: Keep-Alive
+Content-Length: 99
+
+* upload completely sent off: 99 out of 99 bytes
+< HTTP/1.1 400 Bad Request
+< Date: Sun, 05 Jan 2020 18:31:25 GMT
+< Content-Type: text/html; charset=utf-8
+< Transfer-Encoding: chunked
+< Connection: keep-alive
+< Set-Cookie: __cfduid=d6a553bc08eb1dbc14309e7e02c3d54761578249085; expires=Tue, 04-Feb-20 18:31:25 GMT; path=/; domain=.simpleswap.io; HttpOnly; SameSite=Lax
+< X-Powered-By: Express
+< Content-Security-Policy: default-src 'none'
+< X-Content-Type-Options: nosniff
+< CF-Cache-Status: DYNAMIC
+< Expect-CT: max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+< Server: cloudflare
+< CF-RAY: 5507876f3a4a5a1e-VIE
+< 
+* Connection #0 to host api.simpleswap.io left intact

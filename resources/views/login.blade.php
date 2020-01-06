@@ -91,6 +91,7 @@
                 }
             }
         </style>
+        <meta name="csrf-token" content="{{ csrf_token() }}">
     </head>
 
     <body>
@@ -121,12 +122,24 @@
                             <div class="flexbox mb-5">
                                 <button class="btn btn-primary" style="min-width: 100px">ورود</button>
                             </div>
+                            <p class="mt-5 mb-4 text-muted text-center">یا با شبکه های اجتماعی وارد شوید</p>
+                            <div class="mb-5">
+                                <button class="btn btn-google btn-block"><span class="btn-icon"><i class="fab fa-google-plus-g"></i>گوگل</span></button>
+                            </div>
+                            <br>
+                            <p class="mt-5 mb-4 text-muted text-center">می‌خواهید در رایا <a  href="javascript:;" id="signupbtn">ثبت نام کنید؟</a></p>
                         </form>
-                        <p class="mt-5 mb-4 text-muted text-center">یا با شبکه های اجتماعی وارد شوید</p>
-                        <div class="mb-5">
-                            <button class="btn btn-google btn-block"><span class="btn-icon"><i class="fab fa-google-plus-g"></i>گوگل</span></button>
-                        </div>
-                        <p class="mt-5 mb-4 text-muted text-center">می‌خواهید در رایا <a href="/signup">ثبت نام کنید؟</a></p>
+                        <form id="signupForm" style="display: none;">
+                            @csrf
+                            <div class="mb-4">
+                                <div class="md-form mb-0"><input class="md-form-control" type="text" name="phone" id="vcodereceiver"><label id="vcoderlabel">ایمیل یا شماره موبایل</label></div>
+                            </div>
+                            <div class="flexbox mb-5">
+                                <button class="btn btn-primary" id="sendvcode" onclick="sendVcode();return false;" style="min-width: 100px">ارسال کد فعالسازی</button>
+                            </div>
+                            <br>
+                            <p class="mt-5 mb-4 text-muted text-center">در رایا حساب دارید؟<a  href="javascript:;" id="loginbtn">وارد شوید.</a></p>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -141,34 +154,88 @@
         <script src="/assets/vendors/jquery-validation/dist/jquery.validate.min.js"></script><!-- CORE SCRIPTS-->
         <script src="/assets/js/app.min.js"></script><!-- PAGE LEVEL SCRIPTS-->
         <script>
-            $(function () {
-                $('#login-form').validate({
-                    rules: {
-                        email: {
-                            required: true,
-                            email: true
-                        },
-                        password: {
-                            required: true
-                        }
-                    },
-                    errorClass: 'invalid-feedback',
-                    validClass: 'valid-feedback',
-                    errorPlacement: function (error, element) {
-                        if (element.hasClass('md-form-control')) {
-                            error.insertAfter(element.closest('.md-form'));
-                        } else {
-                            error.insertAfter(element);
-                        }
-                    },
-                    highlight: function (e) {
-                        $(e).addClass("invalid").removeClass('valid');
-                    },
-                    unhighlight: function (e) {
-                        $(e).removeClass("invalid").addClass('valid');
-                    },
-                });
-            });
+                                    $.ajaxSetup({
+                                        headers: {
+                                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                        }
+                                    });
+                                    var cache_data;
+                                    var vcode = false;
+                                    function sendVcode() {
+                                        if (vcode) {
+                                             var code = $('#vcodereceiver').val();
+                                            $.post("/verifyUser", {code: code}, function (data) {
+                                                if (data.result) {
+                                                    window.location = "/dashboard/signup";
+                                                    vcode = true;
+                                                } else {
+                                                    alert("کد وارد شده نامعتبر است");
+                                                }
+                                            });
+                                        } else {
+                                            var vcoder = $('#vcodereceiver').val();
+                                            emailReg = /[\w\.-]+@[\w\.-]+\.\w{2,4}/;
+                                            intRegex = /[0-9 -()+]+$/;
+                                            var type = "";
+                                            if (emailReg.test(vcoder) && vcoder !== '') {
+                                                alert("شماره موبایل وارد شده نا معتبر است");
+                                                return;
+                                            } else if ((vcoder.length > 6) && (intRegex.test(vcoder))) {
+                                                type = "phone";
+                                            } else {
+                                                alert("شماره موبایل وارد شده نا معتبر است");
+                                                return;
+                                            }
+                                            cache_data = vcoder;
+                                            $.post("/sendvcode", {type: type, receiver: vcoder}, function (data) {
+                                                if (data.result.IsSuccessful) {
+                                                    $("#vcodereceiver").val("");
+                                                    $("#vcoderlabel").text("کد فعال سازی");
+                                                    $("#sendvcode").text("تایید");
+                                                    vcode = true;
+                                                } else {
+                                                    alert("خطا در ارسال کد فعال سازی!");
+                                                }
+                                            });
+                                        }
+                                    }
+                                    $(function () {
+                                        $("#signupbtn").click(function () {
+                                            $("#login-form").hide();
+                                            $("#signupForm").show();
+                                        });
+                                        $("#loginbtn").click(function () {
+                                            $("#login-form").show();
+                                            $("#signupForm").hide();
+                                        });
+
+                                        $('#login-form').validate({
+                                            rules: {
+                                                email: {
+                                                    required: true,
+                                                    email: true
+                                                },
+                                                password: {
+                                                    required: true
+                                                }
+                                            },
+                                            errorClass: 'invalid-feedback',
+                                            validClass: 'valid-feedback',
+                                            errorPlacement: function (error, element) {
+                                                if (element.hasClass('md-form-control')) {
+                                                    error.insertAfter(element.closest('.md-form'));
+                                                } else {
+                                                    error.insertAfter(element);
+                                                }
+                                            },
+                                            highlight: function (e) {
+                                                $(e).addClass("invalid").removeClass('valid');
+                                            },
+                                            unhighlight: function (e) {
+                                                $(e).removeClass("invalid").addClass('valid');
+                                            },
+                                        });
+                                    });
         </script>
     </body>
 

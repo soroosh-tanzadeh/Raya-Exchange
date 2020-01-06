@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2784e97b5b321a8354670215e0984bc2",
+    "content-hash": "6d1a9044cd4350082846327e63b57457",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1875,6 +1875,60 @@
                 "uuid"
             ],
             "time": "2018-07-19T23:38:55+00:00"
+        },
+        {
+            "name": "saeedvaziry/payir",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/saeedvaziry/payir.git",
+                "reference": "c7bae8a4f198e12c2df41c6fef2c49bc68db8c6e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/saeedvaziry/payir/zipball/c7bae8a4f198e12c2df41c6fef2c49bc68db8c6e",
+                "reference": "c7bae8a4f198e12c2df41c6fef2c49bc68db8c6e",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "php": "^7.1.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "SaeedVaziry\\Payir\\PayirServiceProvider"
+                    ],
+                    "aliases": {
+                        "Payir": "SaeedVaziry\\Payir\\Facade"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "SaeedVaziry\\Payir\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Saeed Vaziry",
+                    "email": "sa.vaziry@gmail.com"
+                }
+            ],
+            "description": "Pay.ir Laravel Package",
+            "keywords": [
+                "Saeed Vaziry",
+                "SaeedVaziry",
+                "laravel",
+                "payir"
+            ],
+            "time": "2019-08-15T12:35:48+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -5447,7 +5501,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "saeedvaziry/payir": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

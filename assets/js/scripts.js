@@ -47,17 +47,18 @@ $(document).ready(function () {
 
     $("#coin-num").on("input", function () {
         var coin = parseFloat($("#coin-num").val());
-        var toman = coin * parseFloat($(".dcurrency-select.active").attr("data-price"));
+        var toman = coin * parseInt($(".dcurrency-select").children("a.active").attr("data-price"));
         $("#price-toman").val(toman);
     });
     $(".dcurrency-select").click(function () {
         var coin = parseFloat($("#coin-num").val());
-        var toman = coin * parseFloat($(".dcurrency-select.active").attr("data-price"));
+        var toman = coin * parseInt($(this).children("a").attr("data-price"));
+        $("#coin-type").val($(this).children("a").attr("data-coin"));
         $("#price-toman").val(toman);
     });
     $("#price-toman").on("input", function () {
         var toman = parseFloat($("#price-toman").val());
-        var coin = toman / parseFloat($(".dcurrency-select.active").attr("data-price"));
+        var coin = toman / parseInt($(".dcurrency-select").children("a.active").attr("data-price"));
         $("#coin-num").val(coin);
     });
 });
