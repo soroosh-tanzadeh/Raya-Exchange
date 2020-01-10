@@ -92,6 +92,7 @@
             }
         </style>
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="jeeb-verification" content="O4AQ3GUGYFFGJRFHUXRK7VE6LV7K2Q">
     </head>
 
     <body>

@@ -113,12 +113,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                 </div>
                                 <div class="container-fluid">
                                     <div class="row">
-                                        <div class="col-md-12 pt-2 px-1  d-flex justify-content-center align-items-center">
-                                            <input type="file" class="fileselect" name="files[]" data-binded="#filesdropzone" multiple id="files" style="display: none;" />
-                                            <div class="dropzone openfile" id="filesdropzone" data-target="#files">
+                                        <div class="col-md-6 pt-2 px-1  d-flex justify-content-center align-items-center">
+                                            <input type="file" class="fileselect" name="fileBack" data-binded="#filesdropzone" id="file-back" style="display: none;" />
+                                            <div class="dropzone openfile" id="filesdropzone" data-target="#file-back">
                                                 <div class="dz-message"><i class="ti-import text-primary font-40"></i>
                                                     <div class="mt-3 font-20">برای انتخاب فایل کلیک کنید</div>
-                                                    <div class="text-muted">عکس پشت و جلو کارت ملی خود را و همچنین عکس سلفی با کارت ملی را در اینجا آپلود کنید</div>
+                                                    <div class="text-muted">تصویر جلو کارت ملی</div>
+                                                </div>
+                                                <div class="filenames">
+                                                    <div class="images"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 pt-2 px-1  d-flex justify-content-center align-items-center">
+                                            <input type="file" class="fileselect" name="fileFront" data-binded="#filesdropzone" id="file-front" style="display: none;" />
+                                            <div class="dropzone openfile" id="filesdropzone" data-target="#file-front">
+                                                <div class="dz-message"><i class="ti-import text-primary font-40"></i>
+                                                    <div class="mt-3 font-20">برای انتخاب فایل کلیک کنید</div>
+                                                    <div class="text-muted">تصویر پشت کارت ملی</div>
+                                                </div>
+                                                <div class="filenames">
+                                                    <div class="images"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 pt-2 px-1  d-flex justify-content-center align-items-center">
+                                            <input type="file" class="fileselect" name="selfiImage" data-binded="#filesdropzone" id="file-selfi" style="display: none;" />
+                                            <div class="dropzone openfile" id="filesdropzone" data-target="#file-selfi">
+                                                <div class="dz-message"><i class="ti-import text-primary font-40"></i>
+                                                    <div class="mt-3 font-20">برای انتخاب فایل کلیک کنید</div>
+                                                    <div class="text-muted">تصویر سلفی با کارت ملی</div>
                                                 </div>
                                                 <div class="filenames">
                                                     <div class="images"></div>

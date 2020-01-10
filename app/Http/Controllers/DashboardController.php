@@ -42,7 +42,7 @@ class DashboardController extends Controller {
                 $coin->price_in_toman = $price . " تومان";
             }
             $coin->price_in_toman_int = $priceInToman;
-            $coins[] = $coin;
+            $coins[$coin->id] = $coin;
         }
 
         $chart = Curl::to("https://api.coincap.io/v2/assets/bitcoin/history")
@@ -53,7 +53,10 @@ class DashboardController extends Controller {
         foreach ($chart as $value) {
             $outputChart .= "[$value->time,$value->priceUsd],";
         }
-        return view("dashboard.index", array("user" => session()->get("user"), "coins" => $coins, "chart" => $outputChart));
+        $user = session()->get("user");
+        $offers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("is_active", true)->where("is_selled", false)->where("user_id", "!=", $user->id)->select('users.name', 'coin_offers.*')->limit(10)->get();
+
+        return view("dashboard.index", array("user" => session()->get("user"), "coins" => $coins, "chart" => $outputChart, "offers" => $offers));
     }
 
     public function walletPage(Request $request) {
@@ -92,7 +95,7 @@ class DashboardController extends Controller {
                 $coin->price_in_toman = $price . " تومان";
             }
             $coin->price_in_toman_int = $priceInToman;
-            $coins[] = $coin;
+            $coins[$coin->id] = $coin;
         }
 
         $chart_btc = Curl::to("https://api.coincap.io/v2/assets/bitcoin/history")
@@ -121,7 +124,10 @@ class DashboardController extends Controller {
             $price = $usdprice * $value->priceUsd;
             $outputChart['ripple'] .= "[$value->time,$price],";
         }
-        return view("dashboard.offers.index", array("user" => session()->get("user"), "coins" => $coins, "chart" => $outputChart));
+
+        $offers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("user_id", session()->get('user')->id)->select('users.name', 'coin_offers.*')->paginate(10);
+
+        return view("dashboard.offers.index", array("user" => session()->get("user"), "coins" => $coins, "chart" => $outputChart, "offers" => $offers));
     }
 
     public function newoffer(Request $request) {
@@ -144,7 +150,7 @@ class DashboardController extends Controller {
             return redirect("/dashboard/buyoffer?error=موجودی حساب کافی نیست");
         }
     }
-    
+
     public function offersList(Request $request) {
         $user = session()->get("user");
         $requestURL = "https://api.coincap.io/v2/assets";
@@ -156,7 +162,7 @@ class DashboardController extends Controller {
         $usdprice = Currency::where("code", "USD")->first()->price;
         foreach ($coins_raw as $coin) {
             $priceInToman = (int) ($coin->priceUsd * $usdprice);
-            if (($priceInToman >= 1000) & ($priceInToman < 1000000)) { 
+            if (($priceInToman >= 1000) & ($priceInToman < 1000000)) {
                 $price = $priceInToman / 1000;
                 $coin->price_in_toman = $price . " هزار تومان";
             } elseif ($priceInToman >= 1000000 & ($priceInToman < 1000000000)) {
@@ -171,7 +177,7 @@ class DashboardController extends Controller {
             }
             $coin->price_in_toman_int = $priceInToman;
             $coins[$coin->id] = $coin;
-        } 
+        }
 
         $chart = Curl::to("https://api.coincap.io/v2/assets/bitcoin/history")
                 ->withData(array('interval' => "d1"))
@@ -203,7 +209,7 @@ class DashboardController extends Controller {
             $outputChart['ripple'] .= "[$value->time,$price],";
         }
 
-        $offers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("is_active", true)->where("is_selled", false)->where("user_id" , "!=" ,$user->id)->select('users.name', 'coin_offers.*')->paginate(25);
+        $offers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("is_active", true)->where("is_selled", false)->where("user_id", "!=", $user->id)->select('users.name', 'coin_offers.*')->paginate(25);
 
         return view("dashboard.offers.list", array("user" => session()->get("user"), "coins" => $coins, "chart" => $outputChart, "offers" => $offers));
     }
@@ -213,7 +219,7 @@ class DashboardController extends Controller {
         $tickets = Ticket::where("user_id", $user->id)->get();
         return view("dashboard.tickets.tickets", array("user" => session()->get("user"), "tickets" => $tickets));
     }
- 
+
     public function showTicket($ticket_id) {
         $user = session()->get("user");
         $tickets = Ticket::where("user_id", $user->id)->where("id", $ticket_id)->first();
@@ -227,7 +233,7 @@ class DashboardController extends Controller {
 
     public function sendMessage($ticket_id, Request $request) {
         $ticket = Ticket::where("id", $ticket_id)->first();
-        if ($ticket !== null) { 
+        if ($ticket !== null) {
             $files = array();
             foreach ($request->file('files') as $file) {
                 $name = $file->getClientOriginalName();

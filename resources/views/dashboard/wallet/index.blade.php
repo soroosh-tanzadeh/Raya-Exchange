@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-Copyright (C) 2019 Soroosh Tanzadeh
+Copyright (C) 2019 Webflax
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html lang="en">
     <head>
         @include("includes.head")
+        <title>Raya-EX | کیف پول</title><!-- GLOBAL VENDORS-->
+
     </head>
     <body>
         <div class="modal fade" id="paymodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -33,6 +35,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         <form action="/payir/pay" method="GET">
                             <label>مبلغ شارژ (تومان)</label>
                             <input type="number" name="amount" class="form-control" value="" style="width: 100%;margin-bottom: 10px;" placeholder="مبلغ مورد نظر خود را وارد کنید" />
+                            <input class="btn btn-primary" type="submit" value="پرداخت" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="paycoinModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">شارژ کیف‌پول ارزی </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/payir/pay" method="GET">
+                            <label>میزان کوین</label>
+                            <input type="number" name="amount" class="form-control" value="" style="width: 100%;margin-bottom: 10px;" placeholder="میزان کوین مورد نظر خود را وارد کنید" />
                             <input class="btn btn-primary" type="submit" value="پرداخت" />
                         </form>
                     </div>
@@ -63,7 +86,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         <div class="mb-2 text-muted font-16">کیف پول بیت کوین</div> 
                                         <div class="d-flex" style="word-break:break-word"><span class="h5 mb-0 font-20"><span>{{ $coinWallets['BTC']->credit }}</span><span class="font-weight-normal">BTC</span></span><span class="mx-3"></span>قابل برداشت : ‌{{ $coinWallets['BTC']->cashable }}</div>
                                         <hr>
-                                        <div><a class="btn btn-danger btn-sm btn-rounded ml-4" href="#">برداشت</a></div>
+                                        <div>
+                                            <a class="btn btn-danger btn-sm btn-rounded ml-4" href="#">برداشت</a>
+                                            <a class="btn btn-primary btn-sm btn-rounded ml-4" href="#">واریز</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -75,7 +101,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         <div class="mb-2 text-muted font-16">کیف پول اتریم</div>
                                         <div class="d-flex" style="word-break:break-word"><span class="h5 mb-0 font-20"><span>{{ $coinWallets['ETH']->credit }}</span><span class="font-weight-normal">ETH</span></span><span class="mx-3">قابل برداشت : ‌{{ $coinWallets['ETH']->cashable }}</span></div>
                                         <hr>
-                                        <div><a class="btn btn-danger btn-sm btn-rounded ml-4" href="#">برداشت</a></div>
+                                        <div>
+                                            <a class="btn btn-danger btn-sm btn-rounded ml-4" href="#">برداشت</a>
+                                            <a class="btn btn-primary btn-sm btn-rounded ml-4" href="#">واریز</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -87,7 +116,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         <div class="mb-2 text-muted font-16">کیف پول لایت کوین</div>
                                         <div class="d-flex" style="word-break:break-word"><span class="h5 mb-0 font-20"><span>{{ $coinWallets['LTC']->credit }}</span><span class="font-weight-normal">LTC</span></span><span class="mx-3">قابل برداشت : ‌{{ $coinWallets['LTC']->cashable }}</span></div>
                                         <hr>
-                                        <div><a class="btn btn-danger btn-sm btn-rounded ml-4" href="#">برداشت</a></div>
+                                        <div>
+                                            <a class="btn btn-danger btn-sm btn-rounded ml-4" href="#">برداشت</a>
+                                            <a class="btn btn-primary btn-sm btn-rounded ml-4" href="#">واریز</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -99,7 +131,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         <div class="mb-2 text-muted font-16">کیف پول ریپل</div>
                                         <div class="d-flex" style="word-break:break-word"><span class="h5 mb-0 font-20"><span>{{ $coinWallets['XRP']->credit }}</span><span class="font-weight-normal">XRP</span></span><span class="mx-3">قابل برداشت : ‌{{ $coinWallets['XRP']->cashable }}</span></div>
                                         <hr>
-                                        <div><a class="btn btn-danger btn-sm btn-rounded ml-4" href="#">برداشت</a></div>
+                                        <div>
+                                            <a class="btn btn-danger btn-sm btn-rounded ml-4" href="#">برداشت</a>
+                                            <a class="btn btn-primary btn-sm btn-rounded ml-4" href="#">واریز</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

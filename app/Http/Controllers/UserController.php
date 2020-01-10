@@ -73,14 +73,13 @@ class UserController extends Controller {
         $postalcode = $request->postalcode;
         $affilate = $request->affilate;
         $nationalcode = $request->nationalcode;
-        $files = $request->file("files");
         $password = $request->password;
 
-        $usersfiles = array();
-        foreach ($files as $file) {
-            $file = $file->store("files");
-            $usersfiles[] = $file;
-        }
+        $fileBack = $request->file("fileBack")->store("files");
+        $fileFront = $request->file("fileFront")->store("files");
+        $fileSelfi = $request->file("selfiImage")->store("files");
+        $usersfiles = array($fileBack, $fileFront, $fileSelfi);
+
         $user_id = session()->get("user")->id;
 
         $user = User::where("id", $user_id)->first();

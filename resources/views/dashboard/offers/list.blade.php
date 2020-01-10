@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-Copyright (C) 2020 Soroosh Tanzadeh
+Copyright (C) 2020 Webflax
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html lang="en">
     <head>
         @include("includes.head")
+        <title>Raya-EX | خرید ارز دیجیتال</title>
     </head>
     <body>
         @include("includes.header")
@@ -29,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <h1 class="page-title page-title-sep">خرید و فروش ارز</h1>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html"><i class="la la-home font-20"></i></a></li>
-                        <li class="breadcrumb-item">ثبت پیشنهاد فروش</li>
+                        <li class="breadcrumb-item">خرید پیشنهاد جدید</li>
                     </ol>
                 </div>
             </div><!-- BEGIN: Page content-->
@@ -128,7 +129,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             <div class="card-body">
                                 <div class="d-flex justify-content-between mb-4">
                                     <div>
-                                        <h5 class="box-title mb-2"><i class="ft-download"></i> آخرین فروشندگان </h5>
+                                        <h5 class="box-title mb-2"><i class="ft-download"></i> فروشندگان </h5>
                                     </div>
                                 </div>
 
@@ -296,7 +297,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     color: "#999999",
                             hoverable: true,
                             clickable: true,
-                            tickColor: "#DADDE0", 
+                            tickColor: "#DADDE0",
                             borderWidth: 0,
                     },
                     series: {

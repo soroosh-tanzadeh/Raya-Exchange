@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-Copyright (C) 2019 Soroosh Tanzadeh
+Copyright (C) 2019 Webflax
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,8 +15,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-
-
 <div class="page-wrapper">
     <div class="content-wrapper">
         <!-- BEGIN: Sidebar-->
@@ -25,6 +23,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <ul class="sidebar-menu metismenu" id="theulsidebar">
                 <li><a href="/dashboard"><i class="sidebar-item-icon ft-home"></i><span class="nav-label">داشبورد</span></a></li>
                 <li><a href="/dashboard/mywallet"><i class="sidebar-item-icon ft-dollar-sign"></i><span class="nav-label">کیف پول</span></a></li>
+                <li><a href="javascript:;"><i class="sidebar-item-icon ft-shopping-cart"></i><span class="nav-label">مالی</span><i class="arrow la la-angle-right"></i></a>
+                    <ul class="nav-2-level">
+                        <li><a href="/dashboard/rials"><i class="sidebar-item-icon ft-layers"></i><span class="nav-label">تسویه حساب</span></a></li>
+                        <li><a href="/dashboard/crypto"><i class="sidebar-item-icon ft-layers"></i><span class="nav-label">حساب‌های بانکی</span></a></li>
+                    </ul>
+                </li>
+                <li><a href="javascript:;"><i class="sidebar-item-icon ft-shopping-cart"></i><span class="nav-label">تراکنش‌ها</span><i class="arrow la la-angle-right"></i></a>
+                    <ul class="nav-2-level">
+                        <li><a href="/dashboard/rials"><i class="sidebar-item-icon ft-layers"></i><span class="nav-label">ریالی</span></a></li>
+                        <li><a href="/dashboard/crypto"><i class="sidebar-item-icon ft-layers"></i><span class="nav-label">ارز دیجیتال</span></a></li>
+                    </ul>
+                </li>
                 <li><a href="javascript:;"><i class="sidebar-item-icon ft-shopping-cart"></i><span class="nav-label">خرید و فروش ارز</span><i class="arrow la la-angle-right"></i></a>
                     <ul class="nav-2-level">
                         <!-- 2-nd level-->
@@ -82,62 +92,45 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             <div class="px-3 py-2 text-center"><a class="hover-link font-13" href="javascript:;">مشاهده همه</a></div>
                         </div>
                     </li>-->
-<!--                    <li class="nav-item dropdown"><a class="nav-link dropdown-toggle navbar-icon" data-toggle="dropdown" href="#"><i class="ft-bell position-relative"></i><span class="notify-signal bg-danger"></span></a>
+                    <?php
+                    $notifications = \App\Notification::getNotifications();
+                    ?>
+                    <li class="nav-item dropdown"><a class="nav-link dropdown-toggle navbar-icon" data-toggle="dropdown" href="#">
+                            <i class="ft-bell position-relative"></i>
+                            @if(count($notifications) > 0)
+                            <span class="notify-signal bg-danger"></span>
+                            @endif
+                        </a>
                         <div class="dropdown-menu dropdown-menu-right pt-0" style="min-width: 350px">
                             <div class="py-4 px-3 text-center text-white mb-3" style="background-color: #2c2f48;">
                                 <h5 class="m-0">اعلان ها</h5>
                             </div>
                             <div class="custom-scroll position-relative mb-3" style="height:320px;">
                                 <div class="list-group list-group-flush">
-                                    <a class="list-group-item list-group-item-action px-4 py-3" href="#">
-                                        <div class="media align-items-center"><i class="fas fa-arrow-right text-warning text-center font-20 mr-3" style="width: 40px"></i>
+                                    @if(count($notifications) > 0)
+                                    @foreach($notifications as $notification)
+                                    <a class="list-group-item list-group-item-action px-4 py-3" href="{{ $notification->getTarget() }}">
+                                        <div class="media align-items-center">
                                             <div class="media-body">
                                                 <div class="flexbox">
-                                                    <h6 class="mb-0 font-weight-bold">پیشنهاد جدید</h6>
-                                                    <div class="text-muted font-13">15 دقیقه پیش</div>
+                                                    <h6 class="mb-0 font-weight-bold">{{ $notification->title }}</h6>
+                                                    <div class="text-muted font-13">{{ \Morilog\Jalali\Jalalian::forge($notification->created_at)->ago() }}</div>
                                                 </div>
-                                                <div class="font-13 text-muted"><i class="cc BCN font-20 mr-2" style="vertical-align: middle;"></i> فروش بیت کوین</div>
+                                                <div class="font-13 text-muted">{{ $notification->text }}</div>
                                             </div>
                                         </div>
                                     </a>
-                                    <a class="list-group-item list-group-item-action px-4 py-3" href="#">
-                                        <div class="media align-items-center"><i class="fas fa-arrow-left text-success text-center font-20 mr-3" style="width: 40px"></i>
-                                            <div class="media-body">
-                                                <div class="flexbox">
-                                                    <h6 class="mb-0 font-weight-bold">خرید انجام شد</h6>
-                                                    <div class="text-muted font-13">15 دقیقه پیش</div>
-                                                </div>
-                                                <div class="font-13 text-muted"><i class="cc ETC font-20 mr-2" style="vertical-align: middle;"></i> خرید اتریم</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a class="list-group-item list-group-item-action px-4 py-3" href="#">
-                                        <div class="media align-items-center"><i class="fas fa-check text-success text-center font-20 mr-3" style="width: 40px"></i>
-                                            <div class="media-body">
-                                                <div class="flexbox">
-                                                    <h6 class="mb-0 font-weight-bold">فروش انجام شد</h6>
-                                                    <div class="text-muted font-13">15 دقیقه پیش</div>
-                                                </div>
-                                                <div class="font-13 text-muted"><i class="cc ETC font-20 mr-2" style="vertical-align: middle;"></i> فروش اتریم</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a class="list-group-item list-group-item-action px-4 py-3" href="#">
-                                        <div class="media align-items-center"><i class="fas fa-exchange-alt text-info text-center font-20 mr-3" style="width: 40px"></i>
-                                            <div class="media-body">
-                                                <div class="flexbox">
-                                                    <h6 class="mb-0 font-weight-bold">پذیرفته شد</h6>
-                                                    <div class="text-muted font-13">15 دقیقه پیش</div>
-                                                </div>
-                                                <div class="font-13 text-muted"><i class="cc ETC font-20 mr-2" style="vertical-align: middle;"></i>تبادل اتریم با بیتکوین</div>
-                                            </div>
-                                        </div>
-                                    </a>
+                                    @endforeach
+                                    @else
+                                    <div class="text-center">
+                                        هیچ اعلانی وجود ندارد.
+                                    </div>
+                                    @endif
                                 </div>
                             </div>
                             <div class="px-3 py-2 text-center"><a class="hover-link font-13" href="javascript:;">مشاهده همه</a></div>
                         </div>
-                    </li>-->
+                    </li>
                     <li class="nav-divider"></li>
                     <li class="nav-item dropdown"><a class="nav-link dropdown-toggle no-arrow d-inline-flex align-items-center" data-toggle="dropdown" href="#"><span class="d-none d-sm-inline-block mr-2">{{ $user->first_name }} {{ $user->last_name}}</span><span class="position-relative d-inline-block"><img class="rounded-circle" src="/assets/img/users/admin-image.png" alt="image" width="36" /></span></a>
                         <div class="dropdown-menu dropdown-menu-right pt-0 pb-4" style="min-width: 280px;">

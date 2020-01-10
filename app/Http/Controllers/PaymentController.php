@@ -14,6 +14,8 @@ use App\User;
 use Ixudra\Curl\Facades\Curl;
 use App\Currency;
 use App\Option;
+use App\JeebClient;
+use App\Order;
 
 class PaymentController extends Controller {
 
@@ -90,7 +92,7 @@ class PaymentController extends Controller {
                         $transaction->amount = $verify['amount'];
                         $transaction->coin = "ریال";
                         $transaction->type = "خرید ارز دیجیتال";
-                        $transaction->save();   
+                        $transaction->save();
 
                         $the_offer = CoinOffer::where("id", $offer->id)->first();
                         $the_offer->is_selled = true;
@@ -103,7 +105,7 @@ class PaymentController extends Controller {
                         $user_wallet->credit += $the_offer->amount;
                         $user_wallet->cashable += $the_offer->amount;
                         $user_wallet->save();
-                        
+
                         $rialWallet = Wallet::where("user_id", $the_offer->user_id)->where("type", "rial")->first();
                         $rialWallet->credit += $verify['amount'];
                         $rialWallet->save();
@@ -116,6 +118,60 @@ class PaymentController extends Controller {
         } catch (VerifyException $e) {
             throw $e;
         }
+    }
+
+    /*
+     * 
+     * Coin Payment
+     * 
+     */
+
+    public function payCoin(Request $request) {
+        $order = new Order();
+        $order->user_id = session()->get("user")->id;
+        $order->coin = $request->target;
+        $order->save();
+        $jeebClient = new JeebClient();
+        $data = array();
+        $order = $order->id;
+        $data['orderNo'] = $order; // Order No  
+        $data['value'] = $jeebClient->convert($request->amount, $request->target, 'btc'); // Value in BTC
+        $data['callbackUrl'] = 'http://raya.webflaxco.ir/coincallback'; // Callback URL (this is just an example)
+        $data['webhookUrl'] = 'http://raya.webflaxco.ir/coinwebhook'; // Webhook URL (this is just an example)
+        $data['expiration'] = 15; // Expands default expiration time of payment. should be between 15 to 2880 (mins)
+        $data['coins'] = $request->target; // Defines the payable currencies which users can use
+        $data['language'] = 'auto'; // Payment area's language
+        $data['allowReject'] = true; // Allows payments to be refunded
+        //   $data['allowTestNet'] = true; // Allows testnets to get processed
+        $result = $jeebClient->issue($data);
+        $token = $result['token'];
+        $order = Order::where("id", $order)->first();
+        $order->token = $token;
+        $order->save();
+        return $jeebClient->redirectURL($token);
+    }
+
+    public function webhook(Request $request) {
+        $jeebClient = new JeebClient();
+        $ip = $request->ip();
+        if ($ip === "35.209.237.202" || $ip === "52.56.239.177") {
+            if ($request->stateId === 4) {
+                $order = $request->orderNo;
+                $amount = $request->paidValue;
+                $token = $request->token;
+                $order = Order::where("id", $order)->where("token", $token)->first();
+                $order->amount = $amount;
+                $order->save();
+                $user = Wallet::where("user_id", $order->user_id)->where('type_name', strtoupper($order->coin))->first();
+                $data = array();
+                $data['token'] = $token;
+                $jeebClient->confirm($data);
+            }
+        }
+    }
+
+    public function comfirm(Request $request) {
+        return response()->json($request->all());
     }
 
 }

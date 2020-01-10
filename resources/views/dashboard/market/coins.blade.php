@@ -18,6 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html lang="en">
     <head>
         @include("includes.head")
+        <title>Raya-EX | قیمت ارز دیجیتال</title>
+
     </head>
     <body>
         @include("includes.header")

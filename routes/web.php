@@ -30,28 +30,27 @@ Route::get("/phpmigrate", function() {
     ]);
 });
 
-Route::get("/test", function() {
-    $response = Curl::to('https://currency.jafari.pw/json')
-            ->get();
-    $currencies = json_decode($response);
-    $currencies = $currencies->Currency;
-    foreach ($currencies as $currency) {
-        $currency_db = Currency::where("code", $currency->Code)->first();
-        if ($currency_db === null) {
-            $currency_db = new Currency();
-            $currency_db->code = $currency->Code;
-            $currency_db->price = $currency->Sell;
-            $currency_db->save();
-        } else {
-            $currency_db->code = $currency->Code;
-            $currency_db->price = $currency->Sell;
-            $currency_db->save();
-        }
-    }
-});
+//Route::get("/test", function() {
+//    $response = Curl::to('https://currency.jafari.pw/json')
+//            ->get();
+//    $currencies = json_decode($response);
+//    $currencies = $currencies->Currency;
+//    foreach ($currencies as $currency) {
+//        $currency_db = Currency::where("code", $currency->Code)->first();
+//        if ($currency_db === null) {
+//            $currency_db = new Currency();
+//            $currency_db->code = $currency->Code;
+//            $currency_db->price = $currency->Sell;
+//            $currency_db->save();
+//        } else {
+//            $currency_db->code = $currency->Code;
+//            $currency_db->price = $currency->Sell;
+//            $currency_db->save();
+//        }
+//    }
+//});
 
 Route::get("/encryp/{data?}", function ($data) {
-
     echo(Crypt::encryptString($data));
 });
 
@@ -78,18 +77,30 @@ Route::post('/dashboard/newoffer/', 'DashboardController@newoffer')->middleware(
 Route::get('/dashboard/offers/', 'DashboardController@offersList')->middleware(UserVerification::class);
 Route::get('/dashboard/exchange', 'ExchangeController@index')->middleware(UserVerification::class);
 Route::post("/exchange", "ExchangeController@exchangeRequest")->middleware(UserVerification::class);
-;
 Route::get("/get_estimate", "ExchangeController@getEstimate");
+Route::get('/dashboard/crypto', 'TransactionsController@crypto')->middleware(UserVerification::class);
+Route::get('/dashboard/rials', 'TransactionsController@rials')->middleware(UserVerification::class);
+
 
 // Payments
 Route::get('/payir/callback', 'PaymentController@verify');
-Route::get('/payir/pay', 'PaymentController@pay')->middleware(Authentication::class);
+Route::get('/payir/pay', 'PaymentController@pay')->middleware(UserVerification::class);
 Route::get("/buycoin", "PaymentController@buyCoin")->middleware(UserVerification::class);
+Route::post("/coinwebhook", "PaymentController@webhook");
+Route::post("/coincallback", "PaymentController@comfirm")->middleware(UserVerification::class);
+Route::get("/paycoin", "PaymentController@payCoin")->middleware(UserVerification::class);
 
-
-Route::post("/verifyUser","UserController@verifyCode");
+Route::post("/verifyUser", "UserController@verifyCode");
 
 // Wait to verify
 Route::get("/dashboard/notverified", function() {
     return view("dashboard.wait", array("user" => session()->get("user")));
+})->middleware(Authentication::class);
+
+
+//Notifications
+Route::get("/readNotif", "NotificationsController@read")->middleware(UserVerification::class);
+Route::get("/logout", function () {
+    session()->remove("user");
+    return redirect("/");
 })->middleware(Authentication::class);

@@ -15,6 +15,7 @@
         "laravel/framework": "^6.0",
         "laravel/socialite": "^4.3",
         "laravel/tinker": "^1.0",
+        "morilog/jalali": "^3.1",
         "saeedvaziry/payir": "dev-master",
         "yajra/laravel-datatables-oracle": "^9.8"
     },

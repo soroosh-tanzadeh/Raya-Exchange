@@ -20,6 +20,8 @@ $(document).ready(function () {
         var href = $(this).children("a").attr("href");
         if (href === pathname) {
             $(this).addClass("mm-active");
+            $(this).parent().addClass("mm-show");
+            $(this).parent().parent().addClass("mm-active");
         }
     });
 

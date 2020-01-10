@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <head>
         @include("includes.head")
         <link href="/assets/vendors/select2/dist/css/select2.min.css" rel="stylesheet" /><!-- THEME STYLES-->
+        <title>Raya-EX | تبادل ارز دیجیتال</title>
 
     </head>
     <body>
