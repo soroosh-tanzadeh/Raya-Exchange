@@ -15,6 +15,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
+<?php 
+    use Morilog\Jalali\Jalalian;
+?>
 <html lang="en">
     <head>
         @include("includes.head")
@@ -72,7 +75,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                         </td>
                                                         <td>{{ $checkout->amount }}</td>
                                                         <td>{{ $checkout->token }}</td>
-                                                        <td>{{ $checkout->created_at }}</td>                       
+                                                        <td>{{ Jalalian::forge($checkout->created_at)->ago() }}</td>
                                                         <td>
                                                             @if($checkout->is_payed)
                                                             <text class="text-success">پرداخت شده</text>
@@ -107,7 +110,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                             <b>{{ $deposit->coin }}</b>
                                                         </td>
                                                         <td>{{ $deposit->amount }}</td>
-                                                        <td>{{ $deposit->created_at }}</td>                       
+                                                        <td>{{ Jalalian::forge($checkout->created_at)->ago() }}</td>
                                                         <td>
                                                             @if($deposit->confirmed)
                                                             <text class="text-success">نهایی شده</text>

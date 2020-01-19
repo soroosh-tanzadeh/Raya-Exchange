@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Crypt;
 use Ixudra\Curl\Facades\Curl;
 use App\Currency;
 use App\Http\Middleware\UserVerification;
+use App\Http\Middleware\AdminMiddleware;
+use App\Activity;
 
 /*
   |--------------------------------------------------------------------------
@@ -17,6 +19,11 @@ use App\Http\Middleware\UserVerification;
   |
  */
 
+
+
+/**
+ * Users Routers
+ */
 Route::get("/", "UserController@index");
 Route::post("/dologin", "UserController@doLogin");
 
@@ -30,32 +37,12 @@ Route::get("/phpmigrate", function() {
     ]);
 });
 
-//Route::get("/test", function() {
-//    $response = Curl::to('https://currency.jafari.pw/json')
-//            ->get();
-//    $currencies = json_decode($response);
-//    $currencies = $currencies->Currency;
-//    foreach ($currencies as $currency) {
-//        $currency_db = Currency::where("code", $currency->Code)->first();
-//        if ($currency_db === null) {
-//            $currency_db = new Currency();
-//            $currency_db->code = $currency->Code;
-//            $currency_db->price = $currency->Sell;
-//            $currency_db->save();
-//        } else {
-//            $currency_db->code = $currency->Code;
-//            $currency_db->price = $currency->Sell;
-//            $currency_db->save();
-//        }
-//    }
-//});
-
 Route::get("/encryp/{data?}", function ($data) {
     echo(Crypt::encryptString($data));
 });
 
 // Dashboard Route
-Route::get("/usersfiles/{filename}", "DashboardController@getFile")->middleware(Authentication::class);
+Route::get("/files/{filename}", "DashboardController@getFile")->middleware(Authentication::class);
 Route::get("/dashboard", "DashboardController@index")->middleware(UserVerification::class);
 
 // Tickets
@@ -67,6 +54,7 @@ Route::post("/dashboard/ticket/{ticket_id}/sendmessage", "DashboardController@se
 
 // Market Cap
 Route::get("/dashboard/market", "DashboardController@marketCap")->middleware(Authentication::class);
+Route::post("/getcoin", "DashboardController@getCoinPrice")->middleware(Authentication::class);
 
 // Wallet 
 Route::get("/dashboard/mywallet", "DashboardController@walletPage")->middleware(UserVerification::class);
@@ -74,6 +62,7 @@ Route::get("/dashboard/mywallet", "DashboardController@walletPage")->middleware(
 // Payment
 Route::get("/dashboard/buyoffer", "DashboardController@offerPage")->middleware(UserVerification::class);
 Route::post('/dashboard/newoffer/', 'DashboardController@newoffer')->middleware(UserVerification::class);
+Route::post('/dashboard/newbuyoffer', 'DashboardController@newofferBuy')->middleware(UserVerification::class);
 Route::get('/dashboard/offers/', 'DashboardController@offersList')->middleware(UserVerification::class);
 Route::get('/dashboard/exchange', 'ExchangeController@index')->middleware(UserVerification::class);
 Route::post("/exchange", "ExchangeController@exchangeRequest")->middleware(UserVerification::class);
@@ -101,6 +90,50 @@ Route::get("/dashboard/notverified", function() {
 //Notifications
 Route::get("/readNotif", "NotificationsController@read")->middleware(UserVerification::class);
 Route::get("/logout", function () {
+    Activity::addActivity("خروج از حساب");
     session()->remove("user");
     return redirect("/");
 })->middleware(Authentication::class);
+
+
+Route::post("/coindetail", "DashboardController@coinDetail")->middleware(UserVerification::class);
+
+//Bank Account
+Route::get("/dashboard/bankaccounts", "TransactionsController@bankAccounts")->middleware(UserVerification::class);
+Route::post("/addccount", "TransactionsController@addBankAccount")->middleware(UserVerification::class);
+Route::get("/dashboard/checkouts", "TransactionsController@checkouts")->middleware(UserVerification::class);
+Route::post("/checkoutrequest", "TransactionsController@rialCheckouts")->middleware(UserVerification::class);
+Route::post("/coin/checkoutrequest", "TransactionsController@coinCheckouts")->middleware(UserVerification::class);
+
+
+
+Route::get("/test", function (Request $request) {
+
+    return response()->json($request);
+})->middleware(UserVerification::class);
+
+/**
+ * End Users Routers
+ */
+Route::middleware(AdminMiddleware::class)->group(function () {
+    Route::get("/admin", "AdminController@index");
+    // Users
+    Route::get("/admin/users", "AdminController@users");
+    Route::get("/admin/users/{user_id}", "AdminController@userProfile");
+    Route::post("/admin/verifyuser", "AdminController@verifyUser");
+
+    // Payment
+    Route::get("/admin/rialpays", "AdminController@rialpayments");
+    Route::get("/admin/bankaccounts", "AdminController@bankAccountsPage");
+    Route::post("/admin/comfirmcoinpay", "AdminController@comfirmCoinReceive");
+    Route::post("/admin/comfirmpayment", "AdminController@comfirmPayment");
+    Route::post("/admin/comfirmbankaccount", "AdminController@verifyBankAccount");
+    Route::post("/admin/comfirmpay", "AdminController@comfirmPayment");
+
+    // Tickets
+    Route::get("/admin/tickets", "AdminController@tickets");
+    Route::get("/admin/tickets/new", "AdminController@showNewTicket");
+    Route::get("/admin/ticket/{ticket_id}", "AdminController@showTicket");
+    Route::post("/admin/ticket/newticket", "AdminController@newTicket");
+    Route::post("/admin/ticket/{ticket_id}/sendmessage", "AdminController@sendMessage");
+});

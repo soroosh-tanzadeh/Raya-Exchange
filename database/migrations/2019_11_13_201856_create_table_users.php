@@ -4,15 +4,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTableUsers extends Migration
-{
+class CreateTableUsers extends Migration {
+
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up()
-    {
+    public function up() {
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string("name")->nullable();
@@ -29,6 +28,7 @@ class CreateTableUsers extends Migration
             $table->string("email")->nullable();
             $table->string("password")->nullable();
             $table->text("files")->nullable();
+            $table->boolean("is_admin")->default(false)->nullable();
             $table->timestamps();
         });
     }
@@ -38,8 +38,8 @@ class CreateTableUsers extends Migration
      *
      * @return void
      */
-    public function down()
-    {
+    public function down() {
         Schema::dropIfExists('table_users');
     }
+
 }

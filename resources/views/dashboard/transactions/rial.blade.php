@@ -15,6 +15,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
+<?php 
+    use Morilog\Jalali\Jalalian;
+?>
 <html lang="en">
     <head>
         @include("includes.head")
@@ -58,9 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                         <th>شماره کارت</th>
                                                         <th>شماره شبا</th>
                                                         <th>شماره حساب</th>
-
                                                         <th>مقدار</th>
-                                                        <th>به کیف پول</th>
                                                         <th>تاریخ</th>
                                                         <th>وضعیت پرداخت</th>
                                                     </tr>
@@ -73,10 +74,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                             <b>{{ $checkout->IBAN }}</b>
                                                         </td>
                                                         <td>
+                                                            <b>{{ $checkout->card_number }}</b>
+                                                        </td>
+                                                        <td>
                                                             <b>{{ $checkout->account_number }}</b>
                                                         </td>
                                                         <td>{{ $checkout->amount }}</td>
-                                                        <td>{{ $checkout->created_at }}</td>                       
+                                                        <td>{{ Jalalian::forge($checkout->created_at)->ago() }}</td>
                                                         <td>
                                                             @if($checkout->is_payed)
                                                             <text class="text-success">پرداخت شده</text>
@@ -110,7 +114,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                             <b>{{ $deposit->coin }}</b>
                                                         </td>
                                                         <td>{{ $deposit->amount }}</td>
-                                                        <td>{{ $deposit->created_at }}</td>
+                                                        <td>{{ Jalalian::forge($deposit->created_at)->ago() }}</td>
                                                     </tr>
                                                     @endforeach
                                                 </tbody>

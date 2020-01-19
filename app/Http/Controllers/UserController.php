@@ -8,12 +8,18 @@ use Illuminate\Support\Facades\Crypt;
 use App\Verification;
 use App\SMS;
 use Ixudra\Curl\Facades\Curl;
+use App\Activity;
+use App\Notification;
 
 class UserController extends Controller {
 
     public function index(Request $request) {
         if (session()->has("user")) {
-            return redirect("/dashboard");
+            if (session()->get("user")->is_admin) {
+                return redirect("/admin");
+            } else {
+                return redirect("/dashboard");
+            }
         } else {
             if ($request->has("wrong")) {
                 return view("login", array("error" => true));
@@ -94,6 +100,7 @@ class UserController extends Controller {
         $user->password = Crypt::encryptString($password);
 
         if ($user->save()) {
+            Notification::sendNotification("کاربر", "کاربر جدید در انتظار تایید", -1, "/users/$user->id");
             session()->put("user", $user);
             return redirect("/dashboard/?done");
         } else {
@@ -110,6 +117,10 @@ class UserController extends Controller {
             $upass = Crypt::decryptString($user->password);
             if ($upass === $pass) {
                 session()->put("user", $user);
+                Activity::addActivity("ورود به حساب");
+                if ($user->is_admin) {
+                    return redirect("/admin");
+                }
                 return redirect("/dashboard");
             } else {
                 return $this->loginError();

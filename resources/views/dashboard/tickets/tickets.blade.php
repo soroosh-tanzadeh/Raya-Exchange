@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-Copyright (C) 2019 Soroosh Tanzadeh
+Copyright (C) 2019 Webflax
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -37,8 +37,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </div><!-- BEGIN: Page content-->
             <div>
                 <div class="row">
-                    <div class="col-lg-3 col-md-4"><a class="btn btn-danger btn-rounded btn-block shadow font-weight-strong" data-toggle="modal" data-target="#new-mail-modal" href="javascript:;"><span class="btn-icon"><i class="ti-plus font-18"></i>ایجاد</span></a>
-                        <div class="nav flex-column mt-5 mb-4"><a class="flexbox py-2 hover-link mb-1" href="#"><span class="d-flex align-items-center"><i class="ft-inbox mr-3 font-16"></i>همه تیکت&zwnj;ها</span></a><a class="flexbox py-2 hover-link mb-1" href="#"><span class="d-flex align-items-center"><i class="ft-star mr-3 font-16"></i>نیاز به پاسخ کاربر</span><span class="badge badge-warning badge-circle">4</span></a><a class="flexbox py-2 hover-link mb-1" href="#"><span class="d-flex align-items-center"><i class="ft-send mr-3 font-16"></i>پاسخ از طرف پیشتیبانی</span></a><a class="flexbox py-2 hover-link mb-1" href="#"><span class="d-flex align-items-center"><i class="ft-mail mr-3 font-16"></i>بسته شده</span></a></div>
+                    <div class="col-lg-3 col-md-4"><a class="btn btn-danger btn-rounded btn-block shadow font-weight-strong" href="/dashboard/tickets/new"><span class="btn-icon"><i class="ti-plus font-18"></i>ایجاد</span></a>
+                        <div class="nav flex-column mt-5 mb-4">
+                            <a class="flexbox py-2 hover-link mb-1" href="#"><span class="d-flex align-items-center"><i class="ft-inbox mr-3 font-16"></i>همه تیکت&zwnj;ها</span></a>
+                            <a class="flexbox py-2 hover-link mb-1" href="#"><span class="d-flex align-items-center"><i class="ft-star mr-3 font-16"></i>نیاز به پاسخ کاربر</span></a>
+                            <a class="flexbox py-2 hover-link mb-1" href="#"><span class="d-flex align-items-center"><i class="ft-send mr-3 font-16"></i>پاسخ از طرف پیشتیبانی</span></a>
+                            <a class="flexbox py-2 hover-link mb-1" href="#"><span class="d-flex align-items-center"><i class="ft-mail mr-3 font-16"></i>بسته شده</span></a>
+                        </div>
                         <hr class="my-4">
 
                     </div>

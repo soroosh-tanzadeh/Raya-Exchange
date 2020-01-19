@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Activity extends Model {
 
     public static function getActivities() {
-        return Activity::where("user_id", session()->get("user")->id)->limit(10)->get();
+        return Activity::where("user_id", session()->get("user")->id)->latest()->limit(10)->get();
     }
 
     public static function addActivity($text) {

@@ -53,9 +53,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="/payir/pay" method="GET">
+                        <form action="/paycoin" method="GET">
                             <label>میزان کوین</label>
-                            <input type="number" name="amount" class="form-control" value="" style="width: 100%;margin-bottom: 10px;" placeholder="میزان کوین مورد نظر خود را وارد کنید" />
+                            <input id="targetcoin" type="hidden" name="target" value="" />
+                            <input id="coinamount" type="number" step="0.000000001" min="0.0001" max="100000000" name="amount" class="form-control" value="" style="width: 100%;margin-bottom: 10px;" placeholder="میزان کوین مورد نظر خود را وارد کنید" />
+                            <input class="btn btn-primary" type="submit" value="پرداخت" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="checkoutcoinModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">شارژ کیف‌پول ارزی </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="javascript:;" onsubmit="submitAjaxForm(this);" method="POST" data-action="/coin/checkoutrequest">
+                            @csrf
+                            <input id="checkouttargetcoin" type="hidden" name="target" value="" />
+                            <label>میزان کوین</label>
+                            <input id="checkoutcoinamount" type="number" step="0.000000001" required min="0.01" max="100000000" name="amount" class="form-control" value="" style="width: 100%;margin-bottom: 10px;" placeholder="میزان کوین مورد نظر خود را وارد کنید" />
+                            <label>آدرس کیف پول</label>
+                            <input id="coinwalletAddress" type="text" name="token" class="form-control" required value="" style="width: 100%;margin-bottom: 10px;" placeholder="آدرس کیف پول خود را وارد کنید" />
                             <input class="btn btn-primary" type="submit" value="پرداخت" />
                         </form>
                     </div>
@@ -87,8 +112,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         <div class="d-flex" style="word-break:break-word"><span class="h5 mb-0 font-20"><span>{{ $coinWallets['BTC']->credit }}</span><span class="font-weight-normal">BTC</span></span><span class="mx-3"></span>قابل برداشت : ‌{{ $coinWallets['BTC']->cashable }}</div>
                                         <hr>
                                         <div>
-                                            <a class="btn btn-danger btn-sm btn-rounded ml-4" href="#">برداشت</a>
-                                            <a class="btn btn-primary btn-sm btn-rounded ml-4" href="#">واریز</a>
+                                            <a class="btn btn-danger btn-sm btn-rounded ml-4 text-white recievecoin"  data-coin="btc">برداشت</a>
+                                            <a class="btn btn-primary btn-sm btn-rounded ml-4 text-white paycoin" data-coin="btc">واریز</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body media">
+                                <div class="media w-100"><i class="cc LTC-alt font-40 text-secondary mr-4"></i>
+                                    <div class="media-body">
+                                        <div class="mb-2 text-muted font-16">کیف پول لایت کوین</div>
+                                        <div class="d-flex" style="word-break:break-word"><span class="h5 mb-0 font-20"><span>{{ $coinWallets['LTC']->credit }}</span><span class="font-weight-normal">LTC</span></span><span class="mx-3">قابل برداشت : ‌{{ $coinWallets['LTC']->cashable }}</span></div>
+                                        <hr>
+                                        <div>
+                                            <a class="btn btn-danger btn-sm btn-rounded ml-4 text-white recievecoin"  data-coin="ltc">برداشت</a>
+                                            <a class="btn btn-primary btn-sm btn-rounded ml-4 text-white paycoin" data-coin="ltc">واریز</a>
                                         </div>
                                     </div>
                                 </div>
@@ -103,22 +143,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         <hr>
                                         <div>
                                             <a class="btn btn-danger btn-sm btn-rounded ml-4" href="#">برداشت</a>
-                                            <a class="btn btn-primary btn-sm btn-rounded ml-4" href="#">واریز</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-body media">
-                                <div class="media w-100"><i class="cc LTC-alt font-40 text-secondary mr-4"></i>
-                                    <div class="media-body">
-                                        <div class="mb-2 text-muted font-16">کیف پول لایت کوین</div>
-                                        <div class="d-flex" style="word-break:break-word"><span class="h5 mb-0 font-20"><span>{{ $coinWallets['LTC']->credit }}</span><span class="font-weight-normal">LTC</span></span><span class="mx-3">قابل برداشت : ‌{{ $coinWallets['LTC']->cashable }}</span></div>
-                                        <hr>
-                                        <div>
-                                            <a class="btn btn-danger btn-sm btn-rounded ml-4" href="#">برداشت</a>
-                                            <a class="btn btn-primary btn-sm btn-rounded ml-4" href="#">واریز</a>
+                                            <a class="btn btn-primary btn-sm btn-rounded ml-4 text-white" data-coin="eth">واریز (بزودی)</a>
                                         </div>
                                     </div>
                                 </div>
@@ -133,7 +158,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         <hr>
                                         <div>
                                             <a class="btn btn-danger btn-sm btn-rounded ml-4" href="#">برداشت</a>
-                                            <a class="btn btn-primary btn-sm btn-rounded ml-4" href="#">واریز</a>
+                                            <a class="btn btn-primary btn-sm btn-rounded ml-4" href="#">واریز (بزودی)</a>
                                         </div>
                                     </div>
                                 </div>
@@ -146,8 +171,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                 <div class="mb-3"><i class="badge-lg-primary text-primary ti-wallet" style="height: 54px;width: 54px;font-size: 26px;"></i></div>
                                 <div class="mb-3 text-muted font-16">کیف پول ریالی</div>
                                 <div class="h3 mb-4"><span>{{ $rialWallet->credit }}</span><span class="font-weight-normal"> تومان</span></div>
+                                <div>
+                                    قابل برداشت : <span>{{ $rialWallet->cashable }}</span><span class="font-weight-normal"> تومان</span></div>
                                 <hr>
-                                <div class="flexbox"><a data-toggle="modal" data-target="#paymodal" href="#paymodal">واریز</a><a class="text-warning" href="#">درخواست تسویه</a></div>
+                                <div class="flexbox"><a data-toggle="modal" data-target="#paymodal" href="#paymodal">واریز</a></div>
                             </div>
                         </div>
                         <div class="card">

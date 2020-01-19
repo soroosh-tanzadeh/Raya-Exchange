@@ -19,6 +19,15 @@
 .ticket-upload{
     background:#F7F7F7;
 }
+.bg-change-red{
+    background-color: rgba(255,0,0,.075);
+}
+.bg-change-green{
+    background-color: rgba(0,255,0,.075);
+}
+.clickable{
+    cursor: pointer !important;
+}
 .show-tickets{
     height:300px;
     box-shadow:0px 0px 0px rgba(0.0.0.0)
@@ -994,4 +1003,74 @@ dd {
 }
 .compact-table>tbody>tr>td>i.ft-star-on , .compact-table>tbody>tr>td>i.ft-star{
     font-size: 8px !important;
+}
+* {
+    box-sizing: border-box;
+}
+.trickercontainer {
+    height: 100px;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 100%;
+}
+ 
+.trickercontainer .wrap {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    line-height: normal;
+    height: 100%;
+    font-size-adjust: none;
+}
+
+.wrap {}
+ 
+/**
+ * Stock Ticker styling
+ */
+.stockTicker {
+    font-family: Verdana, Arial, Helvetica, San-serif;
+    font-size: x-small;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    list-style: none;
+    height: 100%;
+    text-align: left;
+}
+
+.stockTicker li,
+.stockTicker span {
+    margin: 0;
+    display: inline-block;
+}
+ 
+.stockTicker .up {
+    color: green;
+    padding-left: 2px;
+}
+ 
+.stockTicker .down {
+    color: red;
+    margin: 0;
+    padding-left: 10px;
+}
+ 
+.stockTicker .eq {
+    margin: 0;
+    padding-left: 10px;
+}
+ 
+div.stockTicker .quote {
+    margin: 0;
+    font-weight: bold;
+    padding-left: 10px;
+}
+.cointrick{
+    border-left: 1px solid #999;
+    border-right: 1px solid #999;
+    height: 100%;
+    margin:0 !important;
+    padding: 20px;
 }

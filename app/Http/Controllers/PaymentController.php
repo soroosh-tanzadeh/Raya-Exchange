@@ -16,6 +16,8 @@ use App\Currency;
 use App\Option;
 use App\JeebClient;
 use App\Order;
+use Illuminate\Support\Facades\Cache;
+use App\Notification;
 
 class PaymentController extends Controller {
 
@@ -34,24 +36,61 @@ class PaymentController extends Controller {
     }
 
     public function buyCoin(Request $request) {
-        $payir = new PayirPG();
         $offer = CoinOffer::where("id", $request->offer_id)->first();
-        $requestURL = "https://api.coincap.io/v2/assets";
-        $response = Curl::to($requestURL)
-                ->withData(array('ids' => $offer->coin))
-                ->get();
-        $coin_price = json_decode($response)->data[0]->priceUsd;
-        $usdprice = Currency::where("code", "USD")->first()->price;
-        $amount = $coin_price * $usdprice;
-        $payir->amount = $usdprice * 10; // Required, Amount
-        $payir->mobile = session()->get("user")->phone_number; // Optional, If you want to show user's saved card numbers in gateway
-        session()->put("coin_wallet", true);
-        session()->put("coin_offer", $offer);
-        try {
-            $payir->send();
-            return redirect($payir->paymentUrl);
-        } catch (SendException $e) {
-            throw $e;
+        if ($offer->type === "sell") {
+            $payir = new PayirPG();
+            $amount = $request->amount;
+            $requestURL = "https://api.coincap.io/v2/assets";
+            $price = ($offer->price_pre * $amount) / $offer->max_buy;
+            $payir->amount = $price * 10; // Required, Amount
+            $payir->mobile = session()->get("user")->phone_number; // Optional, If you want to show user's saved card numbers in gateway
+            session()->put("coin_wallet", true);
+            session()->put("coin_offer", $offer);
+            try {
+                $payir->send();
+                Cache::put(session()->get("user")->id . "_$payir->token" . "_coin$offer->id", $amount);
+                return redirect($payir->paymentUrl);
+            } catch (SendException $e) {
+                throw $e;
+            }
+        } elseif ($offer->type === "buy") {
+            $amount = $request->amount;
+            if ($offer->amount >= $amount) {
+                $price = ($offer->price_pre * $amount) / $offer->max_buy;
+
+                $user = session()->get("user");
+
+                $userWallet = Wallet::where("user_id", $user->id)->where("type", "rial")->first();
+                $userWallet->cashable += round($price);
+                $userWallet->credit += round($price);
+                $the_wallet = Wallet::where("user_id", $user->id)->where("name", $offer->coin)->first();
+                $the_wallet->cashable -= $amount;
+                $the_wallet->credit -= $amount;
+
+                $offer->amount -= $amount;
+                if ($offer->amount <= 0) {
+                    $offer->is_active = false;
+                }
+                $offer_wallet = Wallet::where("user_id", $offer->user_id)->where("name", $offer->coin)->first();
+                $offer_wallet->cashable += $amount;
+                $offer_wallet->credit += $amount;
+                $rialofferWallet = Wallet::where("user_id", $offer->user_id)->where("type", "rial")->first();
+                $rialofferWallet->credit -= round($price);
+
+                if ($the_wallet->save() && $userWallet->save() && $offer_wallet->save() && $rialofferWallet->save() && $offer->save()) {
+                    $transaction = new Transaction();
+                    $transaction->user_id = $user->id;
+                    $transaction->amount = $amount;
+                    $transaction->coin = $offer->coin;
+                    $transaction->type = "فروش ارز دیجیتال";
+                    Notification::sendNotification("خرید ارز", "مقدار $amount از پیشنهاد $offer->id به شما فروخته شد و مبلغ آن از کیف پول شما کسر شد.", $offer->user_id, "/dashboard/mywallet");
+                    if ($transaction->save()) {
+                        return response()->json(array("result" => true, "msg" => "پرداخت با موفقیت انجام شد"));
+                    }
+                }
+            } else {
+                return response()->json(array("result" => true, "msg" => "درخواست غیر مجاز"));
+            }
         }
     }
 
@@ -91,19 +130,21 @@ class PaymentController extends Controller {
                         $transaction->user_id = $user->id;
                         $transaction->amount = $verify['amount'];
                         $transaction->coin = "ریال";
-                        $transaction->type = "خرید ارز دیجیتال";
+                        $transaction->type = "خرید ارز دی   جیتال";
                         $transaction->save();
 
                         $the_offer = CoinOffer::where("id", $offer->id)->first();
-                        $the_offer->is_selled = true;
+                        $amount = Cache::pull(session()->get("user")->id . "_$payir->token" . "_coin$offer->id");
+
+                        $the_offer->amount -= $amount;
                         $the_offer->save();
                         $the_wallet = Wallet::where("user_id", $the_offer->user_id)->where("name", $the_offer->coin)->first();
-                        $the_wallet->credit -= $the_offer->amount + ($the_offer->amount * $fee);
+                        $the_wallet->credit -= $amount + ($amount * $fee);
                         $the_wallet->save();
 
                         $user_wallet = Wallet::where("user_id", $user->id)->where("name", $the_offer->coin)->first();
-                        $user_wallet->credit += $the_offer->amount;
-                        $user_wallet->cashable += $the_offer->amount;
+                        $user_wallet->credit += $amount;
+                        $user_wallet->cashable += $amount;
                         $user_wallet->save();
 
                         $rialWallet = Wallet::where("user_id", $the_offer->user_id)->where("type", "rial")->first();

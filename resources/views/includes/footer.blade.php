@@ -15,7 +15,7 @@
     </div>
     <div class="tab-content">
         <div class="tab-pane active h-100 p-4" id="sidenav-tab-settings">
-            <div class="position-relative custom-scroll h-100">
+            <div class="position-relative custom-scroll h-100"> 
                 <h5 class="mb-4">تنظیمات اعلان</h5>
                 <div class="flexbox py-3">فعال سازی اعلانات<label class="ui-switch switch-solid"><input type="checkbox" checked=""><span></span></label></div>
                 <div class="flexbox py-3">اعلان پیامکی<label class="ui-switch switch-solid"><input type="checkbox"><span></span></label></div>
@@ -44,8 +44,12 @@
 <script src="/assets/js/app.min.js"></script><!-- PAGE LEVEL SCRIPTS-->
 <script src="/assets/vendors/chart.js/dist/Chart.js"></script>
 <script src="/assets/js/dashboard-script.js"></script>
+<script src="/assets/js/toastr.js"></script>
+<script src="/assets/vendors/sweetalert2/dist/sweetalert2.js"></script>
+<script src="/assets/vendors/slick/slick.js" type="text/javascript"></script>
 <script src="/assets/js/scripts.js" type="text/javascript"></script>
 <script src="/assets/vendors/DataTables/datatables.min.js" type="text/javascript"></script>
 <script src="/assets/vendors/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="/assets/vendors/jquery-steps/build/jquery.steps.min.js"></script><!-- CORE SCRIPTS-->
-<script src="/assets/js/app.min.js"></script><!-- PAGE LEVEL SCRIPTS-->
+<script src="/assets/js/admin.js"></script>
+<script src="/assets/js/app.js"></script><!-- PAGE LEVEL SCRIPTS-->
