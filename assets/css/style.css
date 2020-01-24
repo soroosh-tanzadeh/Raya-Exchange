@@ -1,18 +1,17 @@
 @font-face 
 {  	font-family: 'IRANSans'; 
-    src: url('../fonts/IRANSansWeb.ttf') format('truetype'),
-        url('../fonts/IRANSansWeb.woff2') format('woff2'),
-        url('../fonts/IRANSansWeb.woff') format('woff'),
-        url('../fonts/IRANSansWeb_Bold.eot?#') format('eot');  
+    src: url('../fonts/ttf/IRANSansWeb(FaNum).ttf') format('truetype'),
+        url('../fonts/woff2/IRANSansWeb(FaNum).woff2') format('woff2'),
+        url('../fonts/woff/IRANSansWeb(FaNum)_Light.woff') format('woff'),
+        url('../fonts/eot/IRANSansWeb(FaNum).eot') format('eot');  
     font-weight:normal !important;
 }
 @font-face {  
     font-family: 'IRANSans_Bold'; 
-    src:
-        url('../fonts/IRANSansWeb_Bold.ttf') format('truetype'),
-        url('../fonts/IRANSansWeb_Bold.eot?#') format('eot'),
-        url('../fonts/IRANSansWeb_Bold.woff') format('woff'),
-        url('../fonts/IRANSansWeb.woff2') format('woff2');
+    src: url('../fonts/ttf/IRANSansWeb(FaNum)_Bold.ttf') format('truetype'),
+        url('../fonts/woff2/IRANSansWeb(FaNum)_Bold.woff2') format('woff2'),
+        url('../fonts/woff/IRANSansWeb(FaNum)_Black.woff') format('woff'),
+        url('../fonts/eot/IRANSansWeb(FaNum)_Bold.eot') format('eot');  
     font-weight:normal !important;
 }
 
@@ -1008,12 +1007,12 @@ dd {
     box-sizing: border-box;
 }
 .trickercontainer {
-    height: 100px;
+    height: 112px;
     margin: 0 auto;
     padding: 0;
     max-width: 100%;
 }
- 
+
 .trickercontainer .wrap {
     width: 100%;
     overflow: hidden;
@@ -1024,12 +1023,12 @@ dd {
 }
 
 .wrap {}
- 
+
 /**
  * Stock Ticker styling
  */
 .stockTicker {
-    font-family: Verdana, Arial, Helvetica, San-serif;
+    font-family: IRANSans;
     font-size: x-small;
     list-style-type: none;
     margin: 0;
@@ -1045,23 +1044,23 @@ dd {
     margin: 0;
     display: inline-block;
 }
- 
+
 .stockTicker .up {
     color: green;
     padding-left: 2px;
 }
- 
+
 .stockTicker .down {
     color: red;
     margin: 0;
     padding-left: 10px;
 }
- 
+
 .stockTicker .eq {
     margin: 0;
     padding-left: 10px;
 }
- 
+
 div.stockTicker .quote {
     margin: 0;
     font-weight: bold;

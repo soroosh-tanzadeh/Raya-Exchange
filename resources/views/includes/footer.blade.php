@@ -42,6 +42,7 @@
 <script src="/assets/vendors/jquery.flot.tooltip/js/jquery.flot.tooltip.min.js"></script>
 <script src="/assets/vendors/Flot/jquery.flot.time.js"></script><!-- CORE SCRIPTS-->
 <script src="/assets/js/app.min.js"></script><!-- PAGE LEVEL SCRIPTS-->
+<script src="/assets/vendors/moment/moment.js"></script>
 <script src="/assets/vendors/chart.js/dist/Chart.js"></script>
 <script src="/assets/js/dashboard-script.js"></script>
 <script src="/assets/js/toastr.js"></script>

@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Support\Facades\Crypt;
 use App\Verification;
-use App\SMS;
 use Ixudra\Curl\Facades\Curl;
 use App\Activity;
 use App\Notification;

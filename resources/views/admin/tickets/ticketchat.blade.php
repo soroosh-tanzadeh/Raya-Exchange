@@ -17,10 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <html lang="en">
     <head>
-        @include("includes.adminheader")
+        @include("includes.header")
     </head>
     <body>
-        @include("includes.header")
+        @include("includes.adminheader")
         <!-- BEGIN: Content-->
         <!-- END: Header-->
         <div class="page-content fade-in-up">

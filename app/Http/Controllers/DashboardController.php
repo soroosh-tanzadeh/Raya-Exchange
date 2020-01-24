@@ -50,14 +50,24 @@ class DashboardController extends Controller {
                 ->withData(array('interval' => "d1"))
                 ->get();
         $chart = json_decode($chart)->data;
-        $outputChart = "";
+        $outputChart = "[";
         foreach ($chart as $value) {
-            $outputChart .= "[$value->time,$value->priceUsd],";
+            $outputChart .= "{x: new Date($value->time),y: $value->priceUsd},";
         }
+        $outputChart .= "]";
+        $chart = Curl::to("https://api.coincap.io/v2/assets/ethereum/history")
+                ->withData(array('interval' => "d1"))
+                ->get();
+        $chart = json_decode($chart)->data;
+        $liteoutputChart = "[";
+        foreach ($chart as $value) {
+            $liteoutputChart .= "{x: new Date($value->time),y: $value->priceUsd},";
+        }
+        $liteoutputChart .= "]";
         $user = session()->get("user");
         $offers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("is_active", true)->where("is_selled", false)->where("user_id", "!=", $user->id)->select('users.name', 'coin_offers.*')->latest()->limit(10)->get();
         $buyoffers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("type", "buy")->where("is_active", true)->where("is_selled", false)->where("user_id", "!=", $user->id)->select('users.name', 'coin_offers.*')->latest()->paginate(25);
-        return view("dashboard.index", array("user" => session()->get("user"), "coins" => $coins, "chart" => $outputChart, "offers" => $offers, "buyoffers" => $buyoffers));
+        return view("dashboard.index", array("user" => session()->get("user"), "coins" => $coins, "chart" => $outputChart, "litechart" => $liteoutputChart, "offers" => $offers, "buyoffers" => $buyoffers));
     }
 
     public function walletPage(Request $request) {

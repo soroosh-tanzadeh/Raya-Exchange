@@ -100,7 +100,7 @@ $activities = Activity::getActivities();
                                 <h5 class="box-title mb-2"><i class="ft-bar-chart-2"></i> نمودار نوسانات ارزی</h5>
                             </div><a class="text-muted" href="#"><i class="ti-more-alt"></i></a>
                         </div>
-                        <div id="crypto_axes" style="height:300px;"></div>
+                        <canvas id="crypto_axes" style="height:300px;"></canvas>
                     </div>
                 </div>
                 <div class="row">
@@ -344,68 +344,34 @@ $activities = Activity::getActivities();
 <!-- END: Quick sidebar-->
 @include("includes.footer")
 <script>
-    $(document).ready(function () {
-    if ($('#crypto_axes').length) {
-    var oilprices = [
-    {{ $chart }}
-    ];
-            function euroFormatter(v, axis) {
-            return v.toFixed(axis.tickDecimals) + "в‚¬";
+    var bitcoinprices = {{ $chart }};
+    var litechart = {{ $litechart }};
+    var ctx = document.getElementById('crypto_axes');
+    var myChart = new Chart(ctx, {
+    type: 'line',
+            data: {
+            datasets: [{
+            label: 'Bitcoin Price # USD',
+                    data:  bitcoinprices,
+                    borderColor: "#ff9900",
+                    backgroundColor: "transparent"
+            },{
+            label: 'Ethereum Price # USD',
+                    data:  litechart,
+                    borderColor: "blue",
+                    backgroundColor: "transparent"
+            }]
+            },
+            options: {
+            scales: {
+            xAxes: [{
+            type: 'time',
+                    distribution: 'series'
+            }]
+            }
             }
 
-    function doPlot(position) {
-    $.plot("#crypto_axes", [{
-    data: oilprices,
-            label: "Bitcoin price ($)"
-    },
-    ], {
-    xaxes: [{
-    mode: "time"
-    }],
-            yaxes: [{
-            min: 0
-            }, {
-            // align if we are to the right
-            alignTicksWithAxis: position == "right" ? 1 : null,
-                    position: position,
-                    tickFormatter: euroFormatter
-            }],
-            colors: [theme_color('primary'), theme_color('warning')],
-            grid: {
-            color: "#999999",
-                    hoverable: true,
-                    clickable: true,
-                    tickColor: "#DADDE0",
-                    borderWidth: 0,
-            },
-            series: {
-            lines: {
-            show: true,
-                    fillColor: {
-                    colors: [{
-                    opacity: 0.1
-                    }, {
-                    opacity: 0.1
-                    }]
-                    }
-            },
-                    points: {
-                    //show: !0
-                    },
-            },
-            legend: {
-            position: "sw"
-            },
-            tooltip: {
-            show: true,
-                    content: "%s for %x was %y",
-            }
     });
-    }
-    doPlot("right");
-    }
-    }
-    );
 </script>
 </body>
 </html>
