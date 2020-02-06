@@ -27,6 +27,8 @@ use App\Activity;
 Route::get("/", "UserController@index");
 Route::post("/dologin", "UserController@doLogin");
 
+Route::get("/getusdprice","DashboardController@getUSD");
+
 Route::get("/dashboard/signup", "UserController@signupPage")->middleware(Authentication::class);
 Route::post("/dosignup", "UserController@signup");
 Route::post("/sendvcode", "UserController@sendVcode");
@@ -61,7 +63,7 @@ Route::get("/dashboard/mywallet", "DashboardController@walletPage")->middleware(
 
 // Payment
 Route::get("/dashboard/buyoffer", "DashboardController@offerPage")->middleware(UserVerification::class);
-Route::post('/dashboard/newoffer/', 'DashboardController@newoffer')->middleware(UserVerification::class);
+Route::any('/dashboard/newoffer/', 'DashboardController@newoffer')->middleware(UserVerification::class);
 Route::post('/dashboard/newbuyoffer', 'DashboardController@newofferBuy')->middleware(UserVerification::class);
 Route::get('/dashboard/offers/', 'DashboardController@offersList')->middleware(UserVerification::class);
 Route::get('/dashboard/exchange', 'ExchangeController@index')->middleware(UserVerification::class);
@@ -105,13 +107,18 @@ Route::get("/dashboard/checkouts", "TransactionsController@checkouts")->middlewa
 Route::post("/checkoutrequest", "TransactionsController@rialCheckouts")->middleware(UserVerification::class);
 Route::post("/coin/checkoutrequest", "TransactionsController@coinCheckouts")->middleware(UserVerification::class);
 
-
+Route::any("/getcoinhis","DashboardController@coinHistory24")->middleware(UserVerification::class);
 
 Route::get("/test", function (Request $request) {
 
     return response()->json($request);
 })->middleware(UserVerification::class);
 
+
+
+
+// Affilate 
+Route::get("/dashboard/affilate","AffilateController@index")->middleware(UserVerification::class);
 /**
  * End Users Routers
  */

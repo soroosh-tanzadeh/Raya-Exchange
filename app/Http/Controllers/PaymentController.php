@@ -18,6 +18,8 @@ use App\JeebClient;
 use App\Order;
 use Illuminate\Support\Facades\Cache;
 use App\Notification;
+use App\AffilateWallet;
+use App\AffilateTransaction;
 
 class PaymentController extends Controller {
 
@@ -57,15 +59,32 @@ class PaymentController extends Controller {
             $amount = $request->amount;
             if ($offer->amount >= $amount) {
                 $price = ($offer->price_pre * $amount) / $offer->max_buy;
-
+                $price = $price + ($price * Option::getOption("admin_fee"));
                 $user = session()->get("user");
+
+                if ($user->affilate !== null) {
+                    $refrall = ($price * Option::getOption("payment_fee"));
+                    $rtransaction = new AffilateTransaction();
+                    $rtransaction->from_user = session()->get("user")->id;
+                    $rtransaction->user_id = session()->get("user")->affilate;
+                    $rtransaction->amount = session()->get("user")->affilate;
+                    $rtransaction->save();
+                }
 
                 $userWallet = Wallet::where("user_id", $user->id)->where("type", "rial")->first();
                 $userWallet->cashable += round($price);
                 $userWallet->credit += round($price);
+
+
+                $coinamount = ($amount * Option::getOption("sell_fee")) + $amount;
+
                 $the_wallet = Wallet::where("user_id", $user->id)->where("name", $offer->coin)->first();
-                $the_wallet->cashable -= $amount;
-                $the_wallet->credit -= $amount;
+                if ($the_wallet->cashable >= $coinamount) {
+                    $the_wallet->cashable -= $coinamount;
+                    $the_wallet->credit -= $coinamount;
+                } else {
+                    return response()->json(array("result" => false, "msg" => "موجودی کیف‌پول شما کافی نیست!"));
+                }
 
                 $offer->amount -= $amount;
                 if ($offer->amount <= 0) {
@@ -74,6 +93,7 @@ class PaymentController extends Controller {
                 $offer_wallet = Wallet::where("user_id", $offer->user_id)->where("name", $offer->coin)->first();
                 $offer_wallet->cashable += $amount;
                 $offer_wallet->credit += $amount;
+                
                 $rialofferWallet = Wallet::where("user_id", $offer->user_id)->where("type", "rial")->first();
                 $rialofferWallet->credit -= round($price);
 
@@ -89,7 +109,7 @@ class PaymentController extends Controller {
                     }
                 }
             } else {
-                return response()->json(array("result" => true, "msg" => "درخواست غیر مجاز"));
+                return response()->json(array("result" => false, "msg" => "درخواست غیر مجاز"));
             }
         }
     }
@@ -136,6 +156,8 @@ class PaymentController extends Controller {
                         $the_offer = CoinOffer::where("id", $offer->id)->first();
                         $amount = Cache::pull(session()->get("user")->id . "_$payir->token" . "_coin$offer->id");
 
+                        $price = ($the_offer->price_pre * $amount) / $the_offer->max_buy;
+
                         $the_offer->amount -= $amount;
                         $the_offer->save();
                         $the_wallet = Wallet::where("user_id", $the_offer->user_id)->where("name", $the_offer->coin)->first();
@@ -148,7 +170,7 @@ class PaymentController extends Controller {
                         $user_wallet->save();
 
                         $rialWallet = Wallet::where("user_id", $the_offer->user_id)->where("type", "rial")->first();
-                        $rialWallet->credit += $verify['amount'];
+                        $rialWallet->credit += $price;
                         $rialWallet->save();
                     }
                 }

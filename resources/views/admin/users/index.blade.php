@@ -72,7 +72,7 @@ use Morilog\Jalali\Jalalian;
                                                 </td>
                                                 <td>{{ Jalalian::forge($user->created_at)->ago() }}</td>
                                                 <td>
-                                                    @if($user->is_active)
+                                                    @if($user->verified_at != null)
                                                     <text class="text-success">تایید شده</text>
                                                     @else
                                                     <text class="text-warning">تایید نشده</text>

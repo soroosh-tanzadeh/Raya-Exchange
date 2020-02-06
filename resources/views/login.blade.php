@@ -115,7 +115,7 @@
                         <form id="login-form" action="/dologin" method="post">
                             @csrf
                             <div class="mb-4">
-                                <div class="md-form mb-0"><input class="md-form-control" type="email" name="email"><label>ایمیل</label></div>
+                                <div class="md-form mb-0"><input class="md-form-control" type="phone" name="email"><label>ایمیل</label></div>
                             </div>
                             <div class="mb-4">
                                 <div class="md-form mb-0"><input class="md-form-control" type="password" name="password"><label>رمز عبور</label></div>

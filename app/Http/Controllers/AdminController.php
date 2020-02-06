@@ -10,6 +10,8 @@ use App\Transaction;
 use App\Checkout;
 use App\Order;
 use App\CoinOffer;
+use App\Wallet;
+use App\AffilateWallet;
 
 class AdminController extends Controller {
 
@@ -23,9 +25,36 @@ class AdminController extends Controller {
     }
 
     public function verifyUser(Request $request) {
-        $user_id = $request->user_id;
-        $user = User::where("id", $user_id)->first();
+        $user_id = $request->id;
+        $user = User::find($user_id);
         $user->verified_at = time();
+        $wallets = array("BTC" => "bitcoin", "ETH" => "ethereum", "LTC" => "litecoin", "XRP" => "ripple");
+        foreach ($wallets as $key => $value) {
+            $wallet = new Wallet();
+            $wallet->type = "coin";
+            $wallet->type_name = $key;
+            $wallet->name = $value;
+            $wallet->cashable = 0;
+            $wallet->credit = 0;
+            $wallet->user_id = $user_id;
+            $wallet->save();
+        }
+
+        $wallet = new Wallet();
+        $wallet->type = "rial";
+        $wallet->type_name = "Rial";
+        $wallet->name = "";
+        $wallet->cashable = 0;
+        $wallet->credit = 0;
+        $wallet->user_id = $user_id;
+        $wallet->save();
+
+
+        $Awallet = new AffilateWallet();
+        $Awallet->user_id = $user_id;
+        $Awallet->credit = 0;
+        $Awallet->save();
+        
         return response()->json(array("result" => $user->save()));
     }
 

@@ -77,8 +77,8 @@ $usdprice = Currency::where("code", "USD")->first()->price;
                                             <th>قیمت به تومان</th>
                                             <th>حجم بازار (دلار)</th>
                                             <th>میزان عرضه</th>
-                                            <th>قیمت متوسط/۲۴ ساعت</th>
                                             <th>تغییرات قیمت نسبت به روز گذشته</th>
+                                            <th>نمودار تعییرات / هفتگی</th>
 
                                         </tr>
                                     </thead>
@@ -88,7 +88,7 @@ $usdprice = Currency::where("code", "USD")->first()->price;
                                             <td>{{ $coin->rank }}</td>
                                             <td><img src="{{ $coin->icon }}" style="max-width: 30px"/></td>
                                             <td class="showCoin">{{ $coin->name }}</td>
-                                            <td class="coinprice" data-price="{{ round($coin->priceUsd,5) }}">{{ round($coin->priceUsd,5) }}$</td>
+                                            <td class="coinprice" data-price="{{ round($coin->priceUsd,5) }}">{{ number_format(round($coin->priceUsd,5),5) }}$</td>
                                             <td class="coinprice-toman"><?php
                                                 $priceInToman = (int) ($coin->priceUsd * $usdprice);
                                                 if (($priceInToman >= 1000) & ($priceInToman < 1000000)) {
@@ -105,16 +105,50 @@ $usdprice = Currency::where("code", "USD")->first()->price;
                                                     echo $price . " تومان";
                                                 }
                                                 ?></td>
-                                            <td>{{ round($coin->marketCapUsd,5) }} $</td>
-                                            <td>{{ round($coin->supply,5) }} {{ $coin->symbol }}</td>
-                                            <td class="coinvwap">{{ round($coin->vwap24Hr,5) }} $</td>
+                                            <td>
+                                                <?php
+                                                $marketCapUsd = round($coin->marketCapUsd, 3);
+                                                if (($marketCapUsd >= 1000) & ($marketCapUsd < 1000000)) {
+                                                    $cap = $marketCapUsd / 1000;
+                                                    echo $cap . " هزار دلار";
+                                                } elseif ($marketCapUsd >= 1000000 & ($marketCapUsd < 1000000000)) {
+                                                    $cap = $marketCapUsd / 1000000;
+                                                    echo $cap . " میلیون دلار";
+                                                } elseif ($marketCapUsd >= 1000000000) {
+                                                    $cap = $marketCapUsd / 1000000000;
+                                                    echo $cap . " میلیارد دلار";
+                                                } else {
+                                                    $cap = $marketCapUsd;
+                                                    echo $cap . " تومان";
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php
+                                                $supply = round($coin->supply, 4);
+                                                if (($supply >= 1000) & ($supply < 1000000)) {
+                                                    $asupply = $supply / 1000;
+                                                    echo $asupply . " هزار $coin->symbol";
+                                                } elseif ($supply >= 1000000 & ($supply < 1000000000)) {
+                                                    $asupply = $supply / 1000000;
+                                                    echo $asupply . " میلیون $coin->symbol";
+                                                } elseif ($supply >= 1000000000) {
+                                                    $asupply = $supply / 1000000000;
+                                                    echo $asupply . " میلیارد $coin->symbol";
+                                                } else {
+                                                    $asupply = $supply;
+                                                    echo $asupply . " $coin->symbol";
+                                                }
+                                                ?>
+                                            </td>
                                             <td class="coinchange">
                                                 @if($coin->changePercent24Hr < 0)
-                                                <text class="text-danger change">{{ round($coin->changePercent24Hr,2) }}%</text>
+                                                <text class="text-danger change">{{ number_format(round($coin->changePercent24Hr,2),2) }}%</text>
                                                 @else
                                                 <text class="text-success change">{{ round($coin->changePercent24Hr,2) }}%</text>
                                                 @endif
                                             </td>
+                                            <td class="spark-line">{{ $coin->history }}</td>
                                         </tr>
                                         @endforeach
                                     </tbody>
@@ -133,6 +167,16 @@ $usdprice = Currency::where("code", "USD")->first()->price;
         </div><!-- BEGIN: Footer-->
 
         @include("includes.footer") 
+        <style>
+            canvas{
+                max-width: 150px !important;
+            }
+            td{
+                text-align: center;
+            }
+
+
+        </style>
         <script src="/assets/vendors/apexcharts/dist/apexcharts.min.js"></script><!-- CORE SCRIPTS-->
         <script>
 function loadChart(dateSeries1) {
@@ -204,6 +248,14 @@ $.ajaxSetup({
     }
 });
 $(document).ready(function () {
+//    $(".coinrow").each(function () {
+//        var row = this;
+//        var coin = $(this).attr("data-coin");
+////        $.get("/getcoinhis/?coin="+coin, {}, function (data) {
+////          //  $(row).children(".spark-line").html(data.data);
+////        });
+//    });
+    $(".spark-line").sparkline('html', {changeRangeMin: 0, chartRangeMax: 1});
     $(".coinrow").click(function () {
         var coin = $(this).attr("data-coin");
         $.ajax({
@@ -227,6 +279,15 @@ $(document).ready(function () {
             }
         });
     });
+    $("#market-table").dataTable({
+        "language": {
+            "url": "{{ url('/assets/persian.json') }}"
+        },
+        "searching": false,
+        "paging": false,
+        "info": false,
+        "lengthChange": false
+    })
     setInterval(function () {
         $(".coinrow").each(function () {
             var coin_id = $(this).attr("data-coin");
@@ -264,7 +325,6 @@ $(document).ready(function () {
                     }
                 }
             });
-
         });
     }, 5000);
 });

@@ -16,6 +16,7 @@ use App\Transaction;
 use App\CoinOffer;
 use App\Option;
 use App\Activity;
+use App\BankAccount;
 
 class DashboardController extends Controller {
 
@@ -68,6 +69,11 @@ class DashboardController extends Controller {
         $offers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("is_active", true)->where("is_selled", false)->where("user_id", "!=", $user->id)->select('users.name', 'coin_offers.*')->latest()->limit(10)->get();
         $buyoffers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("type", "buy")->where("is_active", true)->where("is_selled", false)->where("user_id", "!=", $user->id)->select('users.name', 'coin_offers.*')->latest()->paginate(25);
         return view("dashboard.index", array("user" => session()->get("user"), "coins" => $coins, "chart" => $outputChart, "litechart" => $liteoutputChart, "offers" => $offers, "buyoffers" => $buyoffers));
+    }
+
+    public function getUSD() {
+        $usdprice = Currency::where("code", "USD")->first()->price;
+        return response()->json(array("result" => true, "price" => $usdprice));
     }
 
     public function walletPage(Request $request) {
@@ -125,79 +131,101 @@ class DashboardController extends Controller {
         $usdprice = Currency::where("code", "USD")->first()->price;
         foreach ($bitcoinChart as $value) {
             $price = $usdprice * $value->priceUsd;
-            $outputChart['bitcoin'] .= "[$value->time,$price],";
+            $outputChart['bitcoin'] .= "[$price,";
         }
+        $outputChart['bitcoin'] .= "]";
         foreach ($litecoinChart as $value) {
             $price = $usdprice * $value->priceUsd;
-            $outputChart['litecoin'] .= "[$value->time,$price],";
+            $outputChart['litecoin'] .= "[$price,";
         }
+        $outputChart['litecoin'] .= "]";
         foreach ($ripplecoinChart as $value) {
             $price = $usdprice * $value->priceUsd;
-            $outputChart['ripple'] .= "[$value->time,$price],";
+            $outputChart['ripple'] .= "[$price,";
         }
+        $outputChart['ripple'] .= "]";
 
         $offers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("user_id", session()->get('user')->id)->select('users.name', 'coin_offers.*')->paginate(10);
         $buyoffers = CoinOffer::join("users", "users.id", "=", "coin_offers.buy_by")->where("is_active", true)->where("is_selled", true)->select('users.name', 'coin_offers.*')->limit(10)->get();
+        $accounts = BankAccount::where("user_id", session()->get("user")->id)->get();
 
-        return view("dashboard.offers.index", array("user" => session()->get("user"), "coins" => $coins, "chart" => $outputChart, "offers" => $offers, "buyoffers" => $buyoffers));
+        return view("dashboard.offers.index", array("user" => session()->get("user"), "coins" => $coins, "chart" => $outputChart, "offers" => $offers, "buyoffers" => $buyoffers, "bankaccounts" => $accounts));
+    }
+
+    public function coinHistory24(Request $request) {
+        $coinhis = Curl::to("https://api.coincap.io/v2/assets/$request->coin/history")
+                ->withData(array('interval' => "m1"))
+                ->asJson()
+                ->get();
+        $output = "";
+        $coinhis = $coinhis->data;
+        foreach ($coinhis as $data) {
+            $output .= $data->priceUsd;
+        }
+        return response()->json(array("result" => true, "data" => $output));
     }
 
     public function newoffer(Request $request) {
-        $user = session()->get("user");
-        $fee = Option::where("key", "sell_fee")->first()->value;
-        $coin_type = $request->coin;
-        $coin_num = $request->coinـnum;
-        $price = $request->price_toman;
-        $minbuy = $request->mincoin;
-        $wallet = Wallet::where("user_id", $user->id)->where("name", $coin_type)->first();
-        if ($wallet->cashable >= $coin_num - ($coin_num * ($fee))) {
-            $coin = new CoinOffer();
-            $coin->user_id = session()->get("user")->id;
-            $coin->amount = $coin_num;
-            $coin->coin = $coin_type;
-            $coin->price_pre = $price;
-            $coin->min_buy = $minbuy;
-            $coin->max_buy = $coin_num;
-            $wallet->cashable -= $coin_num + ($coin_num * ($fee));
-
-            if ($coin->save() && $wallet->save()) {
-                Activity::addActivity("ایجاد پیشنهاد فروش جدید");
-                return redirect("/dashboard/mywallet");
+        if ($request->type == "buy") {
+            $user = session()->get("user");
+            $fee = Option::where("key", "sell_fee")->first()->value;
+            $coin_type = $request->coin;
+            $coin_num = $request->coinـnum;
+            $price = $request->price_toman;
+            $minbuy = $request->mincoin;
+            $wallet = Wallet::where("user_id", $user->id)->where("type", "rial")->first();
+            if ($wallet->cashable >= $price) {
+                $coin = new CoinOffer();
+                $coin->user_id = session()->get("user")->id;
+                $coin->amount = $coin_num;
+                $coin->coin = $coin_type;
+                $coin->price_pre = $price;
+                $coin->min_buy = $minbuy;
+                $coin->max_buy = $coin_num;
+                $coin->type = "buy";
+                $wallet->cashable -= $price;
+                if ($coin->save() && $wallet->save()) {
+                    Activity::addActivity("ایجاد پیشنهاد خرید جدید");
+                    return redirect("/dashboard/mywallet");
+                } else {
+                    return redirect("/dashboard/buyoffer?error=خطا در ذخیره اطلاعات");
+                }
             } else {
-                return redirect("/dashboard/buyoffer?error=خطا در ذخیره اطلاعات");
+                return redirect("/dashboard/buyoffer?error=کیف پول ریالی خود را به اندازه مبلغ پیشنهاد شارژ کنید");
             }
-        } else {
-            return redirect("/dashboard/buyoffer?error=موجودی حساب کافی نیست");
+        } elseif ($request->type == "sell") {
+            $user = session()->get("user");
+            $fee = Option::where("key", "sell_fee")->first()->value;
+            $coin_type = $request->coin;
+            $coin_num = $request->coinـnum;
+            $price = $request->price_toman;
+            $minbuy = $request->mincoin;
+            $wallet = Wallet::where("user_id", $user->id)->where("name", $coin_type)->first();
+            if ($wallet->cashable >= $coin_num - ($coin_num * ($fee))) {
+                $coin = new CoinOffer();
+                $coin->user_id = session()->get("user")->id;
+                $coin->amount = $coin_num;
+                $coin->coin = $coin_type;
+                $coin->price_pre = $price;
+                $coin->min_buy = $minbuy;
+                $coin->max_buy = $coin_num;
+                $coin->type = "sell";
+                $wallet->cashable -= $coin_num + ($coin_num * ($fee));
+
+                if ($coin->save() && $wallet->save()) {
+                    Activity::addActivity("ایجاد پیشنهاد فروش جدید");
+                    return redirect("/dashboard/mywallet");
+                } else {
+                    return redirect("/dashboard/buyoffer?error=خطا در ذخیره اطلاعات");
+                }
+            } else {
+                return redirect("/dashboard/buyoffer?error=موجودی حساب کافی نیست");
+            }
         }
     }
 
     public function newofferBuy(Request $request) {
-        $user = session()->get("user");
-        $fee = Option::where("key", "sell_fee")->first()->value;
-        $coin_type = $request->coin;
-        $coin_num = $request->coinـnum;
-        $price = $request->price_toman;
-        $minbuy = $request->mincoin;
-        $wallet = Wallet::where("user_id", $user->id)->where("type", "rial")->first();
-        if ($wallet->cashable >= $price) {
-            $coin = new CoinOffer();
-            $coin->user_id = session()->get("user")->id;
-            $coin->amount = $coin_num;
-            $coin->coin = $coin_type;
-            $coin->price_pre = $price;
-            $coin->min_buy = $minbuy;
-            $coin->max_buy = $coin_num;
-            $coin->type = "buy";
-            $wallet->cashable -= $price;
-            if ($coin->save() && $wallet->save()) {
-                Activity::addActivity("ایجاد پیشنهاد خرید جدید");
-                return redirect("/dashboard/mywallet");
-            } else {
-                return redirect("/dashboard/buyoffer?error=خطا در ذخیره اطلاعات");
-            }
-        } else {
-            return redirect("/dashboard/buyoffer?error=کیف پول ریالی خود را به اندازه مبلغ پیشنهاد شارژ کنید");
-        }
+        
     }
 
     public function offersList(Request $request) {
@@ -237,27 +265,35 @@ class DashboardController extends Controller {
         $chart_ltc = Curl::to("https://api.coincap.io/v2/assets/litecoin/history")
                 ->withData(array('interval' => "d1"))
                 ->get();
-        $chart_xrp = Curl::to("https://api.coincap.io/v2/assets/ripple/history")
+        $chart_xrp = Curl::to("https://api.coincap.io/v2/assets/ethereum/history")
                 ->withData(array('interval' => "d1"))
                 ->get();
 
         $bitcoinChart = json_decode($chart_btc)->data;
         $litecoinChart = json_decode($chart_ltc)->data;
         $ripplecoinChart = json_decode($chart_xrp)->data;
-        $outputChart = array("bitcoin" => "", "litecoin" => "", "ripple" => "");
+        $outputChart = array("bitcoin" => "", "litecoin" => "", "ethereum" => "");
         $usdprice = Currency::where("code", "USD")->first()->price;
+        $outputChart['bitcoin'] .= "[";
         foreach ($bitcoinChart as $value) {
             $price = $usdprice * $value->priceUsd;
-            $outputChart['bitcoin'] .= "[$value->time,$price],";
+            $outputChart['bitcoin'] .= "$price,";
         }
+        $outputChart['bitcoin'] .= "]";
+
+        $outputChart['litecoin'] .= "[";
         foreach ($litecoinChart as $value) {
             $price = $usdprice * $value->priceUsd;
-            $outputChart['litecoin'] .= "[$value->time,$price],";
+            $outputChart['litecoin'] .= "$price,";
         }
+        $outputChart['litecoin'] .= "]";
+
+        $outputChart['ethereum'] .= "[";
         foreach ($ripplecoinChart as $value) {
             $price = $usdprice * $value->priceUsd;
-            $outputChart['ripple'] .= "[$value->time,$price],";
+            $outputChart['ethereum'] .= "$price,";
         }
+        $outputChart['ethereum'] .= "]";
 
         $offers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("type", "sell")->where("is_active", true)->where("is_selled", false)->where("user_id", "!=", $user->id)->select('users.name', 'coin_offers.*')->paginate(25);
         $buyoffers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("type", "buy")->where("is_active", true)->where("is_selled", false)->where("user_id", "!=", $user->id)->select('users.name', 'coin_offers.*')->paginate(25);
@@ -375,7 +411,7 @@ class DashboardController extends Controller {
             }
             $coin->price_in_toman_int = $priceInToman;
             $output[] = $coin;
-            $coin->priceUsd = round($coin->priceUsd, 5);
+            $coin->priceUsd = number_format(round($coin->priceUsd, 5), 5);
         }
         return response()->json($output[0]);
     }
@@ -406,6 +442,17 @@ class DashboardController extends Controller {
         $coins = $data->data;
         $output = array();
         foreach ($coins as $coin) {
+            $coinhis = Curl::to("https://api.coincap.io/v2/assets/$coin->id/history")
+                    ->withData(array('interval' => "d1"))
+                    ->asJson()
+                    ->get();
+            $historydata = "";
+            $coinhis = $coinhis->data;
+            foreach ($coinhis as $hisdata) {
+                $price = $hisdata->priceUsd;
+                $power = pow(10, strlen((string) round($price)));
+                $historydata .= ($price / $power) . ", ";
+            }
             $coin_icon = Common::getIconPath() . "/" . strtolower($coin->symbol) . ".png";
             $client = new Client();
             if (Common::url_exists($coin_icon)) {
@@ -413,6 +460,7 @@ class DashboardController extends Controller {
             } else {
                 $coin->icon = Common::getLogoPath();
             }
+            $coin->history = $historydata;
             $output[] = $coin;
         }
         return view("dashboard.market.coins", array("user" => session()->get("user"), "coins" => $output, "page" => $page));

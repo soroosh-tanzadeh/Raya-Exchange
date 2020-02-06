@@ -327,3 +327,50 @@ $(document).ready(function () {
         });
     });
 });
+
+var DAYS_S = ["S", "M", "T", "W", "T", "F", "S"];
+var color = Chart.helpers.color;
+
+
+function initCryptoAreaCharts(elem, data, border_color) {
+    if (elem.length == 0) {
+        return;
+    }
+    var ctx = document.getElementById(elem).getContext("2d");
+    var gradientFill = ctx.createLinearGradient(0, 0, 0, 300);
+    gradientFill.addColorStop(0, Color(border_color).alpha(0.05).rgbString());
+    gradientFill.addColorStop(1, '#fff');
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: DAYS_S,
+            datasets: [{
+                    label: '',
+                    data: data,
+                    backgroundColor: gradientFill,
+                    borderColor: border_color,
+                    pointRadius: 0,
+                    pointHitRadius: 20,
+                    pointHoverBackgroundColor: border_color,
+                    pointHoverBorderColor: '#ffe8f0',
+                    pointHoverBorderWidth: 5,
+                    pointHoverRadius: 6
+                }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: {
+                display: false,
+            },
+            scales: {
+                xAxes: [{
+                        display: false,
+                    }],
+                yAxes: [{
+                        display: false,
+                    }]
+            },
+        }
+    });
+}

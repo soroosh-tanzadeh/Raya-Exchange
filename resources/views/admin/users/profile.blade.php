@@ -94,7 +94,7 @@ use Morilog\Jalali\Jalalian;
                                 </div>
                             </div>
                             <div class="card-footer justify-content-end d-flex">
-                                <input type="submit" class="comfirmuser btn btn-success" value="تایید کاربر" />
+                                <input type="submit" class="comfirmuser btn btn-success" data-user="{{ $profile->id }}" value="تایید کاربر" />
                                 <a href="/admin/tickets/new?user={{ $profile->id }}" class="btn btn-warning mx-2 text-white" >ارسال تیکت</a>
                             </div>
                         </div>

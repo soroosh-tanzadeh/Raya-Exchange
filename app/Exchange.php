@@ -4,8 +4,9 @@ namespace App;
 
 use Ixudra\Curl\Facades\Curl;
 use App\Common;
+use Illuminate\Database\Eloquent\Model;
 
-class Exchange {
+class Exchange extends Model {
 
     public $token;
 
@@ -43,6 +44,14 @@ class Exchange {
             echo 'Error:' . curl_error($ch);
         }
         curl_close($ch);
+
+        $exchange = new Exchange();
+        $exchange->amount = $amount;
+        $exchange->from = $from;
+        $exchange->to = $to;
+        $exchange->$to_address = $to_address;
+        $exchange->user_id = session()->get("user_id");
+        $exchange->save();
 
         return json_decode($result);
     }

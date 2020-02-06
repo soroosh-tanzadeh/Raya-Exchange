@@ -101,7 +101,7 @@ $headerWallets = Wallet::getWallets();
                     </ul>
                 </li>
                 <li><a href="/dashboard/market"><i class="sidebar-item-icon ft-layers"></i><span class="nav-label">قیمت لحظه ای ارز های دیجیتال</span></a></li>
-                <li><a href="/dashboard/crypto-wallet"><i class="sidebar-item-icon ft-users"></i><span class="nav-label">کسب درآمد</span></a></li>
+                <li><a href="/dashboard/affilate"><i class="sidebar-item-icon ft-users"></i><span class="nav-label">کسب درآمد</span></a></li>
                 <li><a href="/dashboard/tickets"><i class="sidebar-item-icon ft-mail"></i><span class="nav-label">تیکت</span></a></li>
             </ul>
         </div>
@@ -114,6 +114,8 @@ $headerWallets = Wallet::getWallets();
                     <li class="nav-item"><a class="nav-link navbar-icon sidebar-toggler" id="sidebar-toggler" href="#"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a></li>
                 </ul>
                 <ul class="navbar-nav">
+                    
+                    @if($user->verified_at !== null)
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle navbar-icon" data-toggle="dropdown" href="#">
                             <i class="ti-wallet font-18 position-relative"></i>
@@ -176,6 +178,7 @@ $headerWallets = Wallet::getWallets();
                             </div>
                         </div>
                     </li>
+                    @endif
                     <?php
                     $notifications = \App\Notification::getNotifications();
                     ?>

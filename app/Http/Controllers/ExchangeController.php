@@ -10,8 +10,8 @@ class ExchangeController extends Controller {
 
     public function index(Request $request) {
         $result = Curl::to("https://api.simpleswap.io/get_all_currencies")->asJson()->get();
-        //  return response()->json();
-        return view("dashboard.market.exchange", array("user" => session()->get("user"), "currencies" => ((array) $result)));
+        $exchanges = Exchange::query()->where("user_id", session()->get("user")->id)->latest()->paginate(10);
+        return view("dashboard.market.exchange", array("user" => session()->get("user"), "exchanges" => $exchanges, "currencies" => ((array) $result)));
     }
 
     public function exchangeRequest(Request $request) {
@@ -21,7 +21,8 @@ class ExchangeController extends Controller {
 
     public function getEstimate(Request $request) {
         $result = Curl::to("https://api.simpleswap.io/get_estimated?currency_from=$request->from&currency_to=$request->to&amount=$request->amount")->asJson()->get();
-        return $result;
+     //   echo "https://api.simpleswap.io/get_estimated?currency_from=$request->from&currency_to=$request->to&amount=$request->amount";
+       return response()->json($result);
     }
 
 }

@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html lang="en">
     <head>
         @include("includes.head")
-        <link href="/assets/vendors/select2/dist/css/select2.min.css" rel="stylesheet" /><!-- THEME STYLES-->
         <title>Raya-EX | تبادل ارز دیجیتال</title>
 
     </head>
@@ -45,8 +44,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                     <div class="form-group mb-4">
                                         <h4 class="col-form-label px-3">یک کوین را انتخاب کنید</h4>
                                         <div class="d-flex justify-content-center align-items-center">
-                                            <select class="form-control select2_demo mx-3" required id="from_coin" style="width: 40%">
-                                                <option></option>
+                                            <select class="form-control mx-3" required id="from_coin" style="width: 40%">
+                                                <option value="">یک نو</option>
                                                 @foreach($currencies as $currency)
                                                 <option value="{{ $currency->symbol }}">{{ $currency->name }}</option>
                                                 @endforeach
@@ -55,7 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                             <div class="d-inline-flex justify-content-center align-items-center mx-3" style="width: 60px"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
 
                                             <select class="form-control" id="to_coin" required style="width: 40%">
-                                                <option></option>
+                                                <option value=""></option>
                                                 @foreach($currencies as $currency)
                                                 <option value="{{ $currency->symbol }}">{{ $currency->name }}</option>
                                                 @endforeach
@@ -71,7 +70,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                             <div class="d-inline-flex justify-content-center align-items-center" style="width: 60px"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
                                             <div class="col">
                                                 <div class="input-group">
-                                                    <input class="form-control" id="target-coin"  readonly type="text" placeholder="Loading">
+                                                    <input class="form-control" id="target-coin"  readonly type="text" placeholder="0">
                                                 </div>
                                             </div>
                                         </div>
@@ -88,11 +87,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-4">
+                                    <div>
+                                        <h5 class="box-title mb-2"><i class="ft-download"></i> تاریخچه تبادلات</h5>
+                                    </div>
+                                </div>
+                                @if(count($exchanges) > 0)
+                                <div class="table-responsive font-11">
+                                    <table class="table table-hover compact-table">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>از ارز</th>
+                                                <th>به ارز</th>
+                                                <th>مقدار<th>
+                                                <th>به کیف‌پول</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($exchanges as $exchange)
+                                            <tr>
+                                                <td>{{ $exchange->from }}</td>
+                                                <td>{{ $exchange->to }}</td>
+                                                <td>{{ $exchange->amount }} {{ $exchange->from }}</td>
+                                                <td>{{ $exchange->to_address }}</td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {{ $exchanges->links() }}
+                                @else 
+                                <h4 class="text-center">تا کنون هیچ تبادلی انجام نداده‌اید</h4>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div><!-- BEGIN: Footer-->
 
         @include("includes.footer") 
-        <script src="/assets/vendors/select2/dist/js/select2.full.min.js"></script><!-- CORE SCRIPTS-->
 
         <script>
 $("#from_coin").select2({
@@ -106,19 +144,42 @@ $(document).ready(function () {
     $("#from_coin,#to_coin").change(function () {
         var from_coin = $("#from_coin").val();
         var to_coin = $("#to_coin").val();
-        var amount = $("#amount").val();
-        $.get("/get_estimate?from=" + from_coin + "&to=" + to_coin + "&amount=" + amount, {}, function (data) {
-            $("#target-coin").val(data);
-        });
-    })
+        if (from_coin !== to_coin) {
+            var amount = $("#amount").val();
+            $.get("/get_estimate?from=" + from_coin + "&to=" + to_coin + "&amount=" + amount, {}, function (data) {
+                $("#target-coin").val(data);
+            });
+        } else {
+            Swal.fire(
+                    'خطا!',
+                    'نمی‌توان یک کوین را به خودش تبادل کرد',
+                    'error'
+                    );
+            $("#to_coin").val(null);
+            $("#from_coin").val(null);
+            $("#from_coin").trigger('change.select2');
+            $("#to_coin").trigger('change.select2');
+
+        }
+
+    });
     $("#amount").on("input", function () {
         var from_coin = $("#from_coin").val();
         var to_coin = $("#to_coin").val();
         var amount = $("#amount").val();
-        $.get("/get_estimate?from=" + from_coin + "&to=" + to_coin + "&amount=" + amount, {}, function (data) {
-            $("#target-coin").val(data);
-        });
-    })
+        if (from_coin !== "" && to_coin !== "") {
+            $.get("/get_estimate?from=" + from_coin + "&to=" + to_coin + "&amount=" + amount, {}, function (data) {
+                $("#target-coin").val(data);
+            });
+        } else {
+            Swal.fire(
+                    'خطا!',
+                    'ارز مبدا و مقصد را انتخاب کنید',
+                    'error'
+                    );
+            $(this).val("");
+        }
+    });
     $("#exchangebtn").click(function () {
         var from_coin = $("#from_coin").val();
         var to_coin = $("#to_coin").val();

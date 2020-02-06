@@ -135,7 +135,7 @@ toastr.options = {
     "hideMethod": "fadeOut"
 }
 $(document).ready(function () {
-
+    
     $(function () {
         $("#ticker").csTicker({interval: 20});
     });
@@ -209,25 +209,23 @@ $(document).ready(function () {
     });
 
 // SIDEBAR TOGGLE
-    $('#sidebar-toggler').on('click', function(e) {
+    $('#sidebar-toggler').on('click', function (e) {
         e.preventDefault();
-        if( $('body').hasClass('drawer-sidebar') ) {
+        if ($('body').hasClass('drawer-sidebar')) {
             $('#sidebar').backdrop();
-        }
-        else if( $('body').hasClass('sidebar-collapsed-mode') ) {
+        } else if ($('body').hasClass('sidebar-collapsed-mode')) {
             $('body').toggleClass('sidebar-hidden');
-        }
-        else {
+        } else {
             $('body').toggleClass('mini-sidebar');
         }
     });
 
     // QUICK SIDEBAR TOGGLE
-    $('.quick-sidebar-toggler').on('click', function(e){
+    $('.quick-sidebar-toggler').on('click', function (e) {
         e.preventDefault();
         $('#quick-sidebar').backdrop();
     });
-    
+
 });
 
 function submitAjaxForm(form) {

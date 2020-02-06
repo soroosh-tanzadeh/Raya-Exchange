@@ -42,7 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <div class="page-breadcrumb">
                     <h1 class="page-title page-title-sep">داشبورد</h1>
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="../index.html"><i class="ft-home font-20"></i></a></li>
+                        <li class="breadcrumb-item"><a href="#"><i class="ft-home font-20"></i></a></li>
                         <li class="breadcrumb-item">داشبورد</li>
                     </ol>
                 </div>
@@ -114,8 +114,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                 <div class="container-fluid">
                                     <div class="row">
                                         <div class="col-md-6 pt-2 px-1  d-flex justify-content-center align-items-center">
-                                            <input type="file" class="fileselect" name="fileBack" data-binded="#filesdropzone" id="file-back" style="display: none;" />
-                                            <div class="dropzone openfile" id="filesdropzone" data-target="#file-back">
+                                            <input type="file" class="fileselect" name="fileBack" data-binded="#backdropzone" id="file-back" style="display: none;" />
+                                            <div class="dropzone openfile w-100" id="backdropzone" data-target="#file-back">
                                                 <div class="dz-message"><i class="ti-import text-primary font-40"></i>
                                                     <div class="mt-3 font-20">برای انتخاب فایل کلیک کنید</div>
                                                     <div class="text-muted">تصویر جلو کارت ملی</div>
@@ -126,8 +126,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                             </div>
                                         </div>
                                         <div class="col-md-6 pt-2 px-1  d-flex justify-content-center align-items-center">
-                                            <input type="file" class="fileselect" name="fileFront" data-binded="#filesdropzone" id="file-front" style="display: none;" />
-                                            <div class="dropzone openfile" id="filesdropzone" data-target="#file-front">
+                                            <input type="file" class="fileselect" name="fileFront" data-binded="#frontdropzone" id="file-front" style="display: none;" />
+                                            <div class="dropzone openfile w-100" id="frontdropzone" data-target="#file-front">
                                                 <div class="dz-message"><i class="ti-import text-primary font-40"></i>
                                                     <div class="mt-3 font-20">برای انتخاب فایل کلیک کنید</div>
                                                     <div class="text-muted">تصویر پشت کارت ملی</div>
@@ -138,8 +138,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                             </div>
                                         </div>
                                         <div class="col-md-12 pt-2 px-1  d-flex justify-content-center align-items-center">
-                                            <input type="file" class="fileselect" name="selfiImage" data-binded="#filesdropzone" id="file-selfi" style="display: none;" />
-                                            <div class="dropzone openfile" id="filesdropzone" data-target="#file-selfi">
+                                            <input type="file" class="fileselect" name="selfiImage" data-binded="#selfidropzone" id="file-selfi" style="display: none;" />
+                                            <div class="dropzone openfile w-100" id="selfidropzone" data-target="#file-selfi">
                                                 <div class="dz-message"><i class="ti-import text-primary font-40"></i>
                                                     <div class="mt-3 font-20">برای انتخاب فایل کلیک کنید</div>
                                                     <div class="text-muted">تصویر سلفی با کارت ملی</div>

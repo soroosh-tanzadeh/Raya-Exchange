@@ -40,39 +40,72 @@ use Morilog\Jalali\Jalalian;
             </div><!-- BEGIN: Page content-->
             <div>
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-lg-4">
                         <div class="card">
                             <div class="card-body">
-                                <div class="d-flex justify-content-between mb-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <div class="d-flex"><i class="cc BCN mr-3 font-40 text-warning" title="BCN" style="line-height: 1"></i>
+                                        <div>
+                                            <h5 class="font-18 mb-2 font-weight-normal">BTC</h5>
+                                            <div class="text-muted">بیت کوین</div>
+                                        </div>
+                                    </div>
                                     <div>
-                                        <h5 class="box-title mb-2"><i class="ft-bar-chart-2"></i> Bitcoin</h5>
-                                    </div><a class="text-muted" href="#"><i class="ti-more-alt"></i></a>
+                                        <div class="h3 mb-2">{{ $coins['bitcoin']->price_in_toman }}</div>
+                                        @if($coins['bitcoin']->changePercent24Hr < 0)
+                                        <div class="text-danger change text-right"> <i class="ti-arrow-down mx-2"></i>{{ number_format(round($coins['bitcoin']->changePercent24Hr,2),2) }}%</div>
+                                        @else
+                                        <div  class="text-success change text-right"><i class="ti-arrow-up mx-2"></i>{{ round($coins['bitcoin']->changePercent24Hr,2) }}%</div>
+                                        @endif
+                                    </div>
                                 </div>
-                                <div id="crypto_axes" style="height:300px;"></div>
+                                <div class="card-fullwidth-block" style="margin-bottom: -1.8rem"><canvas id="crypto_chart_1" style="height:100px;"></canvas></div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-lg-4">
                         <div class="card">
                             <div class="card-body">
-                                <div class="d-flex justify-content-between mb-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <div class="d-flex"><i class="cc ETC-alt mr-3 font-40 text-primary" title="ETC" style="line-height: 1"></i>
+                                        <div>
+                                            <h5 class="font-18 mb-2 font-weight-normal">ETC</h5>
+                                            <div class="text-muted">اتریم</div>
+                                        </div>
+                                    </div>
                                     <div>
-                                        <h5 class="box-title mb-2"><i class="ft-bar-chart-2"></i> Litecoin</h5>
-                                    </div><a class="text-muted" href="#"><i class="ti-more-alt"></i></a>
+                                        <div class="h3 mb-2">{{ $coins['ethereum']->price_in_toman }}</div>
+                                        @if($coins['ethereum']->changePercent24Hr < 0)
+                                        <div class="text-danger change text-right"> <i class="ti-arrow-down mx-2"></i>{{ number_format(round($coins['ethereum']->changePercent24Hr,2),2) }}%</div>
+                                        @else
+                                        <div  class="text-success change text-right"><i class="ti-arrow-up mx-2"></i>{{ round($coins['ethereum']->changePercent24Hr,2) }}%</div>
+                                        @endif
+                                    </div>
                                 </div>
-                                <div id="crypto_litecoin" style="height:300px;"></div>
+                                <div class="card-fullwidth-block" style="margin-bottom: -1.8rem"><canvas id="crypto_chart_2" style="height:100px;"></canvas></div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-lg-4">
                         <div class="card">
                             <div class="card-body">
-                                <div class="d-flex justify-content-between mb-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <div class="d-flex"><i class="cc LTC mr-3 font-40 text-secondary" title="LTC" style="line-height: 1"></i>
+                                        <div>
+                                            <h5 class="font-18 mb-2 font-weight-normal">LTC</h5>
+                                            <div class="text-muted">لایت کوین</div>
+                                        </div>
+                                    </div>
                                     <div>
-                                        <h5 class="box-title mb-2"><i class="ft-bar-chart-2"></i> Ripple</h5>
-                                    </div><a class="text-muted" href="#"><i class="ti-more-alt"></i></a>
+                                        <div class="h3 mb-2">{{ $coins['litecoin']->price_in_toman }}</div>
+                                        @if($coins['litecoin']->changePercent24Hr < 0)
+                                        <div class="text-danger change text-right"> <i class="ti-arrow-down mx-2"></i>{{ number_format(round($coins['litecoin']->changePercent24Hr,2),2) }}%</div>
+                                        @else
+                                        <div  class="text-success change text-right"><i class="ti-arrow-up mx-2"></i>{{ round($coins['litecoin']->changePercent24Hr,2) }}%</div>
+                                        @endif
+                                    </div>
                                 </div>
-                                <div id="crypto_ripple" style="height:300px;"></div>
+                                <div class="card-fullwidth-block" style="margin-bottom: -1.8rem"><canvas id="crypto_chart_3" style="height:100px;"></canvas></div>
                             </div>
                         </div>
                     </div>
@@ -101,7 +134,7 @@ use Morilog\Jalali\Jalalian;
                                                             <th>حداقل خرید</th>
                                                             <th>واحد (تومان)</th>
                                                             <th>تاریخ</th>
-                                                            <th>#</th>
+                                                            <th>خرید</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -154,7 +187,7 @@ use Morilog\Jalali\Jalalian;
                                                                 <th>حداقل فروش</th>
                                                                 <th>واحد (تومان)</th>
                                                                 <th>تاریخ</th>
-                                                                <th>#</th>
+                                                                <th>فروش</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -207,143 +240,16 @@ use Morilog\Jalali\Jalalian;
 
         @include("includes.footer") 
         <script>
-            $(document).ready(function () {
-            if ($('#crypto_axes').length) {
-            var bitcoin = [
-            {{ $chart['bitcoin'] }}
-            ];
-            var litecoin = [
-            {{ $chart['litecoin'] }}
-            ];
-            var ripple = [
-            {{ $chart['ripple'] }}
-            ];
-            function euroFormatter(v, axis) {
-            return v.toFixed(axis.tickDecimals) + "в‚¬";
-            }
+            var bitcoin = {{ $chart['bitcoin'] }};
+            var litecoin = {{ $chart['litecoin'] }};
+            var ethereum = {{ $chart['ethereum'] }};
+        </script>
 
-            function doPlot(position) {
-            $.plot("#crypto_axes", [{
-            data: litecoin,
-                    label: "Bitcoin"
-            }], {
-            xaxes: [{
-            mode: "time"
-            }],
-                    yaxes: [{
-                    min: 0
-                    }],
-                    colors: [theme_color('warning')],
-                    grid: {
-                    color: "#999999",
-                            hoverable: true,
-                            clickable: true,
-                            tickColor: "#DADDE0",
-                            borderWidth: 0,
-                    },
-                    series: {
-                    lines: {
-                    show: true,
-                            fillColor: {
-                            colors: [{
-                            opacity: 0.1
-                            }, {
-                            opacity: 0.1
-                            }]
-                            }
-                    }
-                    },
-                    legend: {
-                    position: "sw"
-                    },
-                    tooltip: {
-                    show: true,
-                            content: "قیمت %s در%x, %y تومان بوده",
-                    }
-            });
-            ///////////////////////////
-            $.plot("#crypto_ripple", [{
-            data: ripple,
-                    label: "Ripple"
-            }], {
-            xaxes: [{
-            mode: "time"
-            }],
-                    yaxes: [{
-                    min: 0
-                    }],
-                    colors: ["red"],
-                    grid: {
-                    color: "#999999",
-                            hoverable: true,
-                            clickable: true,
-                            tickColor: "#DADDE0",
-                            borderWidth: 0,
-                    },
-                    series: {
-                    lines: {
-                    show: true,
-                            fillColor: {
-                            colors: [{
-                            opacity: 0.1
-                            }, {
-                            opacity: 0.1
-                            }]
-                            }
-                    }
-                    },
-                    legend: {
-                    position: "sw"
-                    },
-                    tooltip: {
-                    show: true,
-                            content: "قیمت %s در%x, %y تومان بوده",
-                    }
-            });
-            ///////////////////////////
-            $.plot("#crypto_litecoin", [{
-            data: bitcoin,
-                    label: "Litecoin"
-            }], {
-            xaxes: [{
-            mode: "time"
-            }],
-                    yaxes: [{
-                    min: 0
-                    }],
-                    colors: ["#666"],
-                    grid: {
-                    color: "#999999",
-                            hoverable: true,
-                            clickable: true,
-                            tickColor: "#DADDE0",
-                            borderWidth: 0,
-                    },
-                    series: {
-                    lines: {
-                    show: true,
-                            fillColor: {
-                            colors: [{
-                            opacity: 0.1
-                            }, {
-                            opacity: 0.1
-                            }]
-                            }
-                    }
-                    },
-                    legend: {
-                    position: "sw"
-                    },
-                    tooltip: {
-                    show: true,
-                            content: "قیمت %s در%x, %y تومان بوده",
-                    }
-            });
-            }
-            doPlot("right");
-            }
-            }
-            );
+        <script>
+            initCryptoAreaCharts('crypto_chart_1', bitcoin, theme_color('warning'));
+            initCryptoAreaCharts('crypto_chart_2', ethereum, theme_color('primary'));
+            initCryptoAreaCharts('crypto_chart_3', litecoin, theme_color('dark'));
+
         </script>
     </body>
 </html>

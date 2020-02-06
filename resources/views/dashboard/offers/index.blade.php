@@ -18,6 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html lang="en">
     <head>
         @include("includes.head")
+        <link href="/assets/css/pages/form-wizard.css" rel="stylesheet" />
+        <link href="/assets/vendors/feather-icons/feather.css" rel="stylesheet" />
+        <link href="/assets/vendors/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet" />
+        <link href="/assets/vendors/themify-icons/themify-icons.css" rel="stylesheet" />
+        <link href="/assets/vendors/line-awesome/css/line-awesome.min.css" rel="stylesheet" />
+        <link href="/assets/vendors/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet" /><!-- PAGE LEVEL VENDORS-->
         <title>Raya-EX | پیشنهاد جدید</title><!-- GLOBAL VENDORS-->
 
     </head>
@@ -57,111 +63,56 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </div><!-- BEGIN: Page content-->
             <div>
                 <div class="row">
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between mb-4">
-                                    <div>
-                                        <h5 class="box-title mb-2"><i class="ft-bar-chart-2"></i> Bitcoin</h5>
-                                    </div><a class="text-muted" href="#"><i class="ti-more-alt"></i></a>
-                                </div>
-                                <div id="crypto_axes" style="height:300px;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between mb-4">
-                                    <div>
-                                        <h5 class="box-title mb-2"><i class="ft-bar-chart-2"></i> Litecoin</h5>
-                                    </div><a class="text-muted" href="#"><i class="ti-more-alt"></i></a>
-                                </div>
-                                <div id="crypto_litecoin" style="height:300px;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between mb-4">
-                                    <div>
-                                        <h5 class="box-title mb-2"><i class="ft-bar-chart-2"></i> Ripple</h5>
-                                    </div><a class="text-muted" href="#"><i class="ti-more-alt"></i></a>
-                                </div>
-                                <div id="crypto_ripple" style="height:300px;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
                     <div class="col-md-12">
-                        <div class="card card-fullheight">
-                            <div class="card-header p-0">
-                                <ul class="nav line-tabs nav-justified line-tabs-2x line-tabs-solid w-100">
-                                    <li class="nav-item"><a data-toggle="tab" href="#menu1" class="nav-link w-100 justify-content-center active show" style="border-top-right-radius: 0.6rem;">پیشنهاد فروش</a></li>
-                                    <li class="nav-item"><a data-toggle="tab" href="#menu2" class="nav-link w-100 justify-content-center" style="border-top-left-radius: 0.6rem;">پیشنهاد خرید</a></li>
-                                </ul>                                
-                            </div>
-                            <ul class="nav line-tabs nav-justified line-tabs-2x line-tabs-solid mb-5">
-                                <li class="nav-item dcurrency-select"><a class="nav-link text-center active show" data-toggle="tab" href="#tab-1" data-coin="bitcoin" data-price="{{ $coins['bitcoin']->price_in_toman_int }}"><i class="cc BTC-alt font-26 text-warning mb-2"></i></a></li>
-                                <li class="nav-item dcurrency-select"><a class="nav-link text-center" data-toggle="tab" href="#tab-2" data-coin="ethereum" data-price="{{ $coins['litecoin']->price_in_toman_int }}"><i class="cc ETC font-26 text-primary mb-2"></i></a></li>
-                                <li class="nav-item dcurrency-select"><a class="nav-link text-center" data-toggle="tab" href="#tab-2" data-coin="litecoin" data-price="{{ $coins['ethereum']->price_in_toman_int }}"><i class="cc LTC-alt font-26 text-secondary mb-2"></i></a></li>
-                                <li class="nav-item dcurrency-select"><a class="nav-link text-center" data-toggle="tab" href="#tab-2" data-coin="ripple" data-price="{{ $coins['ripple']->price_in_toman_int }}"><i class="cc XRP-alt font-26 text-primary mb-2"></i></a></li>
-                            </ul>
+                        <div class="card">
                             <div class="card-body">
-                                <div class="tab-content">
-                                    <div id="menu1" class="tab-pane fade active show">
-                                        <h5 class="box-title mb-4"><i class="ft-zap"></i>ایجاد پیشنهاد فروش</h5>
-                                        <h5 class="mb-3 mt-4">مقدار مورد نظر :</h5>
-                                        <form action="/dashboard/newoffer" method="POST">
-                                            @csrf
-                                            <div class="form-group mb-5">
-                                                <input type="hidden" id="coin-type" value="bitcoin" name="coin"/>
-                                                <div class="form-row">
-                                                    <div class="col">
-                                                        <div class="input-group-icon input-group-icon-right">
-                                                            <input class="form-control" type="text" name="coinـnum" required id="coin-num" placeholder="مقدار">
-                                                            <span class="input-icon input-icon-right"><i class="cc BCN-alt text-warning font-13"></i></span></div>
-                                                        <input class="form-control mt-1" type="text" name="mincoin" required id="mincoin" placeholder="حداقل خرید">
+                                <h5 class="box-title text-primary">ایجاد پیشنهاد جدید</h5>
+                                <form class="circle-steps" id="form-wizard" action="/dashboard/newoffer/" method="GET" novalidate="novalidate">
+                                    <h6>نوع پیشنهاد</h6>
+                                    <fieldset>
+                                        <h3 class="mb-4">انتخاب نوع پیشنهاد</h3>
+                                        <select required name="type" class="form-control">
+                                            <option value="" disabled selected>نوع پیشنهاد را انتخاب کنید</option>
+                                            <option value="sell">فروش ارز دجیتال</option>
+                                            <option value="buy">خرید ارز دجیتال</option>
+                                        </select>
+                                        @csrf
+                                    </fieldset>
+                                    <h6>نحوه پرداخت</h6>
+                                    <fieldset>
+                                        <h3 class="mb-4">انتخاب حساب بانکی</h3>
+                                        <select required name="bankaccount" class="form-control">
+                                            <option value="-1">پرداخت به کیف‌پول</option>
+                                            @foreach($bankaccounts as $bankaccount)
+                                            <option value="{{ $bankaccount->id }}">{{ $bankaccount->IBAN }} - {{ $bankaccount->owner }}</option>
+                                            @endforeach
+                                        </select>
+                                    </fieldset>
+                                    <h6>اطلاعات</h6>
+                                    <fieldset>
+                                        <div class="form-group mb-5">
+                                            <select required name="coin" class="form-control">
+                                                <option value="">یک کوین‌را انتخاب کنید </option>
+                                                <option value="bitcoin">Bitcoin</option>
+                                                <option value="litecoin">Litecoin</option>
+                                            </select>
+                                            <div class="form-row">
+                                                <div class="col">
+                                                    <div class="input-group-icon input-group-icon-right">
+                                                        <input class="form-control" type="text" name="coinـnum" required id="coin-num" placeholder="مقدار">
+                                                        <span class="input-icon input-icon-right"><i class="cc BCN-alt text-warning font-13"></i></span></div>
+                                                    <input class="form-control mt-1" type="text" name="mincoin" required id="mincoin" placeholder="حداقل خرید">
 
-                                                    </div>
-                                                    <div class="d-inline-flex justify-content-center align-items-center" style="width: 60px"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
-                                                    <div class="col d-flex align-items-center">
-                                                        <div class="input-group-icon input-group-icon-right w-100">
-                                                            <input class="form-control" type="text" placeholder="قیمت به تومان" required name="price_toman" id="price-toman"><span class="input-icon input-icon-right">تومان</span></div>
-                                                    </div>
+                                                </div>
+                                                <div class="d-inline-flex justify-content-center align-items-center" style="width: 60px"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
+                                                <div class="col d-flex align-items-center">
+                                                    <div class="input-group-icon input-group-icon-right w-100">
+                                                        <input class="form-control" type="text" placeholder="قیمت به تومان" required name="price_toman" id="price-toman"><span class="input-icon input-icon-right">تومان</span></div>
                                                 </div>
                                             </div>
-                                            <div class="text-center"><button class="btn btn-danger btn-rounded" type="submit" style="min-width: 200px">تکمیل سفارش</button></div>
-                                        </form>
-                                    </div>
-                                    <div id="menu2" class="tab-pane">
-                                        <h5 class="box-title mb-4"><i class="ft-zap"></i>ایجاد پیشنهاد خرید</h5>
-                                        <h5 class="mb-3 mt-4">مقدار مورد نظر :</h5>
-                                        <form action="/dashboard/newbuyoffer" method="POST">
-                                            @csrf
-                                            <div class="form-group mb-5">
-                                                <input type="hidden" id="coinbuy-type" value="bitcoin" name="coin"/>
-                                                <div class="form-row">
-                                                    <div class="col">
-                                                        <div class="input-group-icon input-group-icon-right">
-                                                            <input class="form-control" type="text" name="coinـnum" required id="coinbuy-num" placeholder="مقدار">
-                                                            <span class="input-icon input-icon-right"><i class="cc BCN-alt text-warning font-13"></i></span></div>
-                                                        <input class="form-control mt-1" type="text" name="mincoin" required id="minbuycoin" placeholder="حداقل فروش">
-                                                    </div>
-                                                    <div class="d-inline-flex justify-content-center align-items-center" style="width: 60px"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
-                                                    <div class="col d-flex align-items-center">
-                                                        <div class="input-group-icon input-group-icon-right w-100">
-                                                            <input class="form-control" type="text" placeholder="قیمت به تومان" required name="price_toman" id="pricebuy-toman"><span class="input-icon input-icon-right">تومان</span></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="text-center"><button class="btn btn-danger btn-rounded" type="submit" style="min-width: 200px">تکمیل سفارش</button></div>
-                                        </form>
-                                    </div>
-                                </div>
-
+                                        </div>
+                                    </fieldset>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -373,5 +324,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
             );
         </script>
+
+        <script src="/assets/js/offers.js"></script>
     </body>
 </html>

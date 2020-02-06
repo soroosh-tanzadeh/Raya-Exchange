@@ -110,7 +110,7 @@ class UserController extends Controller {
     public function doLogin(Request $request) {
         $email = $request->input("email");
         $pass = $request->input("password");
-        $user = User::where("email", $email)->first();
+        $user = User::where("phone_number", $email)->orWhere("email", $email)->first();
         $respons = array("result" => 1);
         if ($user !== null) {
             $upass = Crypt::decryptString($user->password);

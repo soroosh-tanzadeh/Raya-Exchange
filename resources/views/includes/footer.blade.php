@@ -44,13 +44,21 @@
 <script src="/assets/js/app.min.js"></script><!-- PAGE LEVEL SCRIPTS-->
 <script src="/assets/vendors/moment/moment.js"></script>
 <script src="/assets/vendors/chart.js/dist/Chart.js"></script>
-<script src="/assets/js/dashboard-script.js"></script>
 <script src="/assets/js/toastr.js"></script>
 <script src="/assets/vendors/sweetalert2/dist/sweetalert2.js"></script>
 <script src="/assets/vendors/slick/slick.js" type="text/javascript"></script>
-<script src="/assets/js/scripts.js" type="text/javascript"></script>
 <script src="/assets/vendors/DataTables/datatables.min.js" type="text/javascript"></script>
 <script src="/assets/vendors/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="/assets/vendors/jquery-steps/build/jquery.steps.min.js"></script><!-- CORE SCRIPTS-->
-<script src="/assets/js/admin.js"></script>
+<script src="/assets/vendors/jquery-sparkline/jquery.sparkline.min.js"></script><!-- CORE SCRIPTS-->
+<script src="/assets/vendors/select2/dist/js/select2.full.min.js"></script><!-- CORE SCRIPTS-->
+<script src="/assets/vendors/jquery/dist/jquery.min.js"></script>
+<script src="/assets/vendors/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendors/metismenu/dist/metisMenu.min.js"></script>
+<script src="/assets/vendors/perfect-scrollbar/dist/perfect-scrollbar.min.js"></script><!-- PAGE LEVEL PLUGINS-->
+<script src="/assets/vendors/chart.js/dist/Chart.min.js"></script>
+<script src="/assets/vendors/apexcharts/dist/apexcharts.min.js"></script><!-- CORE SCRIPTS-->
 <script src="/assets/js/app.js"></script><!-- PAGE LEVEL SCRIPTS-->
+<script src="/assets/js/admin.js"></script>
+<script src="/assets/js/scripts.js" type="text/javascript"></script>
+<script src="/assets/js/dashboard-script.js"></script>

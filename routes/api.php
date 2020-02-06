@@ -14,4 +14,3 @@ use Illuminate\Http\Request;
 */
 
 //Route::post("/history/{id?}/{interval?}","APIController@history");
-Route::get("/market","DashboardController@getCoins");

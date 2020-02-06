@@ -17,3 +17,4 @@
 <link href="/assets/vendors/slick/slick.css" rel="stylesheet" type="text/css"/>
 <link href="/assets/vendors/slick/slick-theme.css" rel="stylesheet" type="text/css"/>
 <link href="/assets/vendors/sweetalert2/dist/sweetalert2.css" rel="stylesheet" type="text/css"/> 
+<link href="/assets/vendors/select2/dist/css/select2.min.css" rel="stylesheet" /><!-- THEME STYLES-->
