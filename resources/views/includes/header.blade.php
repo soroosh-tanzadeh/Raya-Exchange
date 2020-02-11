@@ -24,7 +24,9 @@ $headcoins = Exchange::getCoins();
 $headerWallets = Wallet::getWallets();
 ?>
 
-
+  @if($user->is_admin)
+    @include("includes.adminheader")
+  @else
 <div class="modal fade" id="buycoinmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -79,30 +81,37 @@ $headerWallets = Wallet::getWallets();
             <ul class="sidebar-menu metismenu" id="theulsidebar">
                 <li><a href="/dashboard"><i class="sidebar-item-icon ft-home"></i><span class="nav-label">داشبورد</span></a></li>
                 <li><a href="/dashboard/mywallet"><i class="sidebar-item-icon ft-dollar-sign"></i><span class="nav-label">کیف پول</span></a></li>
+                <li><a href="javascript:;"><i class="sidebar-item-icon ft-shopping-cart"></i><span class="nav-label">خرید و فروش ارز</span><i class="arrow la la-angle-right"></i></a>
+                    <ul class="nav-2-level">
+                        <!-- 2-nd level-->
+                        <li><a href="/dashboard/offers"><i class="sidebar-item-icon ft-trending-up"></i><span class="nav-label">جدول خرید و فروش</span></a></li>
+                        <li><a href="/dashboard/buyoffer"><i class="sidebar-item-icon ft-shopping-cart"></i><span class="nav-label">ایجاد پیشنهاد جدید</span></a></li>
+                        <li><a href="/dashboard/myoffers"><i class="sidebar-item-icon ft-shopping-cart"></i><span class="nav-label">پیشنهادات من</span></a></li>
+
+                    </ul>
+                </li>
+                <li><a href="javascript:;"><i class="sidebar-item-icon ft-list"></i><span class="nav-label">تراکنش‌ها</span><i class="arrow la la-angle-right"></i></a>
+                    <ul class="nav-2-level">
+                        <li><a href="/dashboard/rials"><i class="sidebar-item-icon ft-layers"></i><span class="nav-label">ریالی</span></a></li>
+                        <li><a href="/dashboard/crypto"><i class="sidebar-item-icon ft-layers"></i><span class="nav-label">ارز دیجیتال</span></a></li>
+                    </ul>
+                </li>
+                <li><a href="javascript:;"><i class="sidebar-item-icon ft-trending-up"></i><span class="nav-label">معاملات ارزی</span><i class="arrow la la-angle-right"></i></a>
+                    <ul class="nav-2-level">
+                        <!-- 2-nd level-->
+                        <li><a href="/dashboard/exchange"><i class="sidebar-item-icon ft-layers"></i><span class="nav-label">تبادل ارز</span></a></li>
+                        <li><a href="/dashboard/market"><i class="sidebar-item-icon ft-layers"></i><span class="nav-label">قیمت لحظه‌ای</span></a></li>
+                    </ul>
+                </li>
+                <li><a href="/dashboard/affilate"><i class="sidebar-item-icon ft-users"></i><span class="nav-label">کسب درآمد</span></a></li>
                 <li><a href="javascript:;"><i class="sidebar-item-icon ft-shopping-cart"></i><span class="nav-label">مالی</span><i class="arrow la la-angle-right"></i></a>
                     <ul class="nav-2-level">
                         <li><a href="/dashboard/checkouts"><i class="sidebar-item-icon ft-layers"></i><span class="nav-label">تسویه حساب</span></a></li>
                         <li><a href="/dashboard/bankaccounts"><i class="sidebar-item-icon ft-layers"></i><span class="nav-label">حساب‌های بانکی</span></a></li>
                     </ul>
                 </li>
-                <li><a href="javascript:;"><i class="sidebar-item-icon ft-shopping-cart"></i><span class="nav-label">تراکنش‌ها</span><i class="arrow la la-angle-right"></i></a>
-                    <ul class="nav-2-level">
-                        <li><a href="/dashboard/rials"><i class="sidebar-item-icon ft-layers"></i><span class="nav-label">ریالی</span></a></li>
-                        <li><a href="/dashboard/crypto"><i class="sidebar-item-icon ft-layers"></i><span class="nav-label">ارز دیجیتال</span></a></li>
-                    </ul>
-                </li>
-                <li><a href="javascript:;"><i class="sidebar-item-icon ft-shopping-cart"></i><span class="nav-label">خرید و فروش ارز</span><i class="arrow la la-angle-right"></i></a>
-                    <ul class="nav-2-level">
-                        <!-- 2-nd level-->
-                        <li><a href="/dashboard/exchange"><i class="sidebar-item-icon ft-layers"></i><span class="nav-label">معاملات ارزی (Exchange)</span></a></li>
-                        <li><a href="/dashboard/offers"><i class="sidebar-item-icon ft-trending-up"></i><span class="nav-label">جدول خرید و فروش</span></a></li>
-                        <li><a href="/dashboard/buyoffer"><i class="sidebar-item-icon ft-shopping-cart"></i><span class="nav-label">ایجاد پیشنهاد جدید</span></a></li>
-
-                    </ul>
-                </li>
-                <li><a href="/dashboard/market"><i class="sidebar-item-icon ft-layers"></i><span class="nav-label">قیمت لحظه ای ارز های دیجیتال</span></a></li>
-                <li><a href="/dashboard/affilate"><i class="sidebar-item-icon ft-users"></i><span class="nav-label">کسب درآمد</span></a></li>
                 <li><a href="/dashboard/tickets"><i class="sidebar-item-icon ft-mail"></i><span class="nav-label">تیکت</span></a></li>
+                <li><a href="/dashboard/faq"><i class="sidebar-item-icon ft-book-open"></i><span class="nav-label">آموزش</span></a></li>
             </ul>
         </div>
         <!-- END: Sidebar-->
@@ -114,7 +123,7 @@ $headerWallets = Wallet::getWallets();
                     <li class="nav-item"><a class="nav-link navbar-icon sidebar-toggler" id="sidebar-toggler" href="#"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a></li>
                 </ul>
                 <ul class="navbar-nav">
-                    
+
                     @if($user->verified_at !== null)
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle navbar-icon" data-toggle="dropdown" href="#">
@@ -234,22 +243,30 @@ $headerWallets = Wallet::getWallets();
                 </ul>
             </nav>
 
-            <div class="pricebar text-white w-100 bg-dark" dir="ltr">
-                <div id="ticker" class="stockTicker">
-                    @foreach($headcoins as $headcoin)
-                    <span class="cointrick">                 
-                        <div class="font-18 text-center" dir="rtl">
-                            <img src="{{ $headcoin->icon }}" class="mx-2" style="max-width: 24px;max-height: 24px"/>
-                            <b>{{ $headcoin->name }}</b>
-                            <br>
-                            <div>
-                                <span>{{ $headcoin->price_in_toman }}</span>
-                                <br>
-                                <span class="mt-1 @if($headcoin->changePercent24Hr > 0) text-success @else text-danger @endif">{{ round($headcoin->changePercent24Hr,2) }}٪</span><i class="@if($headcoin->changePercent24Hr > 0) ft-arrow-up text-success @else ft-arrow-down text-danger @endif"></i>
-                            </div>
+            <div class="pricebar text-white w-100 bg-dark">
+                <div class="mcwp-crypto" id="mcwp-6540">
+                    <div class="mcwp-ticker mcwp-header" data-speed="100">
+                        <div class="cc-ticker cc-white-color" style="background-color:#333333;">
+                            <ul class="cc-stats">
+                                @foreach($headcoins as $headcoin)
+                                <li class="cc-coin">
+                                    <div>
+                                        <img src="{{ $headcoin->icon }}" alt="bitcoin">
+                                        <b>{{ $headcoin->name }}
+                                            <span>{{ $headcoin->price_in_toman }}</span>
+                                            <span>
+                                                <span class="mt-1 @if($headcoin->changePercent24Hr > 0) text-success @else text-danger @endif">{{ abs(round($headcoin->changePercent24Hr,2)) }}٪</span><i class="@if($headcoin->changePercent24Hr > 0) ft-arrow-up text-success @else ft-arrow-down text-danger @endif"></i>
+                                            </span>
+                                        </b>
+                                    </div>
+                                </li>
+                                @endforeach
+
+
+                            </ul>
                         </div>
-                    </span>
-                    @endforeach
+                    </div>
                 </div>
             </div>
             <!-- END: Header-->
+            @endif

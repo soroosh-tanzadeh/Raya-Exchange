@@ -11,6 +11,7 @@
         "php": "^7.2",
         "fideloper/proxy": "^4.0",
         "guzzlehttp/guzzle": "^6.5",
+        "hexters/coinpayment": "^2.0",
         "ixudra/curl": "^6.18",
         "laravel/framework": "^6.0",
         "laravel/socialite": "^4.3",
@@ -20,7 +21,6 @@
         "yajra/laravel-datatables-oracle": "^9.8"
     },
     "require-dev": {
-        "facade/ignition": "^1.4",
         "fzaninotto/faker": "^1.4",
         "mockery/mockery": "^1.0",
         "nunomaduro/collision": "^3.0",

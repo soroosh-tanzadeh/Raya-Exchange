@@ -173,6 +173,9 @@ body.mini-sidebar .header {
     right: auto !important;
     left: 15px;
 }
+td{
+    text-align: center;
+}
 .mr-4, .mx-4 {
     direction: rtl;
     margin-right:0 ;
@@ -193,6 +196,10 @@ body.mini-sidebar .header {
 .page-sidebar .sidebar-points {
     right:auto !important;
     left: 25px;
+}
+.priceunit{
+    font-size: 0.96rem;
+    color: #999;
 }
 .sidebar-menu a .sidebar-item-icon {
     margin-right: 0 !important;

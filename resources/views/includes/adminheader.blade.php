@@ -15,6 +15,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
+
+
 <div class="page-wrapper">
     <div class="content-wrapper">
         <!-- BEGIN: Sidebar-->
@@ -31,6 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     </ul>
                 </li>
                 <li><a href="/admin/tickets"><i class="sidebar-item-icon ft-inbox"></i><span class="nav-label">تیکت‌ها</span></a></li>
+                <li><a href="/admin/faq"><i class="sidebar-item-icon ft-book-open"></i><span class="nav-label">آموزش</span></a></li>
+
             </ul>
         </div>
         <!-- END: Sidebar-->

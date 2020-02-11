@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\Cache;
 use App\Notification;
 use App\AffilateWallet;
 use App\AffilateTransaction;
-
 class PaymentController extends Controller {
 
     public function pay(Request $request) {
@@ -237,4 +236,7 @@ class PaymentController extends Controller {
         return response()->json($request->all());
     }
 
+    
+    
+    
 }

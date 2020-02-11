@@ -12,6 +12,8 @@ use App\Order;
 use App\CoinOffer;
 use App\Wallet;
 use App\AffilateWallet;
+use App\Question;
+use App\FaqCategory;
 
 class AdminController extends Controller {
 
@@ -22,6 +24,24 @@ class AdminController extends Controller {
         $selloffers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->select('users.name', 'coin_offers.*')->latest()->limit(10)->get();
         $buyoffers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("type", "buy")->select('users.name', 'coin_offers.*')->latest()->limit(10)->get();
         return view("admin.index", array("users" => $users, "selloffersall" => $selloffersall, "buyoffersall" => $buyoffersall, "user" => session()->get("user"), "selloffers" => $selloffers, "buyoffers" => $buyoffers));
+    }
+
+    public function newQuestion(Request $request) {
+        $qeustiontext = $request->question;
+        $answer = $request->answer;
+        $category = $request->category;
+
+        $question = new Question();
+        $question->question = $qeustiontext;
+        $question->answer = $answer;
+        $question->category = $category;
+        
+        return response()->json(array("result" => $question->save()));
+    }
+
+    public function faqPage(Request $request) {
+        $categories = FaqCategory::all();
+        return view("dashboard.faq", array("user" => session()->get("user"), "categories" => $categories));
     }
 
     public function verifyUser(Request $request) {
@@ -54,7 +74,7 @@ class AdminController extends Controller {
         $Awallet->user_id = $user_id;
         $Awallet->credit = 0;
         $Awallet->save();
-        
+
         return response()->json(array("result" => $user->save()));
     }
 

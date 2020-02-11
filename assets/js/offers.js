@@ -17,50 +17,51 @@
 
 
 $(document).ready(function () {
-    var form = $("#form-wizard");
-    form.steps({
-        headerTag: "h6",
-        bodyTag: "fieldset",
-        titleTemplate: '<span class="step-number">#index#</span> #title#',
-        onStepChanging: function (event, currentIndex, newIndex) {
-            // Always allow going backward even if the current step contains invalid fields!
-            if (currentIndex > newIndex) {
-                return true;
+    var options = new Array();
+    options.push({
+        id: "bitcoin",
+        text: " Bitcoin " + '<i class="cc BTC-alt font-26 text-warning mb-2"></i>'
+    });
+    options.push({
+        id: "litecoin",
+        text: " Litecoin " + '<i class="cc LTC-alt font-26 text-secondary mb-2"></i>'
+    });
+    $('.coins_select').select2({
+        data: options,
+        minimumResultsForSearch: -1,
+        escapeMarkup: function (markup) {
+            return markup;
+        },
+        width: 'style'
+    });
+
+    $(".canceloffer").click(function () {
+        $(this).prop("disabled", true);
+        var element = this;
+        var offer = $(this).attr("data-offer");
+        $.ajax("/dashboard/canceloffer", {
+            data: {offer_id: offer},
+            type: 'POST',
+            success: function (data, textStatus, jqXHR) {
+                Swal.fire(
+                        'با موفقیت لغو شد!',
+                        '',
+                        'success'
+                        );
+                $(element).parent().append('<text class="text-danger">لغو شده</text>');
+                $(element).remove();
+            },
+            cache: false,
+            error: function (jqXHR, textStatus, errorThrown) {
+                Swal.fire(
+                        'خطا در لغو پیشنهاد',
+                        'لطفا مجدد تلاش کنید',
+                        'error'
+                        );
+            },
+            complete: function (jqXHR, textStatus) {
+                $(this).prop("disabled", false);
             }
-            // Clean up if user went backward before
-            if (currentIndex < newIndex) {
-                // To remove error styles
-                $(".body:eq(" + newIndex + ") label.invalid-feedback", form).remove();
-                $(".body:eq(" + newIndex + ") .invalid-feedback", form).removeClass(".invalid-feedback");
-            }
-            // Disable validation on fields that are disabled or hidden.
-            form.validate().settings.ignore = ":disabled,:hidden";
-            // Start validation; Prevent going forward if false
-            return form.valid();
-        },
-        onFinishing: function (event, currentIndex) {
-            form.validate().settings.ignore = ":disabled";
-            return form.valid();
-        },
-        onFinished: function (event, currentIndex) {
-            form.submit();
-        }
-    }).validate({
-        errorPlacement: function errorPlacement(error, element) {
-            error.insertAfter(element);
-        },
-        rules: {
-            confirm: {
-                equalTo: "#password3"
-            }
-        },
-        errorClass: 'invalid-feedback',
-        validClass: 'valid-feedback',
-        highlight: function (e) {
-            $(e).addClass("is-invalid").removeClass('is-valid');
-        },
-        unhighlight: function (e) {
-            $(e).removeClass("is-invalid").addClass('is-valid');
-        },
+        });
     });
 });

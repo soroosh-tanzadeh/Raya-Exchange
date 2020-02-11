@@ -17,10 +17,12 @@ use App\CoinOffer;
 use App\Option;
 use App\Activity;
 use App\BankAccount;
+use App\FaqCategory;
 
 class DashboardController extends Controller {
 
     public function index() {
+        $currencies = Curl::to("https://api.simpleswap.io/get_all_currencies")->asJson()->get();
         $requestURL = "https://api.coincap.io/v2/assets";
         $response = Curl::to($requestURL)
                 ->withData(array('ids' => "bitcoin,ethereum,litecoin,ripple,monero"))
@@ -68,7 +70,9 @@ class DashboardController extends Controller {
         $user = session()->get("user");
         $offers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("is_active", true)->where("is_selled", false)->where("user_id", "!=", $user->id)->select('users.name', 'coin_offers.*')->latest()->limit(10)->get();
         $buyoffers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("type", "buy")->where("is_active", true)->where("is_selled", false)->where("user_id", "!=", $user->id)->select('users.name', 'coin_offers.*')->latest()->paginate(25);
-        return view("dashboard.index", array("user" => session()->get("user"), "coins" => $coins, "chart" => $outputChart, "litechart" => $liteoutputChart, "offers" => $offers, "buyoffers" => $buyoffers));
+        $transactions = Transaction::where("user_id", $user->id)->limit(7)->get();
+
+        return view("dashboard.index", array("user" => session()->get("user"), "coins" => $coins, "chart" => $outputChart, "litechart" => $liteoutputChart, "offers" => $offers, "buyoffers" => $buyoffers, "currencies" => $currencies, "transactions" => $transactions));
     }
 
     public function getUSD() {
@@ -152,6 +156,45 @@ class DashboardController extends Controller {
         return view("dashboard.offers.index", array("user" => session()->get("user"), "coins" => $coins, "chart" => $outputChart, "offers" => $offers, "buyoffers" => $buyoffers, "bankaccounts" => $accounts));
     }
 
+    public function myoffers(Request $request) {
+        $requestURL = "https://api.coincap.io/v2/assets";
+        $response = Curl::to($requestURL)
+                ->withData(array('ids' => "bitcoin,ethereum,litecoin,ripple,monero"))
+                ->get();
+        $coins_raw = json_decode($response)->data;
+        $coins = array();
+        $usdprice = Currency::where("code", "USD")->first()->price;
+        foreach ($coins_raw as $coin) {
+            $priceInToman = (int) ($coin->priceUsd * $usdprice);
+            if (($priceInToman >= 1000) & ($priceInToman < 1000000)) {
+                $price = $priceInToman / 1000;
+                $coin->price_in_toman = $price . " هزار تومان";
+            } elseif ($priceInToman >= 1000000 & ($priceInToman < 1000000000)) {
+                $price = $priceInToman / 1000000;
+                $coin->price_in_toman = $price . " میلیون تومان";
+            } elseif ($priceInToman >= 1000000000) {
+                $price = $priceInToman / 1000000000;
+                $coin->price_in_toman = $price . " میلیارد تومان";
+            } else {
+                $price = $priceInToman;
+                $coin->price_in_toman = $price . " تومان";
+            }
+            $coin->price_in_toman_int = $priceInToman;
+
+            $coins[$coin->id] = $coin;
+        }
+
+        $offers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("user_id", session()->get('user')->id)->select('users.name', 'coin_offers.*')->paginate(10);
+        return view("dashboard.offers.myoffers", array("user" => session()->get("user"), "offers" => $offers, "coins" => $coins));
+    }
+
+    public function cancelOffer(Request $request) {
+        $offer_id = $request->offer_id;
+        $offer = CoinOffer::find($offer_id)->firstOrFail();
+        $offer->is_active = false;
+        return response()->json(array("result" => $offer->save()));
+    }
+
     public function coinHistory24(Request $request) {
         $coinhis = Curl::to("https://api.coincap.io/v2/assets/$request->coin/history")
                 ->withData(array('interval' => "m1"))
@@ -222,10 +265,6 @@ class DashboardController extends Controller {
                 return redirect("/dashboard/buyoffer?error=موجودی حساب کافی نیست");
             }
         }
-    }
-
-    public function newofferBuy(Request $request) {
-        
     }
 
     public function offersList(Request $request) {
@@ -398,17 +437,18 @@ class DashboardController extends Controller {
             $priceInToman = (int) ($coin->priceUsd * $usdprice);
             if (($priceInToman >= 1000) & ($priceInToman < 1000000)) {
                 $price = $priceInToman / 1000;
-                $coin->price_in_toman = $price . " هزار تومان";
+                $coin->price_in_toman = $price . "<br>" . "<div class='priceunit'>" . " هزار تومان" . "</div>";
             } elseif ($priceInToman >= 1000000 & ($priceInToman < 1000000000)) {
                 $price = $priceInToman / 1000000;
-                $coin->price_in_toman = $price . " میلیون تومان";
+                $coin->price_in_toman = $price . "<br>" . "<div class='priceunit'>" . " میلیون تومان" . "</div>";
             } elseif ($priceInToman >= 1000000000) {
                 $price = $priceInToman / 1000000000;
-                $coin->price_in_toman = $price . " میلیارد تومان";
+                $coin->price_in_toman = $price . "<br>" . "<div class='priceunit'>" . " میلیارد تومان" . "</div>";
             } else {
                 $price = $priceInToman;
-                $coin->price_in_toman = $price . " تومان";
+                $coin->price_in_toman = $price . "<br>" . "<div class='priceunit'>" . " تومان" . "</div>";
             }
+
             $coin->price_in_toman_int = $priceInToman;
             $output[] = $coin;
             $coin->priceUsd = number_format(round($coin->priceUsd, 5), 5);
@@ -483,6 +523,11 @@ class DashboardController extends Controller {
         } else {
             return response()->json(array("result" => false, "data" => null));
         }
+    }
+
+    public function faqPage(Request $request) {
+        $categories = FaqCategory::all();
+        return view("dashboard.faq", array("user" => session()->get("user"), "categories" => $categories));
     }
 
 }

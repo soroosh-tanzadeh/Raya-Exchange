@@ -64,55 +64,73 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <div>
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="box-title text-primary">ایجاد پیشنهاد جدید</h5>
-                                <form class="circle-steps" id="form-wizard" action="/dashboard/newoffer/" method="GET" novalidate="novalidate">
-                                    <h6>نوع پیشنهاد</h6>
-                                    <fieldset>
-                                        <h3 class="mb-4">انتخاب نوع پیشنهاد</h3>
-                                        <select required name="type" class="form-control">
-                                            <option value="" disabled selected>نوع پیشنهاد را انتخاب کنید</option>
-                                            <option value="sell">فروش ارز دجیتال</option>
-                                            <option value="buy">خرید ارز دجیتال</option>
-                                        </select>
-                                        @csrf
-                                    </fieldset>
-                                    <h6>نحوه پرداخت</h6>
-                                    <fieldset>
-                                        <h3 class="mb-4">انتخاب حساب بانکی</h3>
-                                        <select required name="bankaccount" class="form-control">
-                                            <option value="-1">پرداخت به کیف‌پول</option>
-                                            @foreach($bankaccounts as $bankaccount)
-                                            <option value="{{ $bankaccount->id }}">{{ $bankaccount->IBAN }} - {{ $bankaccount->owner }}</option>
-                                            @endforeach
-                                        </select>
-                                    </fieldset>
-                                    <h6>اطلاعات</h6>
-                                    <fieldset>
-                                        <div class="form-group mb-5">
-                                            <select required name="coin" class="form-control">
-                                                <option value="">یک کوین‌را انتخاب کنید </option>
-                                                <option value="bitcoin">Bitcoin</option>
-                                                <option value="litecoin">Litecoin</option>
-                                            </select>
-                                            <div class="form-row">
-                                                <div class="col">
-                                                    <div class="input-group-icon input-group-icon-right">
-                                                        <input class="form-control" type="text" name="coinـnum" required id="coin-num" placeholder="مقدار">
-                                                        <span class="input-icon input-icon-right"><i class="cc BCN-alt text-warning font-13"></i></span></div>
-                                                    <input class="form-control mt-1" type="text" name="mincoin" required id="mincoin" placeholder="حداقل خرید">
+                        <div class="card card-fullheight">
+                            <div class="card-header p-0">
+                                <ul class="nav line-tabs nav-justified line-tabs-2x line-tabs-solid w-100">
+                                    <li class="nav-item"><a data-toggle="tab" href="#menu1" class="nav-link w-100 justify-content-center active show" style="border-top-right-radius: 0.6rem;">پیشنهاد فروش</a></li>
+                                    <li class="nav-item"><a data-toggle="tab" href="#menu2" class="nav-link w-100 justify-content-center" style="border-top-left-radius: 0.6rem;">پیشنهاد خرید</a></li>
+                                </ul>                                
+                            </div>
 
-                                                </div>
-                                                <div class="d-inline-flex justify-content-center align-items-center" style="width: 60px"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
-                                                <div class="col d-flex align-items-center">
-                                                    <div class="input-group-icon input-group-icon-right w-100">
-                                                        <input class="form-control" type="text" placeholder="قیمت به تومان" required name="price_toman" id="price-toman"><span class="input-icon input-icon-right">تومان</span></div>
+                            <div class="card-body">
+                                <div class="tab-content">
+                                    <div id="menu1" class="tab-pane fade active show">
+                                        <h5 class="box-title mb-4"><i class="ft-zap"></i>ایجاد پیشنهاد فروش</h5>
+                                        <h5 class="mb-3 mt-4">مقدار مورد نظر :</h5>
+                                        <form action="/dashboard/newoffer" method="POST">
+                                            @csrf
+                                            <input type="hidden"  value="sell" name="type"/>
+                                            <div class="form-group mb-5">
+                                                <select required name="coin" class="form-control coins_select" style="width: 100%">
+                                                </select>
+                                                <div class="form-row mt-1">
+                                                    <div class="col">
+                                                        <div class="input-group-icon input-group-icon-right">
+                                                            <input class="form-control" type="text" name="coinـnum" required id="coin-num" placeholder="مقدار">
+                                                            <span class="input-icon input-icon-right"><i class="cc BCN-alt text-warning font-13"></i></span></div>
+                                                        <input class="form-control mt-1" type="text" name="mincoin" required id="mincoin" placeholder="حداقل خرید">
+
+                                                    </div>
+                                                    <div class="d-inline-flex justify-content-center align-items-center" style="width: 60px"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
+                                                    <div class="col d-flex align-items-center">
+                                                        <div class="input-group-icon input-group-icon-right w-100">
+                                                            <input class="form-control" type="text" placeholder="قیمت به تومان" required name="price_toman" id="price-toman"><span class="input-icon input-icon-right">تومان</span></div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </fieldset>
-                                </form>
+                                            <div class="text-center"><button class="btn btn-danger btn-rounded" type="submit" style="min-width: 200px">تکمیل سفارش</button></div>
+                                        </form>
+                                    </div>
+                                    <div id="menu2" class="tab-pane">
+                                        <h5 class="box-title mb-4"><i class="ft-zap"></i>ایجاد پیشنهاد خرید</h5>
+                                        <h5 class="mb-3 mt-4">مقدار مورد نظر :</h5>
+                                        <form action="/dashboard/newoffer" method="POST">
+                                            @csrf
+                                            <input type="hidden" value="buy" name="type"/>
+                                            <div class="form-group mb-5">
+                                                <select required name="coin" class="form-control coins_select" style="width: 100%">
+                                                </select>
+                                                <div class="form-row mt-1">
+                                                    <div class="col">
+                                                        <div class="input-group-icon input-group-icon-right">
+                                                            <input class="form-control" type="text" name="coinـnum" required id="coin-num" placeholder="مقدار">
+                                                            <span class="input-icon input-icon-right"><i class="cc BCN-alt text-warning font-13"></i></span></div>
+                                                        <input class="form-control mt-1" type="text" name="mincoin" required id="mincoin" placeholder="حداقل خرید">
+
+                                                    </div>
+                                                    <div class="d-inline-flex justify-content-center align-items-center" style="width: 60px"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
+                                                    <div class="col d-flex align-items-center">
+                                                        <div class="input-group-icon input-group-icon-right w-100">
+                                                            <input class="form-control" type="text" placeholder="قیمت به تومان" required name="price_toman" id="price-toman"><span class="input-icon input-icon-right">تومان</span></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="text-center"><button class="btn btn-danger btn-rounded" type="submit" style="min-width: 200px">تکمیل سفارش</button></div>
+                                        </form>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -124,7 +142,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             <div class="card-body">
                                 <div class="d-flex justify-content-between mb-4">
                                     <div>
-                                        <h5 class="box-title mb-2"><i class="ft-download"></i> پیشنهادات من</h5>
+                                        <h5 class="box-title mb-2"><i class="ft-download"></i> آخرین پیشنهادات من</h5>
                                     </div>
                                 </div>
 
@@ -137,6 +155,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                 <th>قیمت - در این لحظه</th>
                                                 <th>تاریخ ایجاد</th>
                                                 <th>وضعیت</th>
+                                                <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -169,6 +188,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                     @else
                                                     در انتظار خریدار
                                                     @endif
+                                                </td>
+                                                <td>
+                                                    <input type="button" class="btn btn-danger" value="لغو پیشنهاد" />
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -323,6 +345,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
             }
             );
+    
+    
         </script>
 
         <script src="/assets/js/offers.js"></script>

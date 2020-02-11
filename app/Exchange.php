@@ -44,22 +44,33 @@ class Exchange extends Model {
             echo 'Error:' . curl_error($ch);
         }
         curl_close($ch);
-
+        $result = json_decode($result);
         $exchange = new Exchange();
         $exchange->amount = $amount;
         $exchange->from = $from;
         $exchange->to = $to;
-        $exchange->$to_address = $to_address;
-        $exchange->user_id = session()->get("user_id");
+        $exchange->to_address = $to_address;
+        $exchange->user_id = session()->get("user")->id;
+        $exchange->exchange_id = $result->id;
+        $exchange->payment_address = $result->address_from;
         $exchange->save();
 
-        return json_decode($result);
+        return $result;
+    }
+
+    public static function getExchangeStatus($id) {
+        $result = Curl::to("https://api.simpleswap.io/v1/get_exchange?api_key=" . env("SIMPLE_SWAP_TOKEN", "test") . "&id=$id")->asJson()->get();
+        if ($result->status === "waiting") {
+            return 0;
+        } else {
+            return 1;
+        }
     }
 
     public static function getCoins() {
         $requestURL = "https://api.coincap.io/v2/assets";
         $response = Curl::to($requestURL)
-                ->withData(array('ids' => "bitcoin,ethereum,litecoin,ripple,monero,eos,bitcoin-cash,neo,dogecoin"))
+                ->withData(array('ids' => "bitcoin,ethereum,litecoin,ripple,monero,eos,bitcoin-cash,neo,dogecoin,dash,etc,zec,ont,trx,bnb,bat,nem,xml,usdt,ada,miota"))
                 ->get();
         $coins_raw = json_decode($response)->data;
         $coins = array();
@@ -68,16 +79,16 @@ class Exchange extends Model {
             $priceInToman = (int) ($coin->priceUsd * $usdprice);
             if (($priceInToman >= 1000) & ($priceInToman < 1000000)) {
                 $price = $priceInToman / 1000;
-                $coin->price_in_toman = $price . " هزار تومان";
+                $coin->price_in_toman = " هزار تومان" . $price;
             } elseif ($priceInToman >= 1000000 & ($priceInToman < 1000000000)) {
                 $price = $priceInToman / 1000000;
-                $coin->price_in_toman = $price . " میلیون تومان";
+                $coin->price_in_toman = " میلیون تومان " . $price;
             } elseif ($priceInToman >= 1000000000) {
                 $price = $priceInToman / 1000000000;
-                $coin->price_in_toman = $price . " میلیارد تومان";
+                $coin->price_in_toman = " میلیارد تومان " . $price;
             } else {
                 $price = $priceInToman;
-                $coin->price_in_toman = $price . " تومان";
+                $coin->price_in_toman = " تومان " . $price;
             }
             $coin_icon = Common::getIconPath() . "/" . strtolower($coin->symbol) . ".png";
             if (Common::url_exists($coin_icon)) {

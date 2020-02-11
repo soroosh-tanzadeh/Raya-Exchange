@@ -27,7 +27,7 @@ use App\Activity;
 Route::get("/", "UserController@index");
 Route::post("/dologin", "UserController@doLogin");
 
-Route::get("/getusdprice","DashboardController@getUSD");
+Route::get("/getusdprice", "DashboardController@getUSD");
 
 Route::get("/dashboard/signup", "UserController@signupPage")->middleware(Authentication::class);
 Route::post("/dosignup", "UserController@signup");
@@ -66,6 +66,7 @@ Route::get("/dashboard/buyoffer", "DashboardController@offerPage")->middleware(U
 Route::any('/dashboard/newoffer/', 'DashboardController@newoffer')->middleware(UserVerification::class);
 Route::post('/dashboard/newbuyoffer', 'DashboardController@newofferBuy')->middleware(UserVerification::class);
 Route::get('/dashboard/offers/', 'DashboardController@offersList')->middleware(UserVerification::class);
+Route::get('/dashboard/myoffers/', 'DashboardController@myoffers')->middleware(UserVerification::class);
 Route::get('/dashboard/exchange', 'ExchangeController@index')->middleware(UserVerification::class);
 Route::post("/exchange", "ExchangeController@exchangeRequest")->middleware(UserVerification::class);
 Route::get("/get_estimate", "ExchangeController@getEstimate");
@@ -82,6 +83,10 @@ Route::post("/coincallback", "PaymentController@comfirm")->middleware(UserVerifi
 Route::get("/paycoin", "PaymentController@payCoin")->middleware(UserVerification::class);
 
 Route::post("/verifyUser", "UserController@verifyCode");
+
+Route::get("/assets/icons/{iconfile}", function($iconfile) {
+    return redirect("/assets/img/raya-logo.png");
+})->middleware(Authentication::class);
 
 // Wait to verify
 Route::get("/dashboard/notverified", function() {
@@ -100,6 +105,13 @@ Route::get("/logout", function () {
 
 Route::post("/coindetail", "DashboardController@coinDetail")->middleware(UserVerification::class);
 
+Route::post("/dashboard/canceloffer", "DashboardController@cancelOffer")->middleware(UserVerification::class);
+
+
+//FAQ
+Route::get("/dashboard/faq", "DashboardController@faqPage")->middleware(UserVerification::class);
+
+
 //Bank Account
 Route::get("/dashboard/bankaccounts", "TransactionsController@bankAccounts")->middleware(UserVerification::class);
 Route::post("/addccount", "TransactionsController@addBankAccount")->middleware(UserVerification::class);
@@ -107,7 +119,7 @@ Route::get("/dashboard/checkouts", "TransactionsController@checkouts")->middlewa
 Route::post("/checkoutrequest", "TransactionsController@rialCheckouts")->middleware(UserVerification::class);
 Route::post("/coin/checkoutrequest", "TransactionsController@coinCheckouts")->middleware(UserVerification::class);
 
-Route::any("/getcoinhis","DashboardController@coinHistory24")->middleware(UserVerification::class);
+Route::any("/getcoinhis", "DashboardController@coinHistory24")->middleware(UserVerification::class);
 
 Route::get("/test", function (Request $request) {
 
@@ -118,7 +130,7 @@ Route::get("/test", function (Request $request) {
 
 
 // Affilate 
-Route::get("/dashboard/affilate","AffilateController@index")->middleware(UserVerification::class);
+Route::get("/dashboard/affilate", "AffilateController@index")->middleware(UserVerification::class);
 /**
  * End Users Routers
  */
@@ -143,4 +155,10 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get("/admin/ticket/{ticket_id}", "AdminController@showTicket");
     Route::post("/admin/ticket/newticket", "AdminController@newTicket");
     Route::post("/admin/ticket/{ticket_id}/sendmessage", "AdminController@sendMessage");
+
+
+    //FAQ
+    Route::get("/admin/faq", "AdminController@faqPage");
+    Route::post("/admin/newfaq", "AdminController@newQuestion");
+    
 });

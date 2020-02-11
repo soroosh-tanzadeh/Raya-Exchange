@@ -79,7 +79,7 @@ $usdprice = Currency::where("code", "USD")->first()->price;
                                             <th>میزان عرضه</th>
                                             <th>تغییرات قیمت نسبت به روز گذشته</th>
                                             <th>نمودار تعییرات / هفتگی</th>
-
+                                            <th>تبادل</th>
                                         </tr>
                                     </thead>
                                     <tbody class="rowlinkx" data-link="row">
@@ -93,16 +93,16 @@ $usdprice = Currency::where("code", "USD")->first()->price;
                                                 $priceInToman = (int) ($coin->priceUsd * $usdprice);
                                                 if (($priceInToman >= 1000) & ($priceInToman < 1000000)) {
                                                     $price = $priceInToman / 1000;
-                                                    echo $price . " هزار تومان";
+                                                    echo $price . "<br>".  "<div class='priceunit'>" ." هزار تومان" . "</div>";
                                                 } elseif ($priceInToman >= 1000000 & ($priceInToman < 1000000000)) {
                                                     $price = $priceInToman / 1000000;
-                                                    echo $price . " میلیون تومان";
+                                                    echo $price . "<br>".  "<div class='priceunit'>" ." میلیون تومان". "</div>";
                                                 } elseif ($priceInToman >= 1000000000) {
                                                     $price = $priceInToman / 1000000000;
-                                                    echo $price . " میلیارد تومان";
+                                                    echo $price . "<br>".  "<div class='priceunit'>" ." میلیارد تومان". "</div>";
                                                 } else {
                                                     $price = $priceInToman;
-                                                    echo $price . " تومان";
+                                                    echo $price . "<br>".  "<div class='priceunit'>" ." تومان". "</div>";
                                                 }
                                                 ?></td>
                                             <td>
@@ -110,16 +110,16 @@ $usdprice = Currency::where("code", "USD")->first()->price;
                                                 $marketCapUsd = round($coin->marketCapUsd, 3);
                                                 if (($marketCapUsd >= 1000) & ($marketCapUsd < 1000000)) {
                                                     $cap = $marketCapUsd / 1000;
-                                                    echo $cap . " هزار دلار";
+                                                    echo $cap . "<br>".  "<div class='priceunit'>" ." هزار دلار". "</div>";
                                                 } elseif ($marketCapUsd >= 1000000 & ($marketCapUsd < 1000000000)) {
                                                     $cap = $marketCapUsd / 1000000;
-                                                    echo $cap . " میلیون دلار";
+                                                    echo $cap . "<br>".  "<div class='priceunit'>" ." میلیون دلار". "</div>";
                                                 } elseif ($marketCapUsd >= 1000000000) {
                                                     $cap = $marketCapUsd / 1000000000;
-                                                    echo $cap . " میلیارد دلار";
+                                                    echo $cap . "<br>".  "<div class='priceunit'>" ." میلیارد دلار". "</div>";
                                                 } else {
                                                     $cap = $marketCapUsd;
-                                                    echo $cap . " تومان";
+                                                    echo $cap . "<br>".  "<div class='priceunit'>" ." تومان". "</div>";
                                                 }
                                                 ?>
                                             </td>
@@ -128,16 +128,16 @@ $usdprice = Currency::where("code", "USD")->first()->price;
                                                 $supply = round($coin->supply, 4);
                                                 if (($supply >= 1000) & ($supply < 1000000)) {
                                                     $asupply = $supply / 1000;
-                                                    echo $asupply . " هزار $coin->symbol";
+                                                    echo $asupply .  "<br>".  "<div class='priceunit'>" ." هزار $coin->symbol". "</div>";
                                                 } elseif ($supply >= 1000000 & ($supply < 1000000000)) {
                                                     $asupply = $supply / 1000000;
-                                                    echo $asupply . " میلیون $coin->symbol";
+                                                    echo $asupply .  "<br>".  "<div class='priceunit'>" ." میلیون $coin->symbol". "</div>";
                                                 } elseif ($supply >= 1000000000) {
                                                     $asupply = $supply / 1000000000;
-                                                    echo $asupply . " میلیارد $coin->symbol";
+                                                    echo $asupply .  "<br>".  "<div class='priceunit'>" ." میلیارد $coin->symbol". "</div>";
                                                 } else {
                                                     $asupply = $supply;
-                                                    echo $asupply . " $coin->symbol";
+                                                    echo $asupply .  "<br>".  "<div class='priceunit'>" ." $coin->symbol". "</div>";
                                                 }
                                                 ?>
                                             </td>
@@ -149,6 +149,7 @@ $usdprice = Currency::where("code", "USD")->first()->price;
                                                 @endif
                                             </td>
                                             <td class="spark-line">{{ $coin->history }}</td>
+                                            <td><button class="btn btn-outline-primary"><i class="fas fa-exchange-alt font-16"></i></button></td>
                                         </tr>
                                         @endforeach
                                     </tbody>

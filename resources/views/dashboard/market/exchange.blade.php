@@ -28,10 +28,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <!-- BEGIN: Page heading-->
             <div class="page-heading"> 
                 <div class="page-breadcrumb">
-                    <h1 class="page-title page-title-sep">خرید و فروش ارز</h1>
+                    <h1 class="page-title page-title-sep">تبادل ارز دیجیتال</h1>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html"><i class="la la-home font-20"></i></a></li>
-                        <li class="breadcrumb-item">ثبت پیشنهاد فروش</li>
+                        <li class="breadcrumb-item">معاملات ارزی</li>
                     </ol>
                 </div>
             </div><!-- BEGIN: Page content-->
@@ -45,18 +45,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         <h4 class="col-form-label px-3">یک کوین را انتخاب کنید</h4>
                                         <div class="d-flex justify-content-center align-items-center">
                                             <select class="form-control mx-3" required id="from_coin" style="width: 40%">
-                                                <option value="">یک نو</option>
+                                                <option value="" data-icon="/assets/icons/raya"></option>
                                                 @foreach($currencies as $currency)
-                                                <option value="{{ $currency->symbol }}">{{ $currency->name }}</option>
+                                                <option value="{{ $currency->symbol }}" data-icon="/assets/icons/{{ $currency->symbol }}.png">{{ $currency->name }}</option>
                                                 @endforeach
                                             </select>
 
                                             <div class="d-inline-flex justify-content-center align-items-center mx-3" style="width: 60px"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
 
                                             <select class="form-control" id="to_coin" required style="width: 40%">
-                                                <option value=""></option>
+                                                <option value="" data-icon="/assets/icons/raya"></option>
                                                 @foreach($currencies as $currency)
-                                                <option value="{{ $currency->symbol }}">{{ $currency->name }}</option>
+                                                <option value="{{ $currency->symbol }}" data-icon="/assets/icons/{{ $currency->symbol }}.png">{{ $currency->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -78,10 +78,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         <label class="mt-4">آدرس والت</label>
                                         <input class="form-control" type="text" id="walletAddress" required placeholder="آدرس کیف پول مقصد را وارد کنید">
                                     </div>
-                                    <div class="text-center"><button class="btn btn-danger btn-rounded" id="exchangebtn" type="submit" style="min-width: 200px">تبادل</button></div>
-                                </form>
-                                <div class="text-center mt-4" id="msg">
+                                    <div class="text-right" style="display: flex;justify-content: center;align-items: flex-end;flex-direction: column;">
+                                        <button class="btn btn-danger btn-rounded" id="exchangebtn" type="submit" style="min-width: 200px">تبادل</button>
+                                        <div class="mt-4 px-1 text-left" style="width: 300px" id="msg">
 
+                                        </div>
+                                    </div>
+                                </form>
+                                <div>
+                                    <ul style="list-style: decimal">
+                                        <li>ارز مورد نظر را برای مبادله انتخاب کنید</li>
+                                        <li>نرخ تبدیل ارز را بررسی کنید</li>
+                                        <li>ارز را کمتر از حد مشخص شده ارسال نکنید</li>
+                                        <li>آدرس کیف پول را جهت دریافت ارز مورد نظر وارد کنید</li>
+                                        <li>و در آخر ارز مورد نظر را به آدرس مشخص شده ارسال نمایید</li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -100,11 +111,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                 <div class="table-responsive font-11">
                                     <table class="table table-hover compact-table">
                                         <thead class="thead-light">
-                                            <tr>
+                                            <tr>  
                                                 <th>از ارز</th>
                                                 <th>به ارز</th>
-                                                <th>مقدار<th>
+                                                <th>مقدار</th>
                                                 <th>به کیف‌پول</th>
+                                                <th>آدرس انتقال</th>
+                                                <th>وضعیت</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -114,6 +127,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                 <td>{{ $exchange->to }}</td>
                                                 <td>{{ $exchange->amount }} {{ $exchange->from }}</td>
                                                 <td>{{ $exchange->to_address }}</td>
+                                                <td>{{ $exchange->payment_address }}</td>
+                                                <td>
+                                                    @if($exchange->status === 0)
+                                                    <text class="text-warning">در انتظار ارسال ارز</text>
+                                                    @else
+                                                    <text class="text-muted">انجام شده/لغو شده</text>
+                                                    @endif
+                                                </td>
                                             </tr>
                                             @endforeach
                                         </tbody>
@@ -133,70 +154,85 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         @include("includes.footer") 
 
         <script>
-$("#from_coin").select2({
-    placeholder: "یک گزینه را انتخاب کنید",
-});
-$("#to_coin").select2({
-    placeholder: "یک گزینه را انتخاب کنید",
-});
 
-$(document).ready(function () {
-    $("#from_coin,#to_coin").change(function () {
-        var from_coin = $("#from_coin").val();
-        var to_coin = $("#to_coin").val();
-        if (from_coin !== to_coin) {
-            var amount = $("#amount").val();
-            $.get("/get_estimate?from=" + from_coin + "&to=" + to_coin + "&amount=" + amount, {}, function (data) {
-                $("#target-coin").val(data);
-            });
-        } else {
-            Swal.fire(
-                    'خطا!',
-                    'نمی‌توان یک کوین را به خودش تبادل کرد',
-                    'error'
-                    );
-            $("#to_coin").val(null);
-            $("#from_coin").val(null);
-            $("#from_coin").trigger('change.select2');
-            $("#to_coin").trigger('change.select2');
-
-        }
-
-    });
-    $("#amount").on("input", function () {
-        var from_coin = $("#from_coin").val();
-        var to_coin = $("#to_coin").val();
-        var amount = $("#amount").val();
-        if (from_coin !== "" && to_coin !== "") {
-            $.get("/get_estimate?from=" + from_coin + "&to=" + to_coin + "&amount=" + amount, {}, function (data) {
-                $("#target-coin").val(data);
-            });
-        } else {
-            Swal.fire(
-                    'خطا!',
-                    'ارز مبدا و مقصد را انتخاب کنید',
-                    'error'
-                    );
-            $(this).val("");
-        }
-    });
-    $("#exchangebtn").click(function () {
-        var from_coin = $("#from_coin").val();
-        var to_coin = $("#to_coin").val();
-        var amount = $("#amount").val();
-        var wallet = $("#walletAddress").val();
-        $(this).prop("disabled", true);
-        $.post("/exchange", {_token: $("meta[name='csrf-token']").attr("content"), from: from_coin, to: to_coin, amount: amount, wallet: wallet}, function (data) {
-            if (data.address_from) {
-                $("#msg").html("مقدار " + amount + from_coin + " " + "به این کیف پول واریز کنید تا تبادل ارز دیجیتال انجام شود" + "<br>" + data.address_from);
-            } else {
-                $("#msg").html("آدرس کیف‌پول اشتباه است! ");
-
+            function iformat(icon) {
+                if (!icon.id) {
+                    return icon.text;
+                }
+                var originalOption = icon.element;
+                return $('<span><img style="max-width: 25px;" src="' + $(originalOption).attr('data-icon') + '"/> ' + icon.text + '</span>');
             }
-            $("#exchangebtn").prop("disabled", false);
-        });
-    });
-});
+
+            $("#from_coin").select2({
+                placeholder: "انتخاب یک کوین برای ارسال",
+                templateSelection: iformat,
+                templateResult: iformat,
+                allowHtml: true
+            });
+            $("#to_coin").select2({
+                placeholder: "انتخاب کوین دریافتی",
+                templateSelection: iformat,
+                templateResult: iformat,
+                allowHtml: true
+            });
+
+            $(document).ready(function () {
+                $("#from_coin,#to_coin").change(function () {
+                    var from_coin = $("#from_coin").val();
+                    var to_coin = $("#to_coin").val();
+                    if (from_coin !== to_coin) {
+                        var amount = $("#amount").val();
+                        $.get("/get_estimate?from=" + from_coin + "&to=" + to_coin + "&amount=" + amount, {}, function (data) {
+                            $("#target-coin").val(data);
+                        });
+                    } else {
+                        Swal.fire(
+                                'خطا!',
+                                'نمی‌توان یک کوین را به خودش تبادل کرد',
+                                'error'
+                                );
+                        $("#to_coin").val(null);
+                        $("#from_coin").val(null);
+                        $("#from_coin").trigger('change.select2');
+                        $("#to_coin").trigger('change.select2');
+
+                    }
+
+                });
+                $("#amount").on("input", function () {
+                    var from_coin = $("#from_coin").val();
+                    var to_coin = $("#to_coin").val();
+                    var amount = $("#amount").val();
+                    if (from_coin !== "" && to_coin !== "") {
+                        $.get("/get_estimate?from=" + from_coin + "&to=" + to_coin + "&amount=" + amount, {}, function (data) {
+                            $("#target-coin").val(data);
+                        });
+                    } else {
+                        Swal.fire(
+                                'خطا!',
+                                'ارز مبدا و مقصد را انتخاب کنید',
+                                'error'
+                                );
+                        $(this).val("");
+                    }
+                });
+                $("#exchangebtn").click(function () {
+                    var from_coin = $("#from_coin").val();
+                    var to_coin = $("#to_coin").val();
+                    var amount = $("#amount").val();
+                    var wallet = $("#walletAddress").val();
+                    $(this).prop("disabled", true);
+                    $.post("/exchange", {_token: $("meta[name='csrf-token']").attr("content"), from: from_coin, to: to_coin, amount: amount, wallet: wallet}, function (data) {
+                        if (data.address_from) {
+                            $("#msg").html("مقدار " + amount + from_coin + " " + "به این کیف پول واریز کنید تا تبادل ارز دیجیتال انجام شود" + "<br><br>" + data.address_from);
+                        } else {
+                            $("#msg").html("آدرس کیف‌پول اشتباه است! ");
+
+                        }
+                        $("#exchangebtn").prop("disabled", false);
+                    });
+                });
+            });
         </script>
     </body>
 </html>
