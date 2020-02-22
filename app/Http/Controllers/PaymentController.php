@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Cache;
 use App\Notification;
 use App\AffilateWallet;
 use App\AffilateTransaction;
+use App\coinPayments\CoinpaymentsAPI;
+
 class PaymentController extends Controller {
 
     public function pay(Request $request) {
@@ -41,26 +43,37 @@ class PaymentController extends Controller {
         if ($offer->type === "sell") {
             $payir = new PayirPG();
             $amount = $request->amount;
-            $requestURL = "https://api.coincap.io/v2/assets";
-            $price = ($offer->price_pre * $amount) / $offer->max_buy;
-            $payir->amount = $price * 10; // Required, Amount
-            $payir->mobile = session()->get("user")->phone_number; // Optional, If you want to show user's saved card numbers in gateway
-            session()->put("coin_wallet", true);
-            session()->put("coin_offer", $offer);
-            try {
-                $payir->send();
-                Cache::put(session()->get("user")->id . "_$payir->token" . "_coin$offer->id", $amount);
-                return redirect($payir->paymentUrl);
-            } catch (SendException $e) {
-                throw $e;
+            if ($amount >= $offer->min_buy && $amount <= $offer->amount) {
+                $price = ($offer->price_pre * $amount) / $offer->max_buy;
+                
+                $payir->amount = $price * 10;
+                $payir->mobile = session()->get("user")->phone_number;
+                session()->put("coin_wallet", true);
+                session()->put("coin_offer", $offer);
+                try {
+                    $payir->send();
+                    Cache::put(session()->get("user")->id . "_$payir->token" . "_coin$offer->id", $amount);
+                    session()->put("coin_wallet", true);
+                    session()->put("coin_offer", $offer);
+                    return redirect($payir->paymentUrl);
+                } catch (SendException $e) {
+                    report($e);
+                }
             }
         } elseif ($offer->type === "buy") {
             $amount = $request->amount;
             if ($offer->amount >= $amount) {
                 $price = ($offer->price_pre * $amount) / $offer->max_buy;
                 $price = $price + ($price * Option::getOption("admin_fee"));
-                $user = session()->get("user");
 
+
+                // Adding Buy fee to admin wallet
+                $adminwallet = Wallet::where("type", "rial")->where("type_name", "admin")->first();
+                $adminwallet->credit += ($price * Option::getOption("admin_fee"));
+                $adminwallet->cashable += ($price * Option::getOption("admin_fee"));
+                //////////////////////////
+                /// Adding affilate fee to user wallet
+                $user = session()->get("user");
                 if ($user->affilate !== null) {
                     $refrall = ($price * Option::getOption("payment_fee"));
                     $rtransaction = new AffilateTransaction();
@@ -70,13 +83,14 @@ class PaymentController extends Controller {
                     $rtransaction->save();
                 }
 
+                /// adding money to seller rial wallet
                 $userWallet = Wallet::where("user_id", $user->id)->where("type", "rial")->first();
                 $userWallet->cashable += round($price);
                 $userWallet->credit += round($price);
 
 
                 $coinamount = ($amount * Option::getOption("sell_fee")) + $amount;
-
+                //////////////////////////////////////////////////////
                 $the_wallet = Wallet::where("user_id", $user->id)->where("name", $offer->coin)->first();
                 if ($the_wallet->cashable >= $coinamount) {
                     $the_wallet->cashable -= $coinamount;
@@ -92,7 +106,7 @@ class PaymentController extends Controller {
                 $offer_wallet = Wallet::where("user_id", $offer->user_id)->where("name", $offer->coin)->first();
                 $offer_wallet->cashable += $amount;
                 $offer_wallet->credit += $amount;
-                
+
                 $rialofferWallet = Wallet::where("user_id", $offer->user_id)->where("type", "rial")->first();
                 $rialofferWallet->credit -= round($price);
 
@@ -110,6 +124,16 @@ class PaymentController extends Controller {
             } else {
                 return response()->json(array("result" => false, "msg" => "درخواست غیر مجاز"));
             }
+        }
+    }
+
+    public function offerPage(Request $request) {
+        $offer = CoinOffer::find($request->offer);
+        $fee = Option::getOption("payment_fee");
+        if ($offer->type === "sell") {
+            return view("dashboard.invoice", array("user" => session()->get("user"), "offer" => $offer, "fee" => $fee));
+        } elseif ($offer->type === "buy") {
+            return view("dashboard.sellcoin", array("user" => session()->get("user"), "offer" => $offer, "fee" => $fee));
         }
     }
 
@@ -132,7 +156,7 @@ class PaymentController extends Controller {
                         $transaction = new Transaction();
                         $transaction->user_id = $user->id;
                         $transaction->amount = $verify['amount'];
-                        $transaction->coin = "ریال";
+                        $transaction->coin = "تمان";
                         $transaction->type = "شارژ حساب";
                         $transaction->save();
 
@@ -148,19 +172,26 @@ class PaymentController extends Controller {
                         $transaction = new Transaction();
                         $transaction->user_id = $user->id;
                         $transaction->amount = $verify['amount'];
-                        $transaction->coin = "ریال";
-                        $transaction->type = "خرید ارز دی   جیتال";
+                        $transaction->coin = "تومان";
+                        $transaction->type = "خرید ارز دیجیتال";
                         $transaction->save();
 
                         $the_offer = CoinOffer::where("id", $offer->id)->first();
                         $amount = Cache::pull(session()->get("user")->id . "_$payir->token" . "_coin$offer->id");
 
-                        $price = ($the_offer->price_pre * $amount) / $the_offer->max_buy;
+                        $price = (($the_offer->price_pre * $amount) / $the_offer->max_buy);
+                        $price = $price - ($price * Option::getOption("admin_fee"));
+                        
+                        // Adding Buy fee to admin wallet
+                        $adminwallet = Wallet::where("type", "rial")->where("type_name", "admin")->first();
+                        $adminwallet->credit += ($price * Option::getOption("admin_fee"));
+                        $adminwallet->cashable += ($price * Option::getOption("admin_fee"));
 
                         $the_offer->amount -= $amount;
                         $the_offer->save();
+
                         $the_wallet = Wallet::where("user_id", $the_offer->user_id)->where("name", $the_offer->coin)->first();
-                        $the_wallet->credit -= $amount + ($amount * $fee);
+                        $the_wallet->credit -= $amount;
                         $the_wallet->save();
 
                         $user_wallet = Wallet::where("user_id", $user->id)->where("name", $the_offer->coin)->first();
@@ -189,28 +220,16 @@ class PaymentController extends Controller {
      */
 
     public function payCoin(Request $request) {
+        $coinp = new CoinpaymentsAPI();
         $order = new Order();
         $order->user_id = session()->get("user")->id;
         $order->coin = $request->target;
+        $order->amount = $request->amount;
         $order->save();
-        $jeebClient = new JeebClient();
-        $data = array();
-        $order = $order->id;
-        $data['orderNo'] = $order; // Order No  
-        $data['value'] = $jeebClient->convert($request->amount, $request->target, 'btc'); // Value in BTC
-        $data['callbackUrl'] = 'http://raya.webflaxco.ir/coincallback'; // Callback URL (this is just an example)
-        $data['webhookUrl'] = 'http://raya.webflaxco.ir/coinwebhook'; // Webhook URL (this is just an example)
-        $data['expiration'] = 15; // Expands default expiration time of payment. should be between 15 to 2880 (mins)
-        $data['coins'] = $request->target; // Defines the payable currencies which users can use
-        $data['language'] = 'auto'; // Payment area's language
-        $data['allowReject'] = true; // Allows payments to be refunded
-        //   $data['allowTestNet'] = true; // Allows testnets to get processed
-        $result = $jeebClient->issue($data);
-        $token = $result['token'];
-        $order = Order::where("id", $order)->first();
-        $order->token = $token;
-        $order->save();
-        return $jeebClient->redirectURL($token);
+        $wallet = Wallet::where("type_name", $order->coin)->where("user_id", session()->get("user")->id)->first();
+        $wallet->credit += $request->amount;
+        $transaction = $coinp->CreateCustomTransaction(array("amount" => $request->amount, "buyer_email" => "soroosh081@gmail.com", "currency1" => $request->target, "currency2" => $request->target, "invoice" => "$order->id", "ipn_url" => url("/coinpayment/ipn")));
+        return redirect($transaction['result']['checkout_url']);
     }
 
     public function webhook(Request $request) {
@@ -236,7 +255,4 @@ class PaymentController extends Controller {
         return response()->json($request->all());
     }
 
-    
-    
-    
 }

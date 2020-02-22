@@ -40,14 +40,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <div class="col-md-12">
                         <div class="card card-fullheight">
                             <div class="card-body">
-                                <form action="javascript:;">
+                                <div id="paybox" style="display: none">
+                                    <div class="text-center my-3">
+                                        جهت دریافت <span id="targetamount"></span> دقیقا به مقدار <span id="amoutcoin"></span> به والت زیر واریز کنید
+                                        <br>
+                                        <b class="text-warning">  پس از انجام پرداخت صفحه‌ را رفرش کنید.</b>
+                                    </div>
+                                    <div class="d-flex w-100 flex-column justify-content-center  align-items-center">
+                                        <div id="walletqrcode"> </div>
+                                        <div id="walletAddress" class="my-3"></div>
+                                    </div>
+                                </div>
+                                <form action="javascript:;" id="exchangebox">
                                     <div class="form-group mb-4">
                                         <h4 class="col-form-label px-3">یک کوین را انتخاب کنید</h4>
                                         <div class="d-flex justify-content-center align-items-center">
                                             <select class="form-control mx-3" required id="from_coin" style="width: 40%">
                                                 <option value="" data-icon="/assets/icons/raya"></option>
                                                 @foreach($currencies as $currency)
-                                                <option value="{{ $currency->symbol }}" data-icon="/assets/icons/{{ $currency->symbol }}.png">{{ $currency->name }}</option>
+                                                <option value="{{ $currency->symbol }}" data-icon="https://simpleswap.io{{ $currency->image }}">{{ $currency->name }}</option>
                                                 @endforeach
                                             </select>
 
@@ -56,7 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                             <select class="form-control" id="to_coin" required style="width: 40%">
                                                 <option value="" data-icon="/assets/icons/raya"></option>
                                                 @foreach($currencies as $currency)
-                                                <option value="{{ $currency->symbol }}" data-icon="/assets/icons/{{ $currency->symbol }}.png">{{ $currency->name }}</option>
+                                                <option value="{{ $currency->symbol }}" data-icon="https://simpleswap.io{{ $currency->image }}">{{ $currency->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -76,7 +87,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         </div>
 
                                         <label class="mt-4">آدرس والت</label>
-                                        <input class="form-control" type="text" id="walletAddress" required placeholder="آدرس کیف پول مقصد را وارد کنید">
+                                        <input class="form-control" type="text" id="walletAddressInput" required placeholder="آدرس کیف پول مقصد را وارد کنید">
                                     </div>
                                     <div class="text-right" style="display: flex;justify-content: center;align-items: flex-end;flex-direction: column;">
                                         <button class="btn btn-danger btn-rounded" id="exchangebtn" type="submit" style="min-width: 200px">تبادل</button>
@@ -154,6 +165,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         @include("includes.footer") 
 
         <script>
+            var qrcode = new QRCode("walletqrcode");
 
             function iformat(icon) {
                 if (!icon.id) {
@@ -183,7 +195,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     if (from_coin !== to_coin) {
                         var amount = $("#amount").val();
                         $.get("/get_estimate?from=" + from_coin + "&to=" + to_coin + "&amount=" + amount, {}, function (data) {
-                            $("#target-coin").val(data);
+                            $("#target-coin").val(data.value);
                         });
                     } else {
                         Swal.fire(
@@ -205,7 +217,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     var amount = $("#amount").val();
                     if (from_coin !== "" && to_coin !== "") {
                         $.get("/get_estimate?from=" + from_coin + "&to=" + to_coin + "&amount=" + amount, {}, function (data) {
-                            $("#target-coin").val(data);
+                            $("#target-coin").val(data.value);
                         });
                     } else {
                         Swal.fire(
@@ -220,14 +232,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     var from_coin = $("#from_coin").val();
                     var to_coin = $("#to_coin").val();
                     var amount = $("#amount").val();
-                    var wallet = $("#walletAddress").val();
+                    var wallet = $("#walletAddressInput").val();
                     $(this).prop("disabled", true);
                     $.post("/exchange", {_token: $("meta[name='csrf-token']").attr("content"), from: from_coin, to: to_coin, amount: amount, wallet: wallet}, function (data) {
                         if (data.address_from) {
-                            $("#msg").html("مقدار " + amount + from_coin + " " + "به این کیف پول واریز کنید تا تبادل ارز دیجیتال انجام شود" + "<br><br>" + data.address_from);
+                            $("#walletAddress").text(data.address_from);
+                            qrcode.makeCode(data.address_from);
+                            $("#amoutcoin").text(data.amount_from + "" + from_coin);
+                            $("#targetamount").text(data.amount_to + "" + to_coin);
+                            $("#paybox").show();
+                            $("#exchangebox").hide();
                         } else {
-                            $("#msg").html("آدرس کیف‌پول اشتباه است! ");
-
+                            Swal2.fire("آدرس کیف‌پول اشتباه است! ", "", "error");
                         }
                         $("#exchangebtn").prop("disabled", false);
                     });

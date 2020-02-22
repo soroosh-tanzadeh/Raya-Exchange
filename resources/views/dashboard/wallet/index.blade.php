@@ -43,6 +43,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
 
 
+        <div class="modal fade" id="newwallet" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">کیف پول جدید</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form data-action="/dashboard/newwallet" data-btn="#newwalletbtn" onsubmit="submitAjaxForm(this)" action="javascript:;" method="POST">
+                            <label>مبلغ شارژ (تومان)</label> 
+                            <select id="walletcoins" required style="width: 100%" name="type">
+                                <option value=""></option>
+                                @foreach($coins as $key => $value)
+                                <option value="{{ strtolower($key)  }}" data-icon="{{ url("/assets/icons/".strtolower($key).".png") }}">{{ $value['name'] }}</option>
+                                @endforeach
+                            </select>
+                            <br>
+                            <input type="hidden" name="name" id="coinname" />
+                            <input class="btn btn-primary my-2" id="newwalletbtn" type="submit" value="ایجاد" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="modal fade" id="paycoinModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -103,69 +130,81 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </div><!-- BEGIN: Page content-->
             <div>
                 <div class="row">
-                    <div class="col-md-7">
+                    <div class="col-md-9">
+                        <div class="card">
+                            <div  class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-inbox w-100" id="market-table">
+                                        <thead>
+                                            <tr>
+                                                <th>نوع ارز</th>
+                                                <th>قیمت به تومان</th>
+                                                <th>موجودی (تومان)</th>
+                                                <th>موجودی (دلار)</th>
+                                                <th>موجودی</th>
+                                                <th>قابل برداشت</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($coinWallets as $coinWallet)
+                                            <tr>
+                                                <td class="text-center"> <img src="{{ url("/assets/icons/". strtolower($coinWallet->type_name) .".png") }}" style="max-width: 40px;"> <p>{{ $coinWallet->name }}</p></td>
+                                                @if(isset($coinsprice[strtolower($coinWallet->name)]))
+                                                <td>{{ $coinsprice[strtolower($coinWallet->name)]->price_in_toman }}</td>
+                                                <td>{{ number_format($coinsprice[strtolower($coinWallet->name)]->price_in_toman_int * $coinWallet->credit) }} تومان</td>
+                                                <td>{{ number_format($coinsprice[strtolower($coinWallet->name)]->priceUsd * $coinWallet->credit,2) }}</td>
+                                                @else
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <td>-</td>
+                                                @endif
+                                                <td>{{ $coinWallet->cashable }}</td>
+                                                <td>{{ $coinWallet->credit }}</td>
+                                                <td class="d-flex justify-content-center align-items-center">
+                                                    <a class="btn btn-success btn-sm btn-rounded ml-2 text-white">خرید و فروش</a>
+                                                    <a class="btn btn-warning btn-sm btn-rounded ml-2 text-white">تبادل</a>
+                                                    <a class="btn btn-danger btn-sm btn-rounded ml-2 text-white recievecoin"  data-coin="{{ $coinWallet->type_name }}">برداشت</a>
+                                                    <a class="btn btn-primary btn-sm btn-rounded ml-2 text-white paycoin" data-coin="{{ $coinWallet->type_name }}">واریز</a>
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!--
+                                                foreach($coinWallets as $coinWallet)
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="media w-100"><img src="{{ url("/assets/icons/". strtolower($coinWallet->type_name) .".png") }}" style="max-width: 40px;" class="mr-3">
+                                                            <div class="media-body">
+                                                                <div class="mb-2 text-muted font-16">کیف پول {{ $coinWallet->name }}</div> 
+                                                                <div class="d-flex" style="word-break:break-word"><span class="h5 mb-0 font-20"><span>{{ $coinWallet->credit }}</span><span class="font-weight-normal">{{ $coinWallet->type_name }}</span></span><span class="mx-3"></span>قابل برداشت : ‌{{ $coinWallet->cashable }}</div>
+                                                                <hr>
+                                                                <div>
+                                                                    <a class="btn btn-danger btn-sm btn-rounded ml-4 text-white recievecoin"  data-coin="{{ $coinWallet->type_name }}">برداشت</a>
+                                                                    <a class="btn btn-primary btn-sm btn-rounded ml-4 text-white paycoin" data-coin="{{ $coinWallet->type_name }}">واریز</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                endforeach-->
+
                         <div class="card">
                             <div class="card-body">
-                                <div class="media w-100"><i class="cc BTC-alt font-40 text-warning mr-4"></i>
-                                    <div class="media-body">
-                                        <div class="mb-2 text-muted font-16">کیف پول بیت کوین</div> 
-                                        <div class="d-flex" style="word-break:break-word"><span class="h5 mb-0 font-20"><span>{{ $coinWallets['BTC']->credit }}</span><span class="font-weight-normal">BTC</span></span><span class="mx-3"></span>قابل برداشت : ‌{{ $coinWallets['BTC']->cashable }}</div>
-                                        <hr>
-                                        <div>
-                                            <a class="btn btn-danger btn-sm btn-rounded ml-4 text-white recievecoin"  data-coin="btc">برداشت</a>
-                                            <a class="btn btn-primary btn-sm btn-rounded ml-4 text-white paycoin" data-coin="btc">واریز</a>
-                                        </div>
+                                <a href="#newwallet" data-toggle="modal" data-target="#newwallet" >
+                                    <div class="d-flex flex-column justify-content-center align-items-center">
+                                        افزودن کیف‌پول جدید 
+                                        <text class="my-1 font-40 btn btn-primary rounded-circle p-1" style="height: 60px;width:60px;text-align: center;vertical-align: middle;">+</text>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-body media">
-                                <div class="media w-100"><i class="cc LTC-alt font-40 text-secondary mr-4"></i>
-                                    <div class="media-body">
-                                        <div class="mb-2 text-muted font-16">کیف پول لایت کوین</div>
-                                        <div class="d-flex" style="word-break:break-word"><span class="h5 mb-0 font-20"><span>{{ $coinWallets['LTC']->credit }}</span><span class="font-weight-normal">LTC</span></span><span class="mx-3">قابل برداشت : ‌{{ $coinWallets['LTC']->cashable }}</span></div>
-                                        <hr>
-                                        <div>
-                                            <a class="btn btn-danger btn-sm btn-rounded ml-4 text-white recievecoin"  data-coin="ltc">برداشت</a>
-                                            <a class="btn btn-primary btn-sm btn-rounded ml-4 text-white paycoin" data-coin="ltc">واریز</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="media w-100"><i class="cc ETH-alt font-40 text-primary mr-4"></i>
-                                    <div class="media-body">
-                                        <div class="mb-2 text-muted font-16">کیف پول اتریم</div>
-                                        <div class="d-flex" style="word-break:break-word"><span class="h5 mb-0 font-20"><span>{{ $coinWallets['ETH']->credit }}</span><span class="font-weight-normal">ETH</span></span><span class="mx-3">قابل برداشت : ‌{{ $coinWallets['ETH']->cashable }}</span></div>
-                                        <hr>
-                                        <div>
-                                            <a class="btn btn-danger btn-sm btn-rounded ml-4" href="#">برداشت</a>
-                                            <a class="btn btn-primary btn-sm btn-rounded ml-4 text-white" data-coin="eth">واریز (بزودی)</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-body media">
-                                <div class="media w-100"><i class="cc XRP-alt font-40 text-primary mr-4"></i>
-                                    <div class="media-body">
-                                        <div class="mb-2 text-muted font-16">کیف پول ریپل</div>
-                                        <div class="d-flex" style="word-break:break-word"><span class="h5 mb-0 font-20"><span>{{ $coinWallets['XRP']->credit }}</span><span class="font-weight-normal">XRP</span></span><span class="mx-3">قابل برداشت : ‌{{ $coinWallets['XRP']->cashable }}</span></div>
-                                        <hr>
-                                        <div>
-                                            <a class="btn btn-danger btn-sm btn-rounded ml-4" href="#">برداشت</a>
-                                            <a class="btn btn-primary btn-sm btn-rounded ml-4" href="#">واریز (بزودی)</a>
-                                        </div>
-                                    </div>
-                                </div>
+                                </a> 
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-3">
                         <div class="card">
                             <div class="card-body text-center">
                                 <div class="mb-3"><i class="badge-lg-primary text-primary ti-wallet" style="height: 54px;width: 54px;font-size: 26px;"></i></div>
@@ -214,5 +253,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div><!-- BEGIN: Footer-->
 
         @include("includes.footer") 
+
+        <script>
+            function iformat(icon) {
+                if (!icon.id) {
+                    return icon.text;
+                }
+                var originalOption = icon.element;
+                return $('<span><img style="max-width: 25px;" src="' + $(originalOption).attr('data-icon') + '"/> ' + icon.text + '</span>');
+            }
+
+            $("#walletcoins").select2({
+                placeholder: "انتخاب یک کوین برای ارسال",
+                templateSelection: iformat,
+                templateResult: iformat,
+                allowHtml: true
+            });
+
+            $("#walletcoins").change(function () {
+                var coinname = $("#walletcoins :selected").text();
+                $("#coinname").val(coinname);
+            });
+        </script>
+
     </body>
 </html>

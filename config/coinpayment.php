@@ -1,4 +1,5 @@
 <?php
+use App\Http\Middleware\Authentication;
 
 return [
     
@@ -26,7 +27,7 @@ return [
     |
     */
     
-    'middleware' => ['auth'],
+    'middleware' => [Authentication::class],
 
     /*
     |--------------------------------------------------------------------------

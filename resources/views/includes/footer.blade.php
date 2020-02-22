@@ -1,4 +1,6 @@
-
+<?php 
+use App\Option;
+?>
 <!-- BEGIN: Footer-->
 <footer class="page-footer flexbox">
     <div class="text-muted"><strong><a href="webflax.ir">وب فلکس</a></strong>   تمامی حقوق محفوظ است. </div><div class="text-muted"><a href="#" class="text-muted">شرایط و قوانین</a> | <a href="#" class="text-muted">حریم خصوصی</a></div>
@@ -33,6 +35,9 @@
 </div
 <!-- END: Page backdrops-->
 <!-- CORE PLUGINS-->
+
+<script> var adminfee = {{ Option::getOption("admin_fee") }}; </script>
+
 <link href="/assets/vendors/DataTables/datatables.min.css" rel="stylesheet" type="text/css"/>
 <script src="/assets/vendors/jquery/dist/jquery.min.js"></script>
 <script src="/assets/vendors/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -57,6 +62,8 @@
 <script src="/assets/vendors/chart.js/dist/Chart.min.js"></script>
 <script src="/assets/vendors/apexcharts/dist/apexcharts.min.js"></script><!-- CORE SCRIPTS-->
 <script src="/assets/vendors/select2/dist/js/select2.full.min.js"></script><!-- CORE SCRIPTS-->
+<script src="/assets/js/numeral.js"></script><!-- CORE SCRIPTS-->
+<script src="/assets/js/qrcode.js"></script><!-- CORE SCRIPTS-->
 <script src="/assets/js/app.js"></script><!-- PAGE LEVEL SCRIPTS-->
 <script src="/assets/js/admin.js"></script>
 <script src="/assets/js/ticker.js" type="text/javascript"></script>

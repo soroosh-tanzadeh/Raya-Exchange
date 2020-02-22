@@ -16,24 +16,23 @@
  */
 
 
+
+function iformat(icon) {
+    if (!icon.id) {
+        return icon.text;
+    }
+    var originalOption = icon.element;
+    return $('<span><img style="max-width: 30px;" src="' + $(originalOption).data('icon') + '"/> ' + icon.text + '</span>');
+}
+
+$(".coins_select").select2({
+    placeholder: "انتخاب یک کوین برای پیشنهاد",
+    templateSelection: iformat,
+    templateResult: iformat,
+    allowHtml: true
+});
+
 $(document).ready(function () {
-    var options = new Array();
-    options.push({
-        id: "bitcoin",
-        text: " Bitcoin " + '<i class="cc BTC-alt font-26 text-warning mb-2"></i>'
-    });
-    options.push({
-        id: "litecoin",
-        text: " Litecoin " + '<i class="cc LTC-alt font-26 text-secondary mb-2"></i>'
-    });
-    $('.coins_select').select2({
-        data: options,
-        minimumResultsForSearch: -1,
-        escapeMarkup: function (markup) {
-            return markup;
-        },
-        width: 'style'
-    });
 
     $(".canceloffer").click(function () {
         $(this).prop("disabled", true);

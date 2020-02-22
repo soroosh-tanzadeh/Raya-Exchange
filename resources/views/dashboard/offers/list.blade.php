@@ -143,7 +143,10 @@ use Morilog\Jalali\Jalalian;
                                                             <td>
                                                                 <b>{{ $offer->name }}</b>
                                                             </td>
-                                                            <td>{{ $offer->coin }}</td>
+                                                            <td>
+                                                                {{ $offer->coin }}
+                                                                <img src="/assets/icons/{{ strtolower($coins[$offer->coin]->symbol) }}.png" style="max-width: 30px;"/>
+                                                            </td>
                                                             <td>{{ $offer->amount }}</td>
                                                             <td>{{ $offer->min_buy }}</td>
                                                             <td><?php
@@ -165,7 +168,7 @@ use Morilog\Jalali\Jalalian;
                                                                 echo $price_in_toman;
                                                                 ?></td>
                                                             <td>{{ Jalalian::forge($offer->created_at)->ago() }}</td>
-                                                            <td><a  data-toggle="tooltip" title="" data-original-title="خرید" data-min="{{ $offer->min_buy }}" data-max="{{ $offer->amount }}" data-offer="{{ $offer->id }}" data-coin="{{ $offer->price_pre }}" data-price="{{ $offer->price_pre}}" class="text-success buycoin font-18"><i class="ft-shopping-cart"></i></a></td>
+                                                            <td><a data-toggle="tooltip" title="" data-original-title="خرید" href="/dashboard/offerpage?offer={{ $offer->id }}" class="text-success font-18"><i class="ft-shopping-cart"></i></a></td>
                                                         </tr>
                                                         @endforeach
                                                     </tbody>
@@ -196,7 +199,10 @@ use Morilog\Jalali\Jalalian;
                                                                 <td>
                                                                     <b>{{ $buyoffer->name }}</b>
                                                                 </td>
-                                                                <td>{{ $buyoffer->coin }}</td>
+                                                                <td>
+                                                                    {{ $buyoffer->coin }}
+                                                                    <img src="/assets/icons/{{ strtolower($coins[$offer->coin]->symbol) }}.png" style="max-width: 30px;"/>
+                                                                </td>
                                                                 <td>{{ $buyoffer->amount }}</td>
                                                                 <td>{{ $buyoffer->min_buy }}</td>
                                                                 <td><?php
@@ -218,7 +224,7 @@ use Morilog\Jalali\Jalalian;
                                                                     echo $price_in_toman;
                                                                     ?></td>
                                                                 <td>{{ Jalalian::forge($buyoffer->created_at)->ago() }}</td>
-                                                                <td><a data-toggle="tooltip" title="" data-original-title="فروش" data-min="{{ $buyoffer->min_buy }}" data-max="{{ $buyoffer->amount }}" data-offer="{{ $buyoffer->id }}" data-coin="{{ $buyoffer->price_pre }}" data-price="{{ $buyoffer->price_pre}}" class="text-success sellcoin font-18"><i class="ft-thumbs-up"></i></a></td>
+                                                                <td><a data-toggle="tooltip" title="" data-original-title="فروش" href="/dashboard/offerpage?offer={{ $offer->id }}" class="text-success font-18"><i class="ft-thumbs-up"></i></a></td>
                                                             </tr>
                                                             @endforeach
                                                         </tbody>

@@ -18,6 +18,7 @@ use App\Option;
 use App\Activity;
 use App\BankAccount;
 use App\FaqCategory;
+use App\coinPayments\CoinpaymentsAPI;
 
 class DashboardController extends Controller {
 
@@ -25,8 +26,8 @@ class DashboardController extends Controller {
         $currencies = Curl::to("https://api.simpleswap.io/get_all_currencies")->asJson()->get();
         $requestURL = "https://api.coincap.io/v2/assets";
         $response = Curl::to($requestURL)
-                ->withData(array('ids' => "bitcoin,ethereum,litecoin,ripple,monero"))
                 ->get();
+        $offerablecoins = Wallet::where("type", "coin")->where("user_id", session()->get("user")->id)->get();
         $coins_raw = json_decode($response)->data;
         $coins = array();
         $usdprice = Currency::where("code", "USD")->first()->price;
@@ -72,7 +73,7 @@ class DashboardController extends Controller {
         $buyoffers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("type", "buy")->where("is_active", true)->where("is_selled", false)->where("user_id", "!=", $user->id)->select('users.name', 'coin_offers.*')->latest()->paginate(25);
         $transactions = Transaction::where("user_id", $user->id)->limit(7)->get();
 
-        return view("dashboard.index", array("user" => session()->get("user"), "coins" => $coins, "chart" => $outputChart, "litechart" => $liteoutputChart, "offers" => $offers, "buyoffers" => $buyoffers, "currencies" => $currencies, "transactions" => $transactions));
+        return view("dashboard.index", array("user" => session()->get("user"), "offerablecoins" => $offerablecoins, "coins" => $coins, "chart" => $outputChart, "litechart" => $liteoutputChart, "offers" => $offers, "buyoffers" => $buyoffers, "currencies" => $currencies, "transactions" => $transactions));
     }
 
     public function getUSD() {
@@ -81,6 +82,32 @@ class DashboardController extends Controller {
     }
 
     public function walletPage(Request $request) {
+        $requestURL = "https://api.coincap.io/v2/assets";
+        $response = Curl::to($requestURL)
+                ->get();
+        $coins_raw = json_decode($response)->data;
+        $coins = array();
+        $usdprice = Currency::where("code", "USD")->first()->price;
+        foreach ($coins_raw as $coin) {
+            $priceInToman = (int) ($coin->priceUsd * $usdprice);
+            if (($priceInToman >= 1000) & ($priceInToman < 1000000)) {
+                $price = $priceInToman / 1000;
+                $coin->price_in_toman = $price . " هزار تومان";
+            } elseif ($priceInToman >= 1000000 & ($priceInToman < 1000000000)) {
+                $price = $priceInToman / 1000000;
+                $coin->price_in_toman = $price . " میلیون تومان";
+            } elseif ($priceInToman >= 1000000000) {
+                $price = $priceInToman / 1000000000;
+                $coin->price_in_toman = $price . " میلیارد تومان";
+            } else {
+                $price = $priceInToman;
+                $coin->price_in_toman = $price . " تومان";
+            }
+            $coin->price_in_toman_int = $priceInToman;
+            $coins[$coin->id] = $coin;
+        }
+        $coinp = new CoinpaymentsAPI();
+        $coinslist = $coinp->GetRatesWithAccepted()['result'];
         $user = session()->get("user");
         $rialWallet = Wallet::where("user_id", $user->id)->where("type", "rial")->first();
         $coinWallets_data = Wallet::where("user_id", $user->id)->where("type", "coin")->get();
@@ -89,13 +116,13 @@ class DashboardController extends Controller {
             $coinWallets[$wallet->type_name] = $wallet;
         }
         $transactions = Transaction::where("user_id", $user->id)->limit(10)->get();
-        return view("dashboard.wallet.index", array("user" => $user, "coinWallets" => $coinWallets, "rialWallet" => $rialWallet, "transactions" => $transactions));
+        return view("dashboard.wallet.index", array("user" => $user,"coinsprice"=>$coins, "coins" => $coinslist, "coinWallets" => $coinWallets, "rialWallet" => $rialWallet, "transactions" => $transactions));
     }
 
     public function offerPage(Request $request) {
+        $offerablecoins = Wallet::where("type", "coin")->where("user_id", session()->get("user")->id)->get();
         $requestURL = "https://api.coincap.io/v2/assets";
         $response = Curl::to($requestURL)
-                ->withData(array('ids' => "bitcoin,ethereum,litecoin,ripple,monero"))
                 ->get();
         $coins_raw = json_decode($response)->data;
         $coins = array();
@@ -153,13 +180,12 @@ class DashboardController extends Controller {
         $buyoffers = CoinOffer::join("users", "users.id", "=", "coin_offers.buy_by")->where("is_active", true)->where("is_selled", true)->select('users.name', 'coin_offers.*')->limit(10)->get();
         $accounts = BankAccount::where("user_id", session()->get("user")->id)->get();
 
-        return view("dashboard.offers.index", array("user" => session()->get("user"), "coins" => $coins, "chart" => $outputChart, "offers" => $offers, "buyoffers" => $buyoffers, "bankaccounts" => $accounts));
+        return view("dashboard.offers.index", array("user" => session()->get("user"), "offerablecoins" => $offerablecoins, "coins" => $coins, "chart" => $outputChart, "offers" => $offers, "buyoffers" => $buyoffers, "bankaccounts" => $accounts));
     }
 
     public function myoffers(Request $request) {
         $requestURL = "https://api.coincap.io/v2/assets";
         $response = Curl::to($requestURL)
-                ->withData(array('ids' => "bitcoin,ethereum,litecoin,ripple,monero"))
                 ->get();
         $coins_raw = json_decode($response)->data;
         $coins = array();
@@ -191,8 +217,25 @@ class DashboardController extends Controller {
     public function cancelOffer(Request $request) {
         $offer_id = $request->offer_id;
         $offer = CoinOffer::find($offer_id)->firstOrFail();
-        $offer->is_active = false;
-        return response()->json(array("result" => $offer->save()));
+//        echo $offer->user_id;
+//        echo ($offer->user_id === session()->get("user")->id);
+//        echo session()->get("user")->id;
+        if (intval($offer->user_id) === intval(session()->get("user")->id)) {
+            if ($offer->type === "buy") {
+                $user_id = session()->get("user")->id;
+                $price = $offer->price_pre * $offer->amount;
+                $wallet = Wallet::where("user_id", $user->id)->where("type", "rial")->first();
+                $wallet->cashable += $price;
+                $wallet->save();
+                $offer = CoinOffer::find($offer_id)->firstOrFail();
+                $offer->is_active = false;
+                return response()->json(array("result" => $offer->save()));
+            }
+            $offer->is_active = false;
+            return response()->json(array("result" => $offer->save()));
+        } else {
+            return abort(404);
+        }
     }
 
     public function coinHistory24(Request $request) {
@@ -271,7 +314,6 @@ class DashboardController extends Controller {
         $user = session()->get("user");
         $requestURL = "https://api.coincap.io/v2/assets";
         $response = Curl::to($requestURL)
-                ->withData(array('ids' => "bitcoin,ethereum,litecoin,ripple,monero"))
                 ->get();
         $coins_raw = json_decode($response)->data;
         $coins = array();
@@ -354,6 +396,22 @@ class DashboardController extends Controller {
     public function showNewTicket() {
         $user = session()->get("user");
         return view("dashboard.tickets.newticket", array("user" => session()->get("user")));
+    }
+
+    public function newWallet(Request $request) {
+        $wallet = Wallet::where("user_id", session()->get("user")->id)->where("type_name", $request->type)->first();
+        if ($wallet === null) {
+            $wallet = new Wallet();
+            $wallet->type = "coin";
+            $wallet->type_name = $request->type;
+            $wallet->name = $request->name;
+            $wallet->cashable = 0;
+            $wallet->credit = 0;
+            $wallet->user_id = session()->get("user")->id;
+            return response()->json(array("result" => $wallet->save(), "msg" => "با موفقیت انجام شد"));
+        } else {
+            return response()->json(array("result" => false, "msg" => "کیف پول وجود دارد"));
+        }
     }
 
     public function sendMessage($ticket_id, Request $request) {
@@ -529,5 +587,11 @@ class DashboardController extends Controller {
         $categories = FaqCategory::all();
         return view("dashboard.faq", array("user" => session()->get("user"), "categories" => $categories));
     }
+    
+    public function knowledgePage(Request $request) {
+        $categories = FaqCategory::all();
+        return view("dashboard.knowledge", array("user" => session()->get("user"), "categories" => $categories));
+    }
+
 
 }

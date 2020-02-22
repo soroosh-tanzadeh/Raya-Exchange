@@ -57,11 +57,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	border: 0;
 	font-size: inherit;
 	font: inherit;
-	font-family: 'Lato',sans-serif;
 	vertical-align: baseline;
 	line-height: 1.5;
 	-webkit-box-sizing: border-box;
-			box-sizing: border-box;
+	box-sizing: border-box;
 }
 .mcwp-crypto span:not([class*="mcwp"]) {
 	padding: 2px 2px 2px 2px;

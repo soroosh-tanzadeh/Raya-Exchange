@@ -48,7 +48,7 @@ class AdminController extends Controller {
         $user_id = $request->id;
         $user = User::find($user_id);
         $user->verified_at = time();
-        $wallets = array("BTC" => "bitcoin", "ETH" => "ethereum", "LTC" => "litecoin", "XRP" => "ripple");
+        $wallets = array("btc" => "bitcoin", "eth" => "ethereum", "ltc" => "litecoin", "xrp" => "ripple");
         foreach ($wallets as $key => $value) {
             $wallet = new Wallet();
             $wallet->type = "coin";

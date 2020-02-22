@@ -18,6 +18,13 @@ class ExchangeController extends Controller {
         }
         return view("dashboard.market.exchange", array("user" => session()->get("user"), "exchanges" => $exchanges, "currencies" => ((array) $coins)));
     }
+    
+    public function getcoins(Request $request){
+        $coins = (array) Curl::to("https://api.simpleswap.io/get_all_currencies")->asJson()->get();
+        foreach ($coins as $coin){
+            echo "<option value='$coin->symbol'>$coin->name</option>\n";
+        }
+    }
 
     public function exchangeRequest(Request $request) {
         $exchange = new Exchange();

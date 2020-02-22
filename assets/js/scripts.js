@@ -134,11 +134,10 @@ toastr.options = {
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
 }
+
+
 $(document).ready(function () {
-    
-    $(function () {
-        $("#ticker").csTicker({interval: 20});
-    });
+
     var pathname = window.location.pathname;
     $("#theulsidebar li").each(function () {
         var href = $(this).children("a").attr("href");
@@ -158,30 +157,39 @@ $(document).ready(function () {
         $("#offeridIN").val($(this).attr("data-offer"))
         $("#buycoinform").attr("action", "/buycoin?offer=" + $(this).attr("data-offer"));
         $("#buycoinmodal").modal();
+    })
+
+    $(".coins_select").change(function () {
+        $("#coin-num").trigger("input");
+        $("#coinbuy-num").trigger("input");
     });
 
     $("#coin-num").on("input", function () {
         var coin = parseFloat($("#coin-num").val());
-        var toman = coin * parseInt($(".dcurrency-select").children("a.active").attr("data-price"));
-        $("#price-toman").val(toman);
+        var toman = coin * parseInt($("#coin-num").parent().parent().parent().parent().find(".coins_select :selected").attr("data-price"));
+        toman = (toman * 0.02) + toman;
+        var total = toman - (toman * adminfee);
+        $("#totalsellprice").text(numeral(parseInt(total)).format('0,0') + " تومان");
+        $("#price-toman").val(numeral(parseInt(toman)).format('0,0'));
     });
+
+    $("#price-toman").on("input", function () {
+        toman = parseInt(numeral($(this).val()).value());
+        var total = toman - (toman * adminfee);
+        $("#totalsellprice").text(numeral(parseInt(total)).format('0,0') + " تومان");
+    });
+
     $("#coinbuy-num").on("input", function () {
-        var coin = parseFloat($("#coin-num").val());
-        var toman = coin * parseInt($(".dcurrency-select").children("a.active").attr("data-price"));
-        $("#pricebuy-toman").val(toman);
+        var coin = parseFloat($("#coinbuy-num").val());
+        var toman = coin * parseInt($("#coinbuy-num").parent().parent().parent().parent().find(".coins_select :selected").attr("data-price"));
+        toman = toman - (toman * 0.02);
+        $("#pricebuy-toman").val(numeral(parseInt(toman)).format('0,0'));
     });
+
     $("#coinamount").on("input", function () {
         var coin = parseFloat($(this).val());
         var toman = (coin * parseInt($(this).attr("data-price"))) / parseFloat($(this).attr("max"));
         $("#coinprice").text(toman);
-    });
-    $(".dcurrency-select").click(function () {
-        var coin = parseFloat($("#coin-num").val());
-        var toman = coin * parseInt($(this).children("a").attr("data-price"));
-        $("#coin-type").val($(this).children("a").attr("data-coin"));
-        $("#coinbuy-type").val($(this).children("a").attr("data-coin"));
-        $("#price-toman").val(toman);
-
     });
 
     $(".sellcoin").click(function () {

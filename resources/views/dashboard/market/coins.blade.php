@@ -25,7 +25,6 @@ $usdprice = Currency::where("code", "USD")->first()->price;
     <head>
         @include("includes.head")
         <title>Raya-EX | قیمت ارز دیجیتال</title>
-
     </head>
     <body>
         <div class="modal fade" id="coinmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -84,12 +83,12 @@ $usdprice = Currency::where("code", "USD")->first()->price;
                                     </thead>
                                     <tbody class="rowlinkx" data-link="row">
                                         @foreach($coins as $coin)
-                                        <tr class="coinrow clickable" data-coin="{{ $coin->id }}">
-                                            <td>{{ $coin->rank }}</td>
-                                            <td><img src="{{ $coin->icon }}" style="max-width: 30px"/></td>
-                                            <td class="showCoin">{{ $coin->name }}</td>
-                                            <td class="coinprice" data-price="{{ round($coin->priceUsd,5) }}">{{ number_format(round($coin->priceUsd,5),5) }}$</td>
-                                            <td class="coinprice-toman"><?php
+                                        <tr data-coin="{{ $coin->id }}">
+                                            <td class="coinrow clickable" data-coin="{{ $coin->id }}">{{ $coin->rank }}</td>
+                                            <td class="coinrow clickable" data-coin="{{ $coin->id }}"><img src="{{ $coin->icon }}" style="max-width: 30px"/></td>
+                                            <td class="showCoin coinrow clickable" data-coin="{{ $coin->id }}">{{ $coin->name }}</td>
+                                            <td class="coinprice coinrow clickable" data-coin="{{ $coin->id }}" data-price="{{ round($coin->priceUsd,5) }}">{{ number_format(round($coin->priceUsd,5),5) }}$</td>
+                                            <td class="coinprice-toman coinrow clickable" data-coin="{{ $coin->id }}"><?php
                                                 $priceInToman = (int) ($coin->priceUsd * $usdprice);
                                                 if (($priceInToman >= 1000) & ($priceInToman < 1000000)) {
                                                     $price = $priceInToman / 1000;
@@ -105,7 +104,7 @@ $usdprice = Currency::where("code", "USD")->first()->price;
                                                     echo $price . "<br>".  "<div class='priceunit'>" ." تومان". "</div>";
                                                 }
                                                 ?></td>
-                                            <td>
+                                            <td class="coinrow clickable" data-coin="{{ $coin->id }}">
                                                 <?php
                                                 $marketCapUsd = round($coin->marketCapUsd, 3);
                                                 if (($marketCapUsd >= 1000) & ($marketCapUsd < 1000000)) {
@@ -123,7 +122,7 @@ $usdprice = Currency::where("code", "USD")->first()->price;
                                                 }
                                                 ?>
                                             </td>
-                                            <td>
+                                            <td class="coinrow clickable" data-coin="{{ $coin->id }}">
                                                 <?php
                                                 $supply = round($coin->supply, 4);
                                                 if (($supply >= 1000) & ($supply < 1000000)) {
@@ -149,7 +148,7 @@ $usdprice = Currency::where("code", "USD")->first()->price;
                                                 @endif
                                             </td>
                                             <td class="spark-line">{{ $coin->history }}</td>
-                                            <td><button class="btn btn-outline-primary"><i class="fas fa-exchange-alt font-16"></i></button></td>
+                                            <td><a href="/dashboard/exchange" target="_blank" class="btn btn-outline-primary"><i class="fas fa-exchange-alt font-16"></i></a></td>
                                         </tr>
                                         @endforeach
                                     </tbody>

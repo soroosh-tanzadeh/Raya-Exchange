@@ -65,6 +65,60 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card card-fullheight">
+                            <!-- TradingView Widget BEGIN -->
+
+                            <div class="card-header">
+                                <h4>ایجاد پیشنهاد جدید</h4>
+                            </div>
+                            <div class="card-body">
+
+
+                                <div class="tab-content">
+                                    <div id="bitcoin" class="tab-pane fade active show">
+                                        <<!-- TradingView Widget BEGIN -->
+                                        <div class="tradingview-widget-container">
+                                            <div id="tradingview_f8db7" style="height: 600px"></div>
+                                            <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BITSTAMP-BTCUSD/" rel="noopener" target="_blank"><span class="blue-text">BTCUSD Chart</span></a> by TradingView</div>
+                                            <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                                            <script type="text/javascript">
+                                                new TradingView.widget(
+                                                        {
+                                                            "autosize": true,
+                                                            "symbol": "BITSTAMP:BTCUSD",
+                                                            "interval": "60",
+                                                            "timezone": "Asia/Tehran",
+                                                            "theme": "Dark",
+                                                            "style": "1",
+                                                            "locale": "fa_IR",
+                                                            "toolbar_bg": "#f1f3f6",
+                                                            "enable_publishing": true,
+                                                            "withdateranges": true,
+                                                            "hide_side_toolbar": false,
+                                                            "allow_symbol_change": true,
+                                                            "details": true,
+                                                            "studies": [
+                                                                "MACD@tv-basicstudies",
+                                                                "MASimple@tv-basicstudies",
+                                                                "RSI@tv-basicstudies",
+                                                                "Volume@tv-basicstudies"
+                                                            ],
+                                                            "container_id": "tradingview_f8db7"
+                                                        }
+                                                );
+                                            </script>
+                                        </div>
+                                        <!-- TradingView Widget END -->
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card card-fullheight">
                             <div class="card-header p-0">
                                 <ul class="nav line-tabs nav-justified line-tabs-2x line-tabs-solid w-100">
                                     <li class="nav-item"><a data-toggle="tab" href="#menu1" class="nav-link w-100 justify-content-center active show" style="border-top-right-radius: 0.6rem;">پیشنهاد فروش</a></li>
@@ -82,23 +136,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                             <input type="hidden"  value="sell" name="type"/>
                                             <div class="form-group mb-5">
                                                 <select required name="coin" class="form-control coins_select" style="width: 100%">
+                                                    <option value=""></option>
+                                                    @foreach($offerablecoins as $offerablecoin)
+                                                    @if(isset($coins[strtolower($offerablecoin->name)]))
+                                                    <option value="{{ strtolower($offerablecoin->name) }}" data-price="{{ $coins[strtolower($offerablecoin->name)]->price_in_toman_int }}" data-icon="{{ url("/assets/icons/".strtolower($offerablecoin->type_name).".png") }}">{{ $offerablecoin->name }}</option>
+                                                    @endif
+                                                    @endforeach
                                                 </select>
                                                 <div class="form-row mt-1">
                                                     <div class="col">
                                                         <div class="input-group-icon input-group-icon-right">
                                                             <input class="form-control" type="text" name="coinـnum" required id="coin-num" placeholder="مقدار">
-                                                            <span class="input-icon input-icon-right"><i class="cc BCN-alt text-warning font-13"></i></span></div>
-                                                        <input class="form-control mt-1" type="text" name="mincoin" required id="mincoin" placeholder="حداقل خرید">
+                                                            <span class="input-icon input-icon-right coinicon"></span></div>
+                                                        <input class="form-control mt-1" type="text" name="mincoin" required placeholder="حداقل سفارش">
 
                                                     </div>
                                                     <div class="d-inline-flex justify-content-center align-items-center" style="width: 60px"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
-                                                    <div class="col d-flex align-items-center">
-                                                        <div class="input-group-icon input-group-icon-right w-100">
-                                                            <input class="form-control" type="text" placeholder="قیمت به تومان" required name="price_toman" id="price-toman"><span class="input-icon input-icon-right">تومان</span></div>
+                                                    <div class="col d-flex justify-content-center flex-column">
+                                                        <div class="input-group-icon input-group-icon-right w-100 my-2">
+                                                            <input class="form-control" type="text" placeholder="قیمت به تومان" required name="price_toman" id="price-toman"><span class="input-icon input-icon-right">تومان</span>
+                                                        </div>
+                                                        <div class="bg-warning text-white text-center rounded p-2 my-2">
+                                                            مبلغی که شما از فروش این مقدار ارز دیجیتال دریافت می‌کنید
+                                                            <p class="text-center" id="totalsellprice">
+                                                                مبلغ را وارد کنید
+                                                            </p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="text-center"><button class="btn btn-danger btn-rounded" type="submit" style="min-width: 200px">تکمیل سفارش</button></div>
+                                            <div class="row">
+                                                <div class="col-8">
+                                                    <ul type="disc">
+                                                        <li>قیمت پیشنهادی ما همیشه با توجه نوسانات قیمت جهانی ارزهای دیجیتال و با نسبت ثابت تغییر خواهد کرد</li>
+                                                        <li>قیمت پیشنهادی ما همیشه ۲٪ بیشتر از قیمت چهانی ارز انتخابی خواهد بود.</li>
+                                                    </ul>
+
+                                                </div>
+                                                <div class="col-4 text-right">
+                                                    <button class="btn btn-danger btn-rounded" type="submit" style="min-width: 200px">تکمیل سفارش</button>
+                                                </div>
+                                            </div>                                       
                                         </form>
                                     </div>
                                     <div id="menu2" class="tab-pane">
@@ -106,31 +184,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         <h5 class="mb-3 mt-4">مقدار مورد نظر :</h5>
                                         <form action="/dashboard/newoffer" method="POST">
                                             @csrf
-                                            <input type="hidden" value="buy" name="type"/>
+                                            <input type="hidden"  value="buy" name="type"/>
                                             <div class="form-group mb-5">
                                                 <select required name="coin" class="form-control coins_select" style="width: 100%">
+                                                    <option value=""></option>
+                                                    @foreach($offerablecoins as $offerablecoin)
+                                                    @if(isset($coins[strtolower($offerablecoin->name)]))
+                                                    <option value="{{ strtolower($offerablecoin->name) }}" data-price="{{ $coins[strtolower($offerablecoin->name)]->price_in_toman_int }}" data-icon="{{ url("/assets/icons/".strtolower($offerablecoin->type_name).".png") }}">{{ $offerablecoin->name }}</option>
+                                                    @endif
+                                                    @endforeach
                                                 </select>
                                                 <div class="form-row mt-1">
                                                     <div class="col">
                                                         <div class="input-group-icon input-group-icon-right">
-                                                            <input class="form-control" type="text" name="coinـnum" required id="coin-num" placeholder="مقدار">
-                                                            <span class="input-icon input-icon-right"><i class="cc BCN-alt text-warning font-13"></i></span></div>
-                                                        <input class="form-control mt-1" type="text" name="mincoin" required id="mincoin" placeholder="حداقل خرید">
+                                                            <input class="form-control" type="text" name="coinـnum" required id="coinbuy-num" placeholder="مقدار">
+                                                            <span class="input-icon input-icon-right coinicon"></span></div>
+                                                        <input class="form-control mt-1" type="text" name="mincoin" required placeholder="حداقل سفارش">
 
                                                     </div>
                                                     <div class="d-inline-flex justify-content-center align-items-center" style="width: 60px"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
-                                                    <div class="col d-flex align-items-center">
-                                                        <div class="input-group-icon input-group-icon-right w-100">
-                                                            <input class="form-control" type="text" placeholder="قیمت به تومان" required name="price_toman" id="price-toman"><span class="input-icon input-icon-right">تومان</span></div>
+                                                    <div class="col d-flex justify-content-center flex-column">
+                                                        <div class="input-group-icon input-group-icon-right w-100 my-2">
+                                                            <input class="form-control" type="text" placeholder="قیمت به تومان" required name="price_toman" id="pricebuy-toman"><span class="input-icon input-icon-right">تومان</span>
+                                                        </div>
+
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            <div class="text-center"><button class="btn btn-danger btn-rounded" type="submit" style="min-width: 200px">تکمیل سفارش</button></div>
+                                            <div class="row">
+                                                <div class="col-8">
+                                                    <ul type="disc">
+                                                        <li>قیمت پیشنهادی ما همیشه با توجه نوسانات قیمت جهانی ارزهای دیجیتال و با نسبت ثابت تغییر خواهد کرد</li>
+                                                        <li>قیمت پیشنهادی ما همیشه ۲٪ کمتر از قیمت چهانی ارز انتخابی خواهد بود.</li>
+                                                    </ul>
+                                                </div>
+                                                <div class="col-4 text-right">
+                                                    <button class="btn btn-danger btn-rounded" type="submit" style="min-width: 200px">تکمیل سفارش</button>
+                                                </div>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -207,148 +301,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div><!-- BEGIN: Footer-->
 
         @include("includes.footer") 
-        <script>
-            $(document).ready(function () {
-            if ($('#crypto_axes').length) {
-            var bitcoin = [
-            {{ $chart['bitcoin'] }}
-            ];
-            var litecoin = [
-            {{ $chart['litecoin'] }}
-            ];
-            var ripple = [
-            {{ $chart['ripple'] }}
-            ];
-            function euroFormatter(v, axis) {
-            return v.toFixed(axis.tickDecimals) + "в‚¬";
-            }
-
-            function doPlot(position) {
-            $.plot("#crypto_axes", [{
-            data: litecoin,
-                    label: "Bitcoin"
-            }], {
-            xaxes: [{
-            mode: "time"
-            }],
-                    yaxes: [{
-                    min: 0
-                    }],
-                    colors: [theme_color('warning')],
-                    grid: {
-                    color: "#999999",
-                            hoverable: true,
-                            clickable: true,
-                            tickColor: "#DADDE0",
-                            borderWidth: 0,
-                    },
-                    series: {
-                    lines: {
-                    show: true,
-                            fillColor: {
-                            colors: [{
-                            opacity: 0.1
-                            }, {
-                            opacity: 0.1
-                            }]
-                            }
-                    }
-                    },
-                    legend: {
-                    position: "sw"
-                    },
-                    tooltip: {
-                    show: true,
-                            content: "قیمت %s در%x, %y تومان بوده",
-                    }
-            });
-            ///////////////////////////
-            $.plot("#crypto_ripple", [{
-            data: ripple,
-                    label: "Ripple"
-            }], {
-            xaxes: [{
-            mode: "time"
-            }],
-                    yaxes: [{
-                    min: 0
-                    }],
-                    colors: ["red"],
-                    grid: {
-                    color: "#999999",
-                            hoverable: true,
-                            clickable: true,
-                            tickColor: "#DADDE0",
-                            borderWidth: 0,
-                    },
-                    series: {
-                    lines: {
-                    show: true,
-                            fillColor: {
-                            colors: [{
-                            opacity: 0.1
-                            }, {
-                            opacity: 0.1
-                            }]
-                            }
-                    }
-                    },
-                    legend: {
-                    position: "sw"
-                    },
-                    tooltip: {
-                    show: true,
-                            content: "قیمت %s در%x, %y تومان بوده",
-                    }
-            });
-            ///////////////////////////
-            $.plot("#crypto_litecoin", [{
-            data: bitcoin,
-                    label: "Litecoin"
-            }], {
-            xaxes: [{
-            mode: "time"
-            }],
-                    yaxes: [{
-                    min: 0
-                    }],
-                    colors: ["#666"],
-                    grid: {
-                    color: "#999999",
-                            hoverable: true,
-                            clickable: true,
-                            tickColor: "#DADDE0",
-                            borderWidth: 0,
-                    },
-                    series: {
-                    lines: {
-                    show: true,
-                            fillColor: {
-                            colors: [{
-                            opacity: 0.1
-                            }, {
-                            opacity: 0.1
-                            }]
-                            }
-                    }
-                    },
-                    legend: {
-                    position: "sw"
-                    },
-                    tooltip: {
-                    show: true,
-                            content: "قیمت %s در%x, %y تومان بوده",
-                    }
-            });
-            }
-            doPlot("right");
-            }
-            }
-            );
-    
-    
-        </script>
-
         <script src="/assets/js/offers.js"></script>
     </body>
 </html>

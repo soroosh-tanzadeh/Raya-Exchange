@@ -22,6 +22,7 @@ class VerifyCsrfToken extends Middleware
         "/coinwebhook",
         "/coincallback",
         "/addccount",
-        "coindetail"
+        "coindetail",
+        "/coinpayment/ipn"
     ];
 }

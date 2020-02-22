@@ -88,7 +88,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <!-- BEGIN: Page heading-->
             <div class="page-heading"> 
                 <div class="page-breadcrumb">
-                    <h1 class="page-title page-title-sep">آموزش</h1>
+                    <h1 class="page-title page-title-sep">سوالات متداول</h1>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html"><i class="la la-home font-20"></i></a></li>
                     </ol>
@@ -169,6 +169,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div><!-- BEGIN: Footer-->
 
         @include("includes.footer")
-        <script src="/assets/js/offers.js"></script>
     </body>
 </html>

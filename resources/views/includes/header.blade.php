@@ -111,7 +111,9 @@ $headerWallets = Wallet::getWallets();
                     </ul>
                 </li>
                 <li><a href="/dashboard/tickets"><i class="sidebar-item-icon ft-mail"></i><span class="nav-label">تیکت</span></a></li>
-                <li><a href="/dashboard/faq"><i class="sidebar-item-icon ft-book-open"></i><span class="nav-label">آموزش</span></a></li>
+                <li><a href="/dashboard/knowledge"><i class="sidebar-item-icon ft-book-open"></i><span class="nav-label">آموزش</span></a></li>
+                <li><a href="/dashboard/faq"><i class="sidebar-item-icon ft-help-circle"></i><span class="nav-label">سوالات متداول</span></a></li>
+
             </ul>
         </div>
         <!-- END: Sidebar-->

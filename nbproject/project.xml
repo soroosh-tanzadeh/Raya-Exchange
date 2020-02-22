@@ -8,12 +8,14 @@
         <libraries xmlns="http://www.netbeans.org/ns/cdnjs-libraries/1"/>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
             <word>csrf</word>
+            <word>endforeach</word>
             <word>endif</word>
             <word>Maxivity</word>
             <word>استان</word>
             <word>خریداران</word>
             <word>دجیتال</word>
             <word>شده</word>
+            <word>کنید</word>
         </spellchecker-wordlist>
     </configuration>
 </project>

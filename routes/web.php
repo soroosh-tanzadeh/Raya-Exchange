@@ -26,12 +26,15 @@ use App\Activity;
  */
 Route::get("/", "UserController@index");
 Route::post("/dologin", "UserController@doLogin");
-
-Route::get("/getusdprice", "DashboardController@getUSD");
-
 Route::get("/dashboard/signup", "UserController@signupPage")->middleware(Authentication::class);
 Route::post("/dosignup", "UserController@signup");
 Route::post("/sendvcode", "UserController@sendVcode");
+Route::post("/verifyUser", "UserController@verifyCode");
+Route::get("/logout", function () {
+    Activity::addActivity("خروج از حساب");
+    session()->remove("user");
+    return redirect("/");
+})->middleware(Authentication::class);
 
 Route::get("/phpmigrate", function() {
     echo Artisan::call('migrate', [
@@ -39,9 +42,12 @@ Route::get("/phpmigrate", function() {
     ]);
 });
 
-Route::get("/encryp/{data?}", function ($data) {
-    echo(Crypt::encryptString($data));
-});
+//
+//Route::get("/encryp/{data?}", function ($data) {
+//    echo(Crypt::encryptString($data));
+//});
+
+Route::get("/getusdprice", "DashboardController@getUSD");
 
 // Dashboard Route
 Route::get("/files/{filename}", "DashboardController@getFile")->middleware(Authentication::class);
@@ -60,6 +66,7 @@ Route::post("/getcoin", "DashboardController@getCoinPrice")->middleware(Authenti
 
 // Wallet 
 Route::get("/dashboard/mywallet", "DashboardController@walletPage")->middleware(UserVerification::class);
+Route::post("/dashboard/newwallet", "DashboardController@newWallet")->middleware(UserVerification::class);
 
 // Payment
 Route::get("/dashboard/buyoffer", "DashboardController@offerPage")->middleware(UserVerification::class);
@@ -72,6 +79,15 @@ Route::post("/exchange", "ExchangeController@exchangeRequest")->middleware(UserV
 Route::get("/get_estimate", "ExchangeController@getEstimate");
 Route::get('/dashboard/crypto', 'TransactionsController@crypto')->middleware(UserVerification::class);
 Route::get('/dashboard/rials', 'TransactionsController@rials')->middleware(UserVerification::class);
+Route::get('/dashboard/offerpage', 'PaymentController@offerPage')->middleware(UserVerification::class);
+
+
+//offers
+Route::get('/dashboard/getbuyoffers', 'OffersController@getBuyOffers')->middleware(UserVerification::class);
+Route::get('/dashboard/getselloffers', 'OffersController@getSellOffers')->middleware(UserVerification::class);
+
+
+Route::get('/allcoins', 'ExchangeController@getcoins');
 
 
 // Payments
@@ -82,11 +98,15 @@ Route::post("/coinwebhook", "PaymentController@webhook");
 Route::post("/coincallback", "PaymentController@comfirm")->middleware(UserVerification::class);
 Route::get("/paycoin", "PaymentController@payCoin")->middleware(UserVerification::class);
 
-Route::post("/verifyUser", "UserController@verifyCode");
-
 Route::get("/assets/icons/{iconfile}", function($iconfile) {
     return redirect("/assets/img/raya-logo.png");
 })->middleware(Authentication::class);
+
+//Route::get("/test", function() {
+//    $coinp = new App\coinPayments\CoinpaymentsAPI();
+//    return response()->json($coinp->GetRatesWithAccepted());
+//})->middleware(Authentication::class);
+
 
 // Wait to verify
 Route::get("/dashboard/notverified", function() {
@@ -96,20 +116,13 @@ Route::get("/dashboard/notverified", function() {
 
 //Notifications
 Route::get("/readNotif", "NotificationsController@read")->middleware(UserVerification::class);
-Route::get("/logout", function () {
-    Activity::addActivity("خروج از حساب");
-    session()->remove("user");
-    return redirect("/");
-})->middleware(Authentication::class);
-
 
 Route::post("/coindetail", "DashboardController@coinDetail")->middleware(UserVerification::class);
-
 Route::post("/dashboard/canceloffer", "DashboardController@cancelOffer")->middleware(UserVerification::class);
-
 
 //FAQ
 Route::get("/dashboard/faq", "DashboardController@faqPage")->middleware(UserVerification::class);
+Route::get("/dashboard/knowledge", "DashboardController@knowledgePage")->middleware(UserVerification::class);
 
 
 //Bank Account
@@ -119,16 +132,8 @@ Route::get("/dashboard/checkouts", "TransactionsController@checkouts")->middlewa
 Route::post("/checkoutrequest", "TransactionsController@rialCheckouts")->middleware(UserVerification::class);
 Route::post("/coin/checkoutrequest", "TransactionsController@coinCheckouts")->middleware(UserVerification::class);
 
+
 Route::any("/getcoinhis", "DashboardController@coinHistory24")->middleware(UserVerification::class);
-
-Route::get("/test", function (Request $request) {
-
-    return response()->json($request);
-})->middleware(UserVerification::class);
-
-
-
-
 // Affilate 
 Route::get("/dashboard/affilate", "AffilateController@index")->middleware(UserVerification::class);
 /**
@@ -136,6 +141,7 @@ Route::get("/dashboard/affilate", "AffilateController@index")->middleware(UserVe
  */
 Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get("/admin", "AdminController@index");
+
     // Users
     Route::get("/admin/users", "AdminController@users");
     Route::get("/admin/users/{user_id}", "AdminController@userProfile");
@@ -156,9 +162,7 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::post("/admin/ticket/newticket", "AdminController@newTicket");
     Route::post("/admin/ticket/{ticket_id}/sendmessage", "AdminController@sendMessage");
 
-
     //FAQ
     Route::get("/admin/faq", "AdminController@faqPage");
     Route::post("/admin/newfaq", "AdminController@newQuestion");
-    
 });
