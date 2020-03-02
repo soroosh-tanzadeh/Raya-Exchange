@@ -123,7 +123,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     padding: 10px 8px !important;
     display: inline-block;
     margin: 0 !important;
-	border: 0 none !important;
+    border: 1px solid #CCC;
 }
 .mcwp-crypto ul.cc-stats li.cc-coin div b {
 	font-weight: bold;
@@ -131,7 +131,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 .mcwp-crypto ul.cc-stats li.cc-coin div b span:first-child {
 	display: inline;
-	font-size: 80%;
+	font-size: 90%;
 	padding: 0;
 }
 .mcwp-crypto ul.cc-stats li.cc-coin div b span:first-child + span {
@@ -147,6 +147,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 .mcwp-crypto .cc-coin > div {
 	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 }
 .mcwp-crypto .cc-coin svg {
     width: 24px;
@@ -214,7 +218,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			animation-play-state: paused;
 }
 .mcwp-crypto .cc-stats .cc-dup {
-	display: inline;
+	display: flex;
+	margin-top: 0;
 }
 @-webkit-keyframes ticker {
   0% {
@@ -245,7 +250,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	display: inline-block;
 }
 .mcwp-crypto .cc-coin img, .mcwp-crypto .mcwp-card-head img {
-	position: absolute;
 	right: 0;
 	top: 0;
 	bottom: 0;
@@ -254,7 +258,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 .mcwp-crypto .mcwp-card-head p, .mcwp-crypto .cc-coin b {
 	line-height: 24px;
-	padding: 0 29px 0 0 !important;
 	margin: 0 !important;
 }
 

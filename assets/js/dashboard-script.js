@@ -343,18 +343,15 @@ function initCryptoAreaCharts(elem, data, border_color) {
     var chart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: DAYS_S,
+
             datasets: [{
-                    label: '',
                     data: data,
+                    label: '',
                     backgroundColor: gradientFill,
                     borderColor: border_color,
-                    pointRadius: 0,
-                    pointHitRadius: 20,
                     pointHoverBackgroundColor: border_color,
                     pointHoverBorderColor: '#ffe8f0',
-                    pointHoverBorderWidth: 5,
-                    pointHoverRadius: 6
+                    spanGaps: false
                 }]
         },
         options: {
@@ -365,6 +362,7 @@ function initCryptoAreaCharts(elem, data, border_color) {
             },
             scales: {
                 xAxes: [{
+                        type: 'time',
                         display: false,
                     }],
                 yAxes: [{

@@ -18,9 +18,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html lang="en">
     <head>
         @include("includes.head")
+        <title>RayaEx | تیکت شماره - {{ $ticket->id }}</title>
     </head>
     <body>
         @include("includes.header")
+        <?php
+        $messages = $ticket->getMessages();
+        ?>
         <!-- BEGIN: Content-->
         <!-- END: Header-->
         <div class="page-content fade-in-up">
@@ -39,18 +43,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <table class="aboutticket w-100">
                         <thead>
                             <tr>
-                                <th class="text-green">در انتظار پاسخ</th>
-                                <th>اولویت بالا</th>
-                                <th>بخش فنی</th>
-                                <th>نام تیکت</th>  
+                                <th>
+                                    @if($ticket->type === 1)
+                                    <span class="text-warning">
+                                        {{ $ticket->status }}
+                                    </span>
+                                    @elseif($ticket->type === 2)
+                                    <span class="text-green">
+                                        {{ $ticket->status }}
+                                    </span>
+                                    @else
+                                    <span class="text-green">
+                                        {{ $ticket->status }}
+                                    </span>
+                                    @endif
+                                </th>
+                                <th>{{ $ticket->to }}</th>
+                                <th>{{ $ticket->name }}</th>
                             </tr>
                         </thead>
                     </table>
-                    <?php
-                    $messages = $ticket->getMessages();
-                    ?>
-                    @foreach($messages as $message)
                     <div class="row chat m-0">
+                        @foreach($messages as $message)
+
                         @if($message->from !== -1)
                         <div class="col-md-2">
                             <div class="img d-flex h-100 flex-column justify-content-center align-items-center">
@@ -90,13 +105,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             </div>
                         </div>
                         @endif
+                        @endforeach
                     </div>
-                    @endforeach
                 </div>
-                <form action="/dashboard/ticket/newticket" method="POST" enctype="multipart/form-data">
+                <form action="/dashboard/ticket/{{ $ticket->id }}/sendmessage" method="POST" enctype="multipart/form-data">
+                    @csrf
                     <div class="row m-0">
                         <div class="d-flex justify-content-center align-items-center">
-                            <button onclick="$('#pin').click();" class="btn btn-primary d-flex justify-content-center align-items-center"><i class="fas fa-paper-plane"></i></button>
+                            <button type="submit" class="btn btn-primary d-flex justify-content-center align-items-center"><i class="fas fa-paper-plane"></i></button>
                         </div>
                         <div class="col-10">
                             <textarea class="form-control border-0 my-2" name="text" placeholder="پیام خود را وارد کنید..."></textarea>
@@ -165,6 +181,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
         <!-- END: Quick sidebar-->
         @include("includes.footer")
-        
+
     </body>
 </html>

@@ -256,9 +256,10 @@ $headerWallets = Wallet::getWallets();
                                         <img src="{{ $headcoin->icon }}" alt="bitcoin">
                                         <b>{{ $headcoin->name }}
                                             <span>{{ $headcoin->price_in_toman }}</span>
-                                            <span>
-                                                <span class="mt-1 @if($headcoin->changePercent24Hr > 0) text-success @else text-danger @endif">{{ abs(round($headcoin->changePercent24Hr,2)) }}٪</span><i class="@if($headcoin->changePercent24Hr > 0) ft-arrow-up text-success @else ft-arrow-down text-danger @endif"></i>
-                                            </span>
+                                            <p>
+                                                <span class="mt-1 @if($headcoin->changePercent24Hr > 0) text-success @else text-danger @endif">{{ abs(round($headcoin->changePercent24Hr,2)) }}٪</span>
+                                                <i class="@if($headcoin->changePercent24Hr > 0) ft-arrow-up text-success @else ft-arrow-down text-danger @endif"></i>
+                                            </p>
                                         </b>
                                     </div>
                                 </li>

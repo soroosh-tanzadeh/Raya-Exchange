@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html lang="en">
     <head>
         @include("includes.head")
+        <title>RayaEx | تیکت‌ها</title>
     </head>
     <body>
         @include("includes.header")
@@ -30,7 +31,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <h1 class="page-title page-title-sep">تیکت</h1>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html"><i class="la la-home font-20"></i></a></li>
-                        <li class="breadcrumb-item">برگه ها</li>
                         <li class="breadcrumb-item">تیکت</li>
                     </ol>
                 </div>
@@ -39,10 +39,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <div class="row">
                     <div class="col-lg-3 col-md-4"><a class="btn btn-danger btn-rounded btn-block shadow font-weight-strong" href="/dashboard/tickets/new"><span class="btn-icon"><i class="ti-plus font-18"></i>ایجاد</span></a>
                         <div class="nav flex-column mt-5 mb-4">
-                            <a class="flexbox py-2 hover-link mb-1" href="#"><span class="d-flex align-items-center"><i class="ft-inbox mr-3 font-16"></i>همه تیکت&zwnj;ها</span></a>
-                            <a class="flexbox py-2 hover-link mb-1" href="#"><span class="d-flex align-items-center"><i class="ft-star mr-3 font-16"></i>نیاز به پاسخ کاربر</span></a>
-                            <a class="flexbox py-2 hover-link mb-1" href="#"><span class="d-flex align-items-center"><i class="ft-send mr-3 font-16"></i>پاسخ از طرف پیشتیبانی</span></a>
-                            <a class="flexbox py-2 hover-link mb-1" href="#"><span class="d-flex align-items-center"><i class="ft-mail mr-3 font-16"></i>بسته شده</span></a>
+                            <a class="flexbox py-2 hover-link mb-1" href="?type=alltickets"><span class="d-flex align-items-center"><i class="ft-inbox mr-3 font-16"></i>همه تیکت&zwnj;ها</span></a>
+                            <a class="flexbox py-2 hover-link mb-1" href="?type=user"><span class="d-flex align-items-center"><i class="ft-star mr-3 font-16"></i>پاسخ کاربر</span></a>
+                            <a class="flexbox py-2 hover-link mb-1" href="?type=admin"><span class="d-flex align-items-center"><i class="ft-send mr-3 font-16"></i>پاسخ پیشتیبانی</span></a>
+                            <a class="flexbox py-2 hover-link mb-1" href="?type=closed"><span class="d-flex align-items-center"><i class="ft-mail mr-3 font-16"></i>بسته شده</span></a>
                         </div>
                         <hr class="my-4">
 
@@ -77,7 +77,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                 <tr data-id="1" class="filterable">
                                                     <td class="check-cell rowlink-skip text-center"><label class="checkbox checkbox-danger check-single"><input class="mail-check" type="checkbox"><span></span></label></td>
                                                     <td class="text-center"><a href="/dashboard/ticket/{{$ticket->id}}" class="link text-black">{{ $ticket->name }}</a></td>
-                                                    <td class="text-center"><i class="badge-point text-center badge-{{ $ticket->status }}"></i></td>
+                                                    <td class="text-center">
+                                                        @if($ticket->type === 1)
+                                                        <span class="text-warning">
+                                                            {{ $ticket->status }}
+                                                        </span>
+                                                        @elseif($ticket->type === 2)
+                                                        <span class="text-green">
+                                                            {{ $ticket->status }}
+                                                        </span>
+                                                        @else
+                                                        <span class="text-green">
+                                                            {{ $ticket->status }}
+                                                        </span>
+                                                        @endif
+                                                    </td>
                                                     <td class="text-center">{{ $ticket->created_at }}</td>
                                                 </tr>
                                                 @endforeach

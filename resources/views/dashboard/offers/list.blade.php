@@ -59,7 +59,13 @@ use Morilog\Jalali\Jalalian;
                                         @endif
                                     </div>
                                 </div>
-                                <div class="card-fullwidth-block" style="margin-bottom: -1.8rem"><canvas id="crypto_chart_1" style="height:100px;"></canvas></div>
+                                <div class="card-fullwidth-block" style="margin-bottom: -1.8rem"><canvas id="crypto_chart_1" style="height:100px;"></canvas></div>  
+                            </div>
+                            <div class="card-footer p-1">
+                                <div class="w-100 d-flex justify-content-between">
+                                    <a class="btn btn-primary" href="/dashboard/buyoffer">ایجاد پیشنهاد جدید</a>
+                                    <a class="btn btn-secondary" href="/dashboard/exchange">تبادل</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -84,6 +90,12 @@ use Morilog\Jalali\Jalalian;
                                 </div>
                                 <div class="card-fullwidth-block" style="margin-bottom: -1.8rem"><canvas id="crypto_chart_2" style="height:100px;"></canvas></div>
                             </div>
+                            <div class="card-footer p-1">
+                                <div class="w-100 d-flex justify-content-between">
+                                    <a class="btn btn-primary" href="/dashboard/buyoffer">ایجاد پیشنهاد جدید</a>
+                                    <a class="btn btn-secondary" href="/dashboard/exchange">تبادل</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-4">
@@ -107,6 +119,12 @@ use Morilog\Jalali\Jalalian;
                                 </div>
                                 <div class="card-fullwidth-block" style="margin-bottom: -1.8rem"><canvas id="crypto_chart_3" style="height:100px;"></canvas></div>
                             </div>
+                            <div class="card-footer p-1">
+                                <div class="w-100 d-flex justify-content-between">
+                                    <a class="btn btn-primary" href="/dashboard/buyoffer">ایجاد پیشنهاد جدید</a>
+                                    <a class="btn btn-secondary" href="/dashboard/exchange">تبادل</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -123,115 +141,79 @@ use Morilog\Jalali\Jalalian;
                             <div class="card-body">
                                 <div class="tab-content">
                                     <div id="menu1" class="tab-pane fade active show">
-                                        <div class="table-responsive font-11">
+                                        <div>
+                                            <ul class="nav line-tabs line-tabs-solid w-100" role="tablist">
+                                                <li class="nav-item">
+                                                    <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers px-1" data-offer="sell" data-coin="bitcoin"data-toggle="tab" role="tab" aria-controls="profile" aria-selected="false">Bitcoin <i class="cc mx-2 BTC-alt font-20 text-warning mb-2"></i></a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers px-1" data-offer="sell" data-coin="etheruem" data-toggle="tab" role="tab"  aria-selected="false">Ethereum <i class="cc mx-2 ETH-alt font-20 text-primary mb-2"></i></a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers px-1" data-offer="sell" data-coin="teather" data-toggle="tab" role="tab"  aria-selected="false">Tether <i class="cc mx-2 USDT-alt font-20 text-success mb-2"></i></a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers px-1 h-100" data-offer="sell" data-coin="more" data-toggle="tab" role="tab"  aria-selected="false">سایر <i class="mx-2 ti-more font-20 text-muted"></i></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="table-responsive font-11 my-2">
                                             <div class="table-responsive font-11">
-                                                <table class="table table-hover compact-table">
+                                                <table class="table table-hover compact-table w-100" id="buyofferstable">
                                                     <thead class="thead-light">
                                                         <tr>
                                                             <th>نام کاربری</th>
                                                             <th>ارز</th>
                                                             <th>موجودی</th>
                                                             <th>حداقل خرید</th>
-                                                            <th>واحد (تومان)</th>
+                                                            <th>قیمت واحد (تومان)</th>
                                                             <th>تاریخ</th>
                                                             <th>خرید</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach($offers as $offer)
-                                                        <tr>
-                                                            <td>
-                                                                <b>{{ $offer->name }}</b>
-                                                            </td>
-                                                            <td>
-                                                                {{ $offer->coin }}
-                                                                <img src="/assets/icons/{{ strtolower($coins[$offer->coin]->symbol) }}.png" style="max-width: 30px;"/>
-                                                            </td>
-                                                            <td>{{ $offer->amount }}</td>
-                                                            <td>{{ $offer->min_buy }}</td>
-                                                            <td><?php
-                                                                $priceInToman = $offer->price_pre;
-                                                                $price_in_toman = "";
-                                                                if (($priceInToman >= 1000) & ($priceInToman < 1000000)) {
-                                                                    $price = $priceInToman / 1000;
-                                                                    $price_in_toman = $price . " هزار تومان";
-                                                                } elseif ($priceInToman >= 1000000 & ($priceInToman < 1000000000)) {
-                                                                    $price = $priceInToman / 1000000;
-                                                                    $price_in_toman = $price . " میلیون تومان";
-                                                                } elseif ($priceInToman >= 1000000000) {
-                                                                    $price = $priceInToman / 1000000000;
-                                                                    $price_in_toman = $price . " میلیارد تومان";
-                                                                } else {
-                                                                    $price = $priceInToman;
-                                                                    $price_in_toman = $price . " تومان";
-                                                                }
-                                                                echo $price_in_toman;
-                                                                ?></td>
-                                                            <td>{{ Jalalian::forge($offer->created_at)->ago() }}</td>
-                                                            <td><a data-toggle="tooltip" title="" data-original-title="خرید" href="/dashboard/offerpage?offer={{ $offer->id }}" class="text-success font-18"><i class="ft-shopping-cart"></i></a></td>
-                                                        </tr>
-                                                        @endforeach
+
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            {{ $offers->links() }}
                                         </div>
                                     </div>
                                     <div id="menu2" class="tab-pane">
-                                        <div class="table-responsive font-11">
+                                        <div>
+                                            <ul class="nav line-tabs line-tabs-solid w-100" role="tablist">
+                                                <li class="nav-item">
+                                                    <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers px-1" data-offer="buy" data-coin="bitcoin"data-toggle="tab" role="tab" aria-controls="profile" aria-selected="false">Bitcoin <i class="cc mx-2 BTC-alt font-20 text-warning mb-2"></i></a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers px-1" data-offer="buy" data-coin="etheruem" data-toggle="tab" role="tab"  aria-selected="false">Ethereum <i class="cc mx-2 ETH-alt font-20 text-primary mb-2"></i></a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers px-1" data-offer="buy" data-coin="teather" data-toggle="tab" role="tab"  aria-selected="false">Tether <i class="cc mx-2 USDT-alt font-20 text-success mb-2"></i></a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers px-1 h-100" data-offer="buy" data-coin="more" data-toggle="tab" role="tab"  aria-selected="false">سایر <i class="mx-2 ti-more font-20 text-muted"></i></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="table-responsive font-11 my-2">
                                             <div class="table-responsive font-11">
                                                 <div class="table-responsive font-11">
-                                                    <table class="table table-hover compact-table">
+                                                    <table class="table table-hover compact-table w-100" id="sellofferstable">
                                                         <thead class="thead-light">
                                                             <tr>
                                                                 <th>نام کاربری</th>
                                                                 <th>ارز</th>
                                                                 <th>موجودی</th>
                                                                 <th>حداقل فروش</th>
-                                                                <th>واحد (تومان)</th>
+                                                                <th>قیمت واحد (تومان)</th>
                                                                 <th>تاریخ</th>
                                                                 <th>فروش</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            @foreach($buyoffers as $buyoffer)
-                                                            <tr>
-                                                                <td>
-                                                                    <b>{{ $buyoffer->name }}</b>
-                                                                </td>
-                                                                <td>
-                                                                    {{ $buyoffer->coin }}
-                                                                    <img src="/assets/icons/{{ strtolower($coins[$offer->coin]->symbol) }}.png" style="max-width: 30px;"/>
-                                                                </td>
-                                                                <td>{{ $buyoffer->amount }}</td>
-                                                                <td>{{ $buyoffer->min_buy }}</td>
-                                                                <td><?php
-                                                                    $priceInToman = $buyoffer->price_pre;
-                                                                    $price_in_toman = "";
-                                                                    if (($priceInToman >= 1000) & ($priceInToman < 1000000)) {
-                                                                        $price = $priceInToman / 1000;
-                                                                        $price_in_toman = $price . " هزار تومان";
-                                                                    } elseif ($priceInToman >= 1000000 & ($priceInToman < 1000000000)) {
-                                                                        $price = $priceInToman / 1000000;
-                                                                        $price_in_toman = $price . " میلیون تومان";
-                                                                    } elseif ($priceInToman >= 1000000000) {
-                                                                        $price = $priceInToman / 1000000000;
-                                                                        $price_in_toman = $price . " میلیارد تومان";
-                                                                    } else {
-                                                                        $price = $priceInToman;
-                                                                        $price_in_toman = $price . " تومان";
-                                                                    }
-                                                                    echo $price_in_toman;
-                                                                    ?></td>
-                                                                <td>{{ Jalalian::forge($buyoffer->created_at)->ago() }}</td>
-                                                                <td><a data-toggle="tooltip" title="" data-original-title="فروش" href="/dashboard/offerpage?offer={{ $offer->id }}" class="text-success font-18"><i class="ft-thumbs-up"></i></a></td>
-                                                            </tr>
-                                                            @endforeach
+
                                                         </tbody>
                                                     </table>
-                                                </div>
-                                                <div class="w-100 text-center">
-                                                    {{ $offers->links() }}
                                                 </div>
                                             </div>
                                         </div>
@@ -245,10 +227,14 @@ use Morilog\Jalali\Jalalian;
         </div><!-- BEGIN: Footer-->
 
         @include("includes.footer") 
+        <script src="/assets/js/offerslist.js"></script>
         <script>
-            var bitcoin = {{ $chart['bitcoin'] }};
-            var litecoin = {{ $chart['litecoin'] }};
-            var ethereum = {{ $chart['ethereum'] }};
+var bitcoin = {!! $chart['bitcoin'] !!}
+;
+        var litecoin = {!! $chart['litecoin'] !!}
+;
+        var ethereum = {!! $chart['ethereum'] !!}
+;
         </script>
 
         <script>

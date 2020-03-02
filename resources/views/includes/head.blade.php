@@ -14,6 +14,7 @@
 <link href="/assets/css/style.css" rel="stylesheet" /><!-- PAGE RTL STYLES-->
 <link href="/assets/css/toastr.css" rel="stylesheet" /><!-- PAGE RTL STYLES-->
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<link href="/assets/vendors/summernote/dist/summernote-bs4.css" rel="stylesheet" /><!-- THEME STYLES-->
 <link href="/assets/vendors/slick/slick.css" rel="stylesheet" type="text/css"/>
 <link href="/assets/vendors/slick/slick-theme.css" rel="stylesheet" type="text/css"/>
 <link href="/assets/vendors/sweetalert2/dist/sweetalert2.css" rel="stylesheet" type="text/css"/> 

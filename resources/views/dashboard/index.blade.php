@@ -67,7 +67,7 @@ $activities = Activity::getActivities();
                                 <div class="mb-2"><i class="cc ETC font-40 text-primary"></i></div>
                                 <div class="mb-3 text-muted font-16">اتریم</div>
                                 <div class="d-flex justify-content-center align-items-center mb-1">
-                                    <div class="h5 m-0 font-20"><span>{{ number_format($coins['ethereum']->priceUsd,3) }}</span><span class="font-weight-normal"> $</span></div>
+                                    <div class="h5 m-0 font-20"><span>{{ number_format($coins['ethereum']->priceUsd,2) }}</span><span class="font-weight-normal"> $</span></div>
                                     <div class="mx-3">
                                         <span class="@if($coins['ethereum']->changePercent24Hr > 0) text-success @else text-danger @endif">{{ abs(round($coins['ethereum']->changePercent24Hr,2)) }}٪</span><i class="@if($coins['ethereum']->changePercent24Hr > 0) ft-arrow-up text-success @else ft-arrow-down text-danger @endif"></i>
                                     </div>
@@ -84,7 +84,7 @@ $activities = Activity::getActivities();
                                 <div class="mb-2"><i class="cc LTC-alt font-40 text-secondary mb-1"></i></div>
                                 <div class="mb-3 text-muted font-16">لایت کوین</div>
                                 <div class="d-flex justify-content-center align-items-center">
-                                    <div class="h5 m-0 font-20"><span>{{ number_format($coins['litecoin']->priceUsd,3) }}</span><span class="font-weight-normal"> $</span></div>
+                                    <div class="h5 m-0 font-20"><span>{{ number_format($coins['litecoin']->priceUsd,2) }}</span><span class="font-weight-normal"> $</span></div>
                                     <div class="mx-3">
                                         <span class="@if($coins['litecoin']->changePercent24Hr > 0) text-success @else text-danger @endif">{{ abs(round($coins['litecoin']->changePercent24Hr,2)) }}٪</span><i class="@if($coins['litecoin']->changePercent24Hr > 0) ft-arrow-up text-success @else ft-arrow-down text-danger @endif"></i>
                                     </div>
@@ -101,7 +101,7 @@ $activities = Activity::getActivities();
                                 <div class="mb-2"><i class="cc USDT-alt font-40 text-success mb-1"></i></div>
                                 <div class="mb-3 text-muted font-16">تتر</div>
                                 <div class="d-flex justify-content-center align-items-center">
-                                    <div class="h5 m-0 font-20"><span>{{ number_format($coins['tether']->priceUsd,3) }}</span><span class="font-weight-normal"> $</span></div>
+                                    <div class="h5 m-0 font-20"><span>{{ number_format($coins['tether']->priceUsd,2) }}</span><span class="font-weight-normal"> $</span></div>
                                     <div class="mx-3">
                                         <span class="@if($coins['tether']->changePercent24Hr > 0) text-success @else text-danger @endif">{{ abs(round($coins['tether']->changePercent24Hr,2)) }}٪</span><i class="@if($coins['tether']->changePercent24Hr > 0) ft-arrow-up text-success @else ft-arrow-down text-danger @endif"></i>
                                     </div>
@@ -204,7 +204,7 @@ $activities = Activity::getActivities();
                                                         <div class="input-group-icon input-group-icon-right w-100 my-2">
                                                             <input class="form-control" type="text" placeholder="قیمت به تومان" required name="price_toman" id="pricebuy-toman"><span class="input-icon input-icon-right">تومان</span>
                                                         </div>
-                                                       
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -327,15 +327,18 @@ $activities = Activity::getActivities();
                                         <h5 class="box-title mb-2"><i class="ft-download"></i> آخرین خریداران </h5>
                                     </div>
                                     <div>
-                                        <ul class="nav line-tabs nav-justified line-tabs-solid w-100" role="tablist">
+                                        <ul class="nav line-tabs line-tabs-solid w-100" role="tablist">
                                             <li class="nav-item">
-                                                <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers" data-offer="buy" data-coin="bitcoin"data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">BTC <i class="cc mx-2 BTC-alt font-26 text-warning mb-2"></i></a>
+                                                <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers px-1" data-offer="buy" data-coin="bitcoin"data-toggle="tab" role="tab" aria-controls="profile" aria-selected="false">Bitcoin <i class="cc mx-2 BTC-alt font-20 text-warning mb-2"></i></a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers" data-offer="buy" data-coin="litecoin" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">LTC <i class="cc mx-2 LTC-alt font-26 text-grey-darker mb-2"></i></a>
+                                                <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers px-1" data-offer="buy" data-coin="etheruem" data-toggle="tab" role="tab"  aria-selected="false">Ethereum <i class="cc mx-2 ETH-alt font-20 text-primary mb-2"></i></a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers" data-offer="buy" data-coin="ripple" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Ripple <i class="cc mx-2 XRP-alt font-26 text-danger mb-2"></i></a>
+                                                <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers px-1" data-offer="buy" data-coin="teather" data-toggle="tab" role="tab"  aria-selected="false">Tether <i class="cc mx-2 USDT-alt font-20 text-success mb-2"></i></a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers px-1 h-100" data-offer="buy" data-coin="more" data-toggle="tab" role="tab"  aria-selected="false">سایر <i class="mx-2 ti-more font-20 text-muted"></i></a>
                                             </li>
                                         </ul>
                                     </div>
@@ -373,15 +376,18 @@ $activities = Activity::getActivities();
                                         <h5 class="box-title mb-2"><i class="ft-download"></i> آخرین فروشندگان </h5>
                                     </div>
                                     <div>
-                                        <ul class="nav line-tabs nav-justified line-tabs-solid w-100" role="tablist">
-                                            <li class="nav-item">
-                                                <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers" data-offer="sell" data-coin="bitcoin"data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">BTC <i class="cc mx-2 BTC-alt font-26 text-warning mb-2"></i></a>
+                                        <ul class="nav line-tabs line-tabs-solid w-100" role="tablist">
+                                             <li class="nav-item">
+                                                <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers px-1" data-offer="sell" data-coin="bitcoin"data-toggle="tab" role="tab" aria-controls="profile" aria-selected="false">Bitcoin <i class="cc mx-2 BTC-alt font-20 text-warning mb-2"></i></a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers" data-offer="sell" data-coin="litecoin" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">LTC <i class="cc mx-2 LTC-alt font-26 text-grey-darker mb-2"></i></a>
+                                                <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers px-1" data-offer="sell" data-coin="etheruem" data-toggle="tab" role="tab"  aria-selected="false">Ethereum <i class="cc mx-2 ETH-alt font-20 text-primary mb-2"></i></a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers" data-offer="sell" data-coin="ripple" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Ripple <i class="cc mx-2 XRP-alt font-26 text-danger mb-2"></i></a>
+                                                <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers px-1" data-offer="sell" data-coin="teather" data-toggle="tab" role="tab"  aria-selected="false">Tether <i class="cc mx-2 USDT-alt font-20 text-success mb-2"></i></a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers h-100  px-1" data-offer="sell" data-coin="more" data-toggle="tab" role="tab"  aria-selected="false">سایر <i class="mx-2 ti-more font-20 text-muted"></i></a>
                                             </li>
                                         </ul>
                                     </div>

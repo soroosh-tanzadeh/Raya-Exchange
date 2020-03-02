@@ -92,19 +92,19 @@ class DashboardController extends Controller {
             $priceInToman = (int) ($coin->priceUsd * $usdprice);
             if (($priceInToman >= 1000) & ($priceInToman < 1000000)) {
                 $price = $priceInToman / 1000;
-                $coin->price_in_toman = $price . " هزار تومان";
+                $coin->price_in_toman = $price . '<br><span class="text-muted"> هزار تومان </span>';
             } elseif ($priceInToman >= 1000000 & ($priceInToman < 1000000000)) {
                 $price = $priceInToman / 1000000;
-                $coin->price_in_toman = $price . " میلیون تومان";
+                $coin->price_in_toman = $price . '<br><span class="text-muted"> میلیون تومان </span>';
             } elseif ($priceInToman >= 1000000000) {
                 $price = $priceInToman / 1000000000;
-                $coin->price_in_toman = $price . " میلیارد تومان";
+                $coin->price_in_toman = $price . '<br><span class="text-muted"> میلیارد تومان </span>';
             } else {
                 $price = $priceInToman;
-                $coin->price_in_toman = $price . " تومان";
+                $coin->price_in_toman = $price . '<br><span class="text-muted"> تومان</span>';
             }
             $coin->price_in_toman_int = $priceInToman;
-            $coins[$coin->id] = $coin;
+            $coins[$coin->symbol] = $coin;
         }
         $coinp = new CoinpaymentsAPI();
         $coinslist = $coinp->GetRatesWithAccepted()['result'];
@@ -112,11 +112,16 @@ class DashboardController extends Controller {
         $rialWallet = Wallet::where("user_id", $user->id)->where("type", "rial")->first();
         $coinWallets_data = Wallet::where("user_id", $user->id)->where("type", "coin")->get();
         $coinWallets = array();
+        $wealth = 0;
         foreach ($coinWallets_data as $wallet) {
             $coinWallets[$wallet->type_name] = $wallet;
+            if (isset($coins[strtoupper($wallet->type_name)])) {
+                $wealth += $coins[strtoupper($wallet->type_name)]->priceUsd * $wallet->credit;
+            }
         }
         $transactions = Transaction::where("user_id", $user->id)->limit(10)->get();
-        return view("dashboard.wallet.index", array("user" => $user,"coinsprice"=>$coins, "coins" => $coinslist, "coinWallets" => $coinWallets, "rialWallet" => $rialWallet, "transactions" => $transactions));
+        //  return response()->json($coinp->GetRatesWithAccepted());
+        return view("dashboard.wallet.index", array("usdprice" => $usdprice, "wealth" => $wealth, "user" => $user, "coinsprice" => $coins, "coins" => $coinslist, "coinWallets" => $coinWallets, "rialWallet" => $rialWallet, "transactions" => $transactions));
     }
 
     public function offerPage(Request $request) {
@@ -337,42 +342,49 @@ class DashboardController extends Controller {
             $coins[$coin->id] = $coin;
         }
 
+        $start = (24 * 3600 * 30);
+        $now = time();
+
         $chart = Curl::to("https://api.coincap.io/v2/assets/bitcoin/history")
-                ->withData(array('interval' => "d1"))
+                ->withData(array("start" => ($now - $start) * 1000, "end" => $now * 1000, "interval" => "d1"))
+                ->asJson()
                 ->get();
         $chart_btc = Curl::to("https://api.coincap.io/v2/assets/bitcoin/history")
-                ->withData(array('interval' => "d1"))
+                ->withData(array("start" => ($now - $start) * 1000, "end" => $now * 1000, "interval" => "d1"))
+                ->asJson()
                 ->get();
         $chart_ltc = Curl::to("https://api.coincap.io/v2/assets/litecoin/history")
-                ->withData(array('interval' => "d1"))
+                ->withData(array("start" => ($now - $start) * 1000, "end" => $now * 1000, "interval" => "d1"))
+                ->asJson()
                 ->get();
         $chart_xrp = Curl::to("https://api.coincap.io/v2/assets/ethereum/history")
-                ->withData(array('interval' => "d1"))
+                ->withData(array("start" => ($now - $start) * 1000, "end" => $now * 1000, "interval" => "d1"))
+                ->asJson()
                 ->get();
 
-        $bitcoinChart = json_decode($chart_btc)->data;
-        $litecoinChart = json_decode($chart_ltc)->data;
-        $ripplecoinChart = json_decode($chart_xrp)->data;
+        $bitcoinChart = ($chart_btc)->data;
+        $litecoinChart = ($chart_ltc)->data;
+        $ripplecoinChart = ($chart_xrp)->data;
         $outputChart = array("bitcoin" => "", "litecoin" => "", "ethereum" => "");
         $usdprice = Currency::where("code", "USD")->first()->price;
         $outputChart['bitcoin'] .= "[";
         foreach ($bitcoinChart as $value) {
             $price = $usdprice * $value->priceUsd;
-            $outputChart['bitcoin'] .= "$price,";
+            $outputChart['bitcoin'] .= "{y: $price, x: $value->time},";
         }
         $outputChart['bitcoin'] .= "]";
 
         $outputChart['litecoin'] .= "[";
         foreach ($litecoinChart as $value) {
             $price = $usdprice * $value->priceUsd;
-            $outputChart['litecoin'] .= "$price,";
+            $outputChart['litecoin'] .= "{y: $price, x: $value->time},";
         }
         $outputChart['litecoin'] .= "]";
 
         $outputChart['ethereum'] .= "[";
         foreach ($ripplecoinChart as $value) {
             $price = $usdprice * $value->priceUsd;
-            $outputChart['ethereum'] .= "$price,";
+            $outputChart['ethereum'] .= "{y: $price, x: $value->time},";
         }
         $outputChart['ethereum'] .= "]";
 
@@ -418,28 +430,37 @@ class DashboardController extends Controller {
         $ticket = Ticket::where("id", $ticket_id)->first();
         if ($ticket !== null) {
             $files = array();
-            foreach ($request->file('files') as $file) {
-                $name = $file->getClientOriginalName();
-                $path = $file->store('usersfiles');
-                $files[] = array("name" => url("/usersfiles/$path"), "name" => $name);
+            if ($request->has($files)) {
+                if (is_array($request->file('files'))) {
+                    foreach ($request->file('files') as $file) {
+                        $name = $file->getClientOriginalName();
+                        $path = $file->store('usersfiles');
+                        $files[] = array("link" => url("/files/$path"), "name" => $name);
+                    }
+                }
             }
-            $ticket->status = "2";
-            return $ticket->addMessage($request->text, $files);
+            $ticket->type = 1;
+            $ticket->status = "پاسخ کاربر";
+            $ticket->addMessage($request->text, $files);
+            return redirect("/dashboard/ticket/$ticket_id");
         } else {
-            return false;
+            return redirect("/dashboard/ticket/$ticket_id");
         }
     }
 
     public function getFile($filename, Request $request) {
-        return Storage::download("files/$filename");
+        return Storage::download("usersfiles/$filename");
     }
 
+    // Type 1 - Waiting for Admin
+    // Type 2 - Wating for User
+    // Type 3 - Closed
     public function newTicket(Request $request) {
         $user = session()->get("user");
         $ticket = new Ticket();
         $ticket->user_id = $user->id;
         $ticket->name = $request->name;
-        $ticket->status = "1";
+        $ticket->status = "پاسخ کاربر";
         $ticket->priority = $request->priority;
         $ticket->to = $request->to;
         $ticket->type = 1;
@@ -454,9 +475,9 @@ class DashboardController extends Controller {
                 }
             }
             $ticket->addMessage($request->text, $files);
-            return redirect("/dashboard/ticket/$ticket->id");
+            return response()->json(array("result" => true, "redirect" => "/dashboard/ticket/$ticket->id"));
         } else {
-            return redirect("/dashboard/tickets/new");
+            return response()->json(array("result" => false, "redirect" => "/dashboard/tickets/new"));
         }
     }
 
@@ -587,11 +608,10 @@ class DashboardController extends Controller {
         $categories = FaqCategory::all();
         return view("dashboard.faq", array("user" => session()->get("user"), "categories" => $categories));
     }
-    
+
     public function knowledgePage(Request $request) {
         $categories = FaqCategory::all();
         return view("dashboard.knowledge", array("user" => session()->get("user"), "categories" => $categories));
     }
-
 
 }

@@ -243,7 +243,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             $("#paybox").show();
                             $("#exchangebox").hide();
                         } else {
-                            Swal2.fire("آدرس کیف‌پول اشتباه است! ", "", "error");
+                            if (data.result) {
+                                Swal2.fire("حساب شما احراز هویت نشده!", "", "error");
+                            } else {
+                                Swal2.fire("آدرس کیف‌پول اشتباه است! ", "", "error");
+                            }
+
                         }
                         $("#exchangebtn").prop("disabled", false);
                     });

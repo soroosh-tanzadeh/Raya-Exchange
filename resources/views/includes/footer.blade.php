@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 use App\Option;
 ?>
 <!-- BEGIN: Footer-->
@@ -36,7 +37,9 @@ use App\Option;
 <!-- END: Page backdrops-->
 <!-- CORE PLUGINS-->
 
-<script> var adminfee = {{ Option::getOption("admin_fee") }}; </script>
+<script> var adminfee = {{ Option::getOption("admin_fee") }};</script>
+
+<script> var isVerified = {{ Option::isVerified() }}; </script>
 
 <link href="/assets/vendors/DataTables/datatables.min.css" rel="stylesheet" type="text/css"/>
 <script src="/assets/vendors/jquery/dist/jquery.min.js"></script>
@@ -65,6 +68,7 @@ use App\Option;
 <script src="/assets/js/numeral.js"></script><!-- CORE SCRIPTS-->
 <script src="/assets/js/qrcode.js"></script><!-- CORE SCRIPTS-->
 <script src="/assets/js/app.js"></script><!-- PAGE LEVEL SCRIPTS-->
+<script src="/assets/vendors/summernote/dist/summernote-bs4.min.js"></script><!-- CORE SCRIPTS-->
 <script src="/assets/js/admin.js"></script>
 <script src="/assets/js/ticker.js" type="text/javascript"></script>
 <script src="/assets/js/scripts.js" type="text/javascript"></script>

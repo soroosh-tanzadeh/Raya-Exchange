@@ -56,7 +56,6 @@ $usdprice = Currency::where("code", "USD")->first()->price;
                     <h1 class="page-title page-title-sep">رمز‌ارزها</h1>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html"><i class="la la-home font-20"></i></a></li>
-                        <li class="breadcrumb-item">برگه ها</li>
                         <li class="breadcrumb-item">قیمت لحظه‌ای</li>
                     </ol>
                 </div>

@@ -1080,3 +1080,6 @@ div.stockTicker .quote {
     margin:0 !important;
     padding: 20px;
 }
+#editor-container{
+    height: 200px !important;
+}

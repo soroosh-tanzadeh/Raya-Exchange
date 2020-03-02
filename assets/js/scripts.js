@@ -138,6 +138,14 @@ toastr.options = {
 
 $(document).ready(function () {
 
+
+    $("button[type='submit']").click(function () {
+        if (!isVerified) {
+            Swal.fire("خطا", "حساب شما احراز هویت نشده!", "error");
+            return false;
+        }
+    });
+
     var pathname = window.location.pathname;
     $("#theulsidebar li").each(function () {
         var href = $(this).children("a").attr("href");

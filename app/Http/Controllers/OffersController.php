@@ -14,7 +14,10 @@ class OffersController extends Controller {
     public function getBuyOffers(DataTables $datatable, Request $request) {
         $user = session()->get("user");
         $offers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("is_active", true)->where("type", "buy")->where("is_selled", false)->where("user_id", "!=", $user->id)->select('users.name', 'coin_offers.*');
-        if ($request->has("coin")) {
+        if (!$request->has("list")) {
+            $offers = $offers->limit(10);
+        }
+        if ($request->has("coin") && $request->input("coin") !== "more") {
             return Datatables::eloquent($offers->where("coin", $request->coin)->where("is_active", true))->addColumn('action', function ($offer) {
                         return '<a data-toggle="tooltip" title="" data-original-title="فروش"  href="/dashboard/offerpage?offer=' . $offer->id . '" class="text-success font-18"><i class="ft-thumbs-up"></i></a>';
                     })->editColumn('created_at', function($offer) {
@@ -88,7 +91,10 @@ class OffersController extends Controller {
     public function getSellOffers(Request $request) {
         $user = session()->get("user");
         $offers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("is_active", true)->where("type", "buy")->where("is_selled", false)->where("user_id", "!=", $user->id)->select('users.name', 'coin_offers.*');
-        if ($request->has("coin")) {
+        if (!$request->has("list")) {
+            $offers = $offers->limit(10);
+        }
+        if ($request->has("coin") && $request->input("coin") !== "more") {
             return Datatables::eloquent($offers->where("coin", $request->coin))->addColumn('action', function ($offer) {
                         return '<a data-toggle="tooltip" title="" data-original-title="خرید" href="/dashboard/offerpage?offer=' . $offer->id . '" class="text-success font-18"><i class="ft-shopping-cart"></i></a>';
                     })->editColumn('created_at', function($offer) {

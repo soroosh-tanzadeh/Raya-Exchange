@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Crypt;
 use Ixudra\Curl\Facades\Curl;
 use App\Currency;
 use App\Http\Middleware\UserVerification;
+use App\Http\Middleware\PostVerification;
+
 use App\Http\Middleware\AdminMiddleware;
 use App\Activity;
 
@@ -51,7 +53,7 @@ Route::get("/getusdprice", "DashboardController@getUSD");
 
 // Dashboard Route
 Route::get("/files/{filename}", "DashboardController@getFile")->middleware(Authentication::class);
-Route::get("/dashboard", "DashboardController@index")->middleware(UserVerification::class);
+Route::get("/dashboard", "DashboardController@index")->middleware(Authentication::class);
 
 // Tickets
 Route::get("/dashboard/tickets", "DashboardController@tickets")->middleware(Authentication::class);
@@ -69,14 +71,15 @@ Route::get("/dashboard/mywallet", "DashboardController@walletPage")->middleware(
 Route::post("/dashboard/newwallet", "DashboardController@newWallet")->middleware(UserVerification::class);
 
 // Payment
-Route::get("/dashboard/buyoffer", "DashboardController@offerPage")->middleware(UserVerification::class);
+Route::get("/dashboard/buyoffer", "DashboardController@offerPage")->middleware(Authentication::class);
+
 Route::any('/dashboard/newoffer/', 'DashboardController@newoffer')->middleware(UserVerification::class);
 Route::post('/dashboard/newbuyoffer', 'DashboardController@newofferBuy')->middleware(UserVerification::class);
 Route::get('/dashboard/offers/', 'DashboardController@offersList')->middleware(UserVerification::class);
 Route::get('/dashboard/myoffers/', 'DashboardController@myoffers')->middleware(UserVerification::class);
-Route::get('/dashboard/exchange', 'ExchangeController@index')->middleware(UserVerification::class);
-Route::post("/exchange", "ExchangeController@exchangeRequest")->middleware(UserVerification::class);
-Route::get("/get_estimate", "ExchangeController@getEstimate");
+Route::get('/dashboard/exchange', 'ExchangeController@index')->middleware(Authentication::class);
+Route::post("/exchange", "ExchangeController@exchangeRequest")->middleware(PostVerification::class);
+Route::get("/get_estimate", "ExchangeController@getEstimate")->middleware(Authentication::class);
 Route::get('/dashboard/crypto', 'TransactionsController@crypto')->middleware(UserVerification::class);
 Route::get('/dashboard/rials', 'TransactionsController@rials')->middleware(UserVerification::class);
 Route::get('/dashboard/offerpage', 'PaymentController@offerPage')->middleware(UserVerification::class);
@@ -121,8 +124,8 @@ Route::post("/coindetail", "DashboardController@coinDetail")->middleware(UserVer
 Route::post("/dashboard/canceloffer", "DashboardController@cancelOffer")->middleware(UserVerification::class);
 
 //FAQ
-Route::get("/dashboard/faq", "DashboardController@faqPage")->middleware(UserVerification::class);
-Route::get("/dashboard/knowledge", "DashboardController@knowledgePage")->middleware(UserVerification::class);
+Route::get("/dashboard/faq", "DashboardController@faqPage")->middleware(Authentication::class);
+Route::get("/dashboard/knowledge", "DashboardController@knowledgePage")->middleware(Authentication::class);
 
 
 //Bank Account
@@ -132,10 +135,13 @@ Route::get("/dashboard/checkouts", "TransactionsController@checkouts")->middlewa
 Route::post("/checkoutrequest", "TransactionsController@rialCheckouts")->middleware(UserVerification::class);
 Route::post("/coin/checkoutrequest", "TransactionsController@coinCheckouts")->middleware(UserVerification::class);
 
-
 Route::any("/getcoinhis", "DashboardController@coinHistory24")->middleware(UserVerification::class);
+
+
 // Affilate 
 Route::get("/dashboard/affilate", "AffilateController@index")->middleware(UserVerification::class);
+
+
 /**
  * End Users Routers
  */

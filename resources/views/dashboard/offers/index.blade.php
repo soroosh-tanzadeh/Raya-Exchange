@@ -75,38 +75,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
                                 <div class="tab-content">
                                     <div id="bitcoin" class="tab-pane fade active show">
-                                        <<!-- TradingView Widget BEGIN -->
+                                        <!-- TradingView Widget BEGIN -->
                                         <div class="tradingview-widget-container">
-                                            <div id="tradingview_f8db7" style="height: 600px"></div>
-                                            <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BITSTAMP-BTCUSD/" rel="noopener" target="_blank"><span class="blue-text">BTCUSD Chart</span></a> by TradingView</div>
+                                            <div id="tradingview_f7b3f" style="height: 600px"></div>
                                             <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
                                             <script type="text/javascript">
                                                 new TradingView.widget(
                                                         {
                                                             "autosize": true,
                                                             "symbol": "BITSTAMP:BTCUSD",
-                                                            "interval": "60",
+                                                            "interval": "240",
                                                             "timezone": "Asia/Tehran",
                                                             "theme": "Dark",
                                                             "style": "1",
-                                                            "locale": "fa_IR",
+                                                            "locale": "en",
                                                             "toolbar_bg": "#f1f3f6",
-                                                            "enable_publishing": true,
+                                                            "enable_publishing": false,
                                                             "withdateranges": true,
                                                             "hide_side_toolbar": false,
                                                             "allow_symbol_change": true,
-                                                            "details": true,
                                                             "studies": [
                                                                 "MACD@tv-basicstudies",
                                                                 "MASimple@tv-basicstudies",
                                                                 "RSI@tv-basicstudies",
                                                                 "Volume@tv-basicstudies"
                                                             ],
-                                                            "container_id": "tradingview_f8db7"
+                                                            "container_id": "tradingview_f7b3f"
                                                         }
                                                 );
                                             </script>
                                         </div>
+                                        <!-- TradingView Widget END -->
                                         <!-- TradingView Widget END -->
                                     </div>
                                 </div>
@@ -244,9 +243,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                     <table class="table table-hover compact-table">
                                         <thead class="thead-light">
                                             <tr>
-                                                <th>ارز</th>
+                                                <th>شماره سفارش</th>
+                                                <th>نوع ارز</th>
                                                 <th>مقدار</th>
-                                                <th>قیمت - در این لحظه</th>
+                                                <th>قیمت در لحظه سفارش</th>
+                                                <th>نوع معامله</th>
                                                 <th>تاریخ ایجاد</th>
                                                 <th>وضعیت</th>
                                                 <th></th>
@@ -255,10 +256,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         <tbody>
                                             @foreach($offers as $offer)
                                             <tr>
-                                                <td>{{ $offer->coin }}</td>
+                                                <td>{{ $offer->id }}</td>
+                                                <td>
+                                                    {{ $offer->coin }}
+                                                    <img src="/assets/icons/{{ strtolower($coins[$offer->coin]->symbol) }}.png" style="max-width: 30px;"/>
+
+                                                </td>
                                                 <td>{{ $offer->amount }}</td>
                                                 <td><?php
-                                                    $priceInToman = $coins[$offer->coin]->price_in_toman_int * $offer->amount;
+                                                    $priceInToman = ($offer->price_pre * $offer->amount) / $offer->max_buy;
                                                     $price_in_toman = "";
                                                     if (($priceInToman >= 1000) & ($priceInToman < 1000000)) {
                                                         $price = $priceInToman / 1000;
@@ -276,6 +282,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                     echo $price_in_toman;
                                                     ?></td>
                                                 <td>{{ $offer->created_at }}</td>
+                                                <td>
+                                                    @if($offer->type === "sell")
+                                                    فروش
+                                                    @else
+                                                    خرید
+                                                    @endif
+                                                </td>
                                                 <td>
                                                     @if($offer->is_selled)
                                                     فروخته شده

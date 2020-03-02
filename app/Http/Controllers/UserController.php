@@ -47,12 +47,12 @@ class UserController extends Controller {
             $code->expires_on = time() + 7200;
             $save = $code->save();
             $phone = $user->phone_number;
-            $result = Curl::to("http://rayaex.webflax.ir/sendvcode?code=$verificationCode&phone=$phone&token=e5t9mxv2wzu3bmwzx0zymkgclofm78")->asJson()->get();
+            $result = Curl::to("http://rayaex.webflax.ir/SMSService/sendvcode?code=$verificationCode&phone=$phone&token=e5t9mxv2wzu3bmwzx0zymkgclofm78")->asJson()->get();
             session()->put("user_id", $user->id);
             return response()->json(array("result" => $result));
         }
-    }
-
+    }   
+ 
     public function verifyCode(Request $request) {
         $code = $request->code;
         $user_id = session()->get("user_id");
@@ -60,7 +60,7 @@ class UserController extends Controller {
         if ($result !== null) {
             $user = User::where("id", $user_id)->first();
             $verificationCode = mt_rand(1111111, 9999999);
-            $result = Curl::to("http://rayaex.webflax.ir/sendpassword?code=$verificationCode&phone=$user->phone_number&token=e5t9mxv2wzu3bmwzx0zymkgclofm78")->asJson()->get();
+            $result = Curl::to("http://rayaex.webflax.ir/SMSService/sendpassword?code=$verificationCode&phone=$user->phone_number&token=e5t9mxv2wzu3bmwzx0zymkgclofm78")->asJson()->get();
             $user->password = Crypt::encryptString($verificationCode);
             $user->save();
             session()->put("user", $user);

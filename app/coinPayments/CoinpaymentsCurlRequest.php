@@ -60,7 +60,7 @@ class CoinpaymentsCurlRequest {
 
             // Generate the HMAC hash from the query string and private key
             $hmac = hash_hmac('sha512', $post_fields, $this->private_key);
-
+           // echo $hmac;
             // Check the cURL handle has not already been initiated
             if ($this->curl_handle === null) {
 
@@ -77,7 +77,6 @@ class CoinpaymentsCurlRequest {
 
             // Set HTTP POST fields for cURL
             curl_setopt($this->curl_handle, CURLOPT_POSTFIELDS, $post_fields);
-
             // Execute the cURL session
             $response = curl_exec($this->curl_handle);
 
