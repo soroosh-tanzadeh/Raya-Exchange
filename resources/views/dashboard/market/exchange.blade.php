@@ -19,7 +19,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <head>
         @include("includes.head")
         <title>Raya-EX | تبادل ارز دیجیتال</title>
+        <style>
+            #walletAddressInput{
+                width: calc(50% - 37px);
+            }
 
+            @media (max-width: 760px){
+                #walletAddressInput{
+                    width: 100%;
+                }
+            }
+        </style>
     </head>
     <body>
         @include("includes.header")
@@ -50,60 +60,62 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         <div id="walletqrcode"> </div>
                                         <div id="walletAddress" class="my-3"></div>
                                     </div>
-                                </div>
-                                <form action="javascript:;" id="exchangebox">
-                                    <div class="form-group mb-4">
-                                        <h4 class="col-form-label px-3">یک کوین را انتخاب کنید</h4>
-                                        <div class="d-flex justify-content-center align-items-center">
-                                            <select class="form-control mx-3" required id="from_coin" style="width: 40%">
-                                                <option value="" data-icon="/assets/icons/raya"></option>
-                                                @foreach($currencies as $currency)
-                                                <option value="{{ $currency->symbol }}" data-icon="https://simpleswap.io{{ $currency->image }}">{{ $currency->name }}</option>
-                                                @endforeach
-                                            </select>
-
-                                            <div class="d-inline-flex justify-content-center align-items-center mx-3" style="width: 60px"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
-
-                                            <select class="form-control" id="to_coin" required style="width: 40%">
-                                                <option value="" data-icon="/assets/icons/raya"></option>
-                                                @foreach($currencies as $currency)
-                                                <option value="{{ $currency->symbol }}" data-icon="https://simpleswap.io{{ $currency->image }}">{{ $currency->name }}</option>
-                                                @endforeach
-                                            </select>
+                                    <span> ارز مورد نظر را به آدرس مشخص شده ارسال نماید</span>
+                                    <div class="float-left">
+                                        مهلت واریز
+                                        <div class="counter">
+                                            <span id="minute">20</span> : <span id="sec">0</span>
                                         </div>
                                     </div>
-                                    <h5 class="mb-3 mt-4">مقدار</h5>
+                                </div>
+                                <form action="javascript:;" id="exchangebox">
                                     <div class="form-group mb-5">
                                         <div class="form-row">
-                                            <div class="col">
-                                                <div class="input-group-icon input-group-icon-right"><input class="form-control" id="amount" type="text" required placeholder="0.01023000"><span class="input-icon input-icon-right"><i class="cc BCN-alt text-warning font-13"></i></span></div>
-                                            </div>
-                                            <div class="d-inline-flex justify-content-center align-items-center" style="width: 60px"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
-                                            <div class="col">
+                                            <div class="col-lg my-2">
                                                 <div class="input-group">
-                                                    <input class="form-control" id="target-coin"  readonly type="text" placeholder="0">
+                                                    <input class="form-control" id="amount" type="text" required placeholder="0.01023000" style="width: 50%;height: 45px">
+                                                    <div style="width: 50%">
+                                                        <select class="form-control mx-3" required id="from_coin">
+                                                            <option value="" data-icon="/assets/icons/raya"></option>
+                                                            @foreach($currencies as $currency)
+                                                            <option value="{{ $currency->symbol }}" data-icon="https://simpleswap.io{{ $currency->image }}">{{ $currency->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-
+                                            <div class="d-lg-inline-flex d-none justify-content-center align-items-center" style="width: 60px"><i class="fas fa-arrow-left text-muted font-16"></i></div>
+                                            <div class="col-lg my-2">
+                                                <div class="input-group">  
+                                                    <input class="form-control" id="target-coin" readonly type="text" placeholder="0" style="width: 50%;height: 45px">
+                                                    <div style="width: 50%">
+                                                        <select class="form-control" id="to_coin" required style="width: 50%">
+                                                            <option value="" data-icon="/assets/icons/raya"></option>
+                                                            @foreach($currencies as $currency)
+                                                            <option value="{{ $currency->symbol }}" data-icon="https://simpleswap.io{{ $currency->image }}">{{ $currency->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>    
                                         <label class="mt-4">آدرس والت</label>
                                         <input class="form-control" type="text" id="walletAddressInput" required placeholder="آدرس کیف پول مقصد را وارد کنید">
                                     </div>
-                                    <div class="text-right" style="display: flex;justify-content: center;align-items: flex-end;flex-direction: column;">
-                                        <button class="btn btn-danger btn-rounded" id="exchangebtn" type="submit" style="min-width: 200px">تبادل</button>
-                                        <div class="mt-4 px-1 text-left" style="width: 300px" id="msg">
-
-                                        </div>
+                                    <div>
+                                        <ul style="list-style: decimal">
+                                            <li>ارز مورد نظر را برای مبادله انتخاب کنید</li>
+                                            <li>نرخ تبدیل ارز را بررسی کنید</li>
+                                            <li>ارز را کمتر از حد مشخص شده ارسال نکنید</li>
+                                            <li>آدرس کیف پول را جهت دریافت ارز مورد نظر وارد کنید</li>
+                                        </ul>
                                     </div>
                                 </form>
-                                <div>
-                                    <ul style="list-style: decimal">
-                                        <li>ارز مورد نظر را برای مبادله انتخاب کنید</li>
-                                        <li>نرخ تبدیل ارز را بررسی کنید</li>
-                                        <li>ارز را کمتر از حد مشخص شده ارسال نکنید</li>
-                                        <li>آدرس کیف پول را جهت دریافت ارز مورد نظر وارد کنید</li>
-                                        <li>و در آخر ارز مورد نظر را به آدرس مشخص شده ارسال نمایید</li>
-                                    </ul>
+
+                            </div>
+                            <div class="card-footer">
+                                <div class="text-right">
+                                    <button class="btn btn-danger btn-rounded" id="exchangebtn" type="submit" style="min-width: 200px">تبادل</button>
                                 </div>
                             </div>
                         </div>
@@ -123,6 +135,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                     <table class="table table-hover compact-table">
                                         <thead class="thead-light">
                                             <tr>  
+                                                <th>شناسه تبادل</th>
                                                 <th>از ارز</th>
                                                 <th>به ارز</th>
                                                 <th>مقدار</th>
@@ -134,6 +147,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         <tbody>
                                             @foreach($exchanges as $exchange)
                                             <tr>
+                                                <td>{{ $exchange->exchange_id }}</td>
                                                 <td>{{ $exchange->from }}</td>
                                                 <td>{{ $exchange->to }}</td>
                                                 <td>{{ $exchange->amount }} {{ $exchange->from }}</td>
@@ -142,8 +156,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                 <td>
                                                     @if($exchange->status === 0)
                                                     <text class="text-warning">در انتظار ارسال ارز</text>
+                                                    @elseif($exchange->status === -5)
+                                                    <text class="text-danger">لغو شده</text>
                                                     @else
-                                                    <text class="text-muted">انجام شده/لغو شده</text>
+                                                    <text class="text-danger">انجام شده</text>
                                                     @endif
                                                 </td>
                                             </tr>
@@ -234,24 +250,53 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     var amount = $("#amount").val();
                     var wallet = $("#walletAddressInput").val();
                     $(this).prop("disabled", true);
-                    $.post("/exchange", {_token: $("meta[name='csrf-token']").attr("content"), from: from_coin, to: to_coin, amount: amount, wallet: wallet}, function (data) {
-                        if (data.address_from) {
-                            $("#walletAddress").text(data.address_from);
-                            qrcode.makeCode(data.address_from);
-                            $("#amoutcoin").text(data.amount_from + "" + from_coin);
-                            $("#targetamount").text(data.amount_to + "" + to_coin);
-                            $("#paybox").show();
-                            $("#exchangebox").hide();
-                        } else {
-                            if (data.result) {
-                                Swal2.fire("حساب شما احراز هویت نشده!", "", "error");
-                            } else {
-                                Swal2.fire("آدرس کیف‌پول اشتباه است! ", "", "error");
-                            }
+                    try {
+                        $.post("/exchange", {_token: $("meta[name='csrf-token']").attr("content"), from: from_coin, to: to_coin, amount: amount, wallet: wallet}, function (data) {
+                            if (data.address_from) {
+                                $("#walletAddress").text(data.address_from);
+                                qrcode.makeCode(data.address_from);
+                                $("#amoutcoin").text(data.amount_from + "" + from_coin);
+                                $("#targetamount").text(data.amount_to + "" + to_coin);
+                                $("#paybox").show();
+                                $("#exchangebox").hide();
+                                setInterval(function () {
+                                    var sec = parseInt($("#sec").text());
+                                    var minute = parseInt($("#minute").text());
+                                    sec--;
+                                    if (sec < 0) {
+                                        sec = 59;
+                                        $("#sec").text(sec);
+                                        minute--;
+                                    } else {
+                                        $("#sec").text(sec);
+                                    }
 
-                        }
+                                    if (minute < 0) {
+                                        Swal.fire("پایان مهلت پرداخت", "مهلت پرداخت به پایان رسید", "error");
+                                        $("#paybox").hide(1000);
+                                        $("#exchangebox").show(1000);
+                                    } else {
+                                        $("#minute").text(minute);
+                                    }
+
+                                }, 1000);
+                            } else {
+                                $("#exchangebtn").prop("disabled", false);
+                                if (data.result) {
+                                    Swal.fire("حساب شما احراز هویت نشده!", "", "error");
+                                } else {
+                                    Swal.fire("آدرس کیف‌پول اشتباه است! ", "", "error");
+                                }
+
+                            }
+                        }).fail(function (xhr, status, error) {
+                            Swal.fire("اطلاعات را کامل وارد کنید!", "", "error");
+                            $("#exchangebtn").prop("disabled", false);
+                        });
+                    } catch (e) {
+                        Swal.fire("اطلاعات را کامل وارد کنید!", "", "error");
                         $("#exchangebtn").prop("disabled", false);
-                    });
+                    }
                 });
             });
         </script>

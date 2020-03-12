@@ -21,8 +21,8 @@ sellersTable = $("#buyofferstable").DataTable({
     columns: [
         {data: 'name'},
         {data: 'coin'},
-        {data: 'min_buy'},
         {data: 'amount'},
+        {data: 'min_buy'},
         {data: 'price_pre'},
         {data: 'created_at'},
         {data: 'action', orderable: false, searchable: false}
@@ -43,8 +43,8 @@ buyersTable = $("#sellofferstable").DataTable({
     columns: [
         {data: 'name'},
         {data: 'coin'},
-        {data: 'min_buy'},
         {data: 'amount'},
+        {data: 'min_buy'},
         {data: 'price_pre'},
         {data: 'created_at'},
         {data: 'action', orderable: false, searchable: false}

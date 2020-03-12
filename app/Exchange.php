@@ -70,7 +70,7 @@ class Exchange extends Model {
     public static function getCoins() {
         $requestURL = "https://api.coincap.io/v2/assets";
         $response = Curl::to($requestURL)
-                ->withData(array('ids' => "bitcoin,ethereum,litecoin,ripple,monero,eos,bitcoin-cash,neo,dogecoin,dash,etc,zec,ont,trx,bnb,bat,nem,xml,usdt,ada,miota"))
+                ->withData(array('ids' => "usdt,bitcoin,ethereum,litecoin,ripple,monero,eos,bitcoin-cash,neo,dogecoin,dash,etc,zec,ont,trx,bnb,bat,nem,xml,ada,miota"))
                 ->get();
         $coins_raw = json_decode($response)->data;
         $coins = array();

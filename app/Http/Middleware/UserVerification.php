@@ -21,7 +21,7 @@ class UserVerification {
             if ($select !== null) {
                 if ($select->verified_at !== null) {
                     session()->put('user', $select);
-                } elseif ($select->name !== null) {
+                } elseif ($select->files !== null) {
                     return redirect('/dashboard/notverified');
                 } else {
                     return redirect('/dashboard/signup');

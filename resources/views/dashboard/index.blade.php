@@ -50,12 +50,12 @@ $activities = Activity::getActivities();
                                 <div class="mb-2"><i class="cc BTC-alt font-40 text-warning"></i></div>
                                 <div class="mb-3 text-muted font-16">بیت کوین</div>
                                 <div class="d-flex justify-content-center align-items-center mb-1">
-                                    <div class="h5 m-0 font-20"><span>{{ number_format($coins['bitcoin']->priceUsd,3) }}</span><span class="font-weight-normal"> $</span></div>
+                                    <div class="h5 m-0 font-20"><span>{{ number_format($coins['bitcoin']->priceUsd,2) }}</span><span class="font-weight-normal">$</span></div>
                                     <div class="mx-3">
                                         <span class="@if($coins['bitcoin']->changePercent24Hr > 0) text-success @else text-danger @endif">{{ abs(round($coins['bitcoin']->changePercent24Hr,2)) }}٪</span><i class="@if($coins['bitcoin']->changePercent24Hr > 0) ft-arrow-up text-success @else ft-arrow-down text-danger @endif"></i>
                                     </div>
                                 </div>
-                                <div class="font-16">{{ $coins['bitcoin']->price_in_toman }}</div>
+                                <div class="font-16 coinpriceToman" data-coin="{{ $coins['bitcoin']->id }}">{{ $coins['bitcoin']->price_in_toman }}</div>
                                 <hr>
                                 <div class="flexbox"><a href="/dashboard/buyoffer">خرید</a><a class="text-warning" href="/dashboard/buyoffer">فروش</a><a class="text-secondary" href="/dashboard/exchange">تبادل</a></div>
                             </div>
@@ -67,14 +67,14 @@ $activities = Activity::getActivities();
                                 <div class="mb-2"><i class="cc ETC font-40 text-primary"></i></div>
                                 <div class="mb-3 text-muted font-16">اتریم</div>
                                 <div class="d-flex justify-content-center align-items-center mb-1">
-                                    <div class="h5 m-0 font-20"><span>{{ number_format($coins['ethereum']->priceUsd,2) }}</span><span class="font-weight-normal"> $</span></div>
+                                    <div class="h5 m-0 font-20"><span>{{ number_format($coins['ethereum']->priceUsd,2) }}</span><span class="font-weight-normal">$</span></div>
                                     <div class="mx-3">
                                         <span class="@if($coins['ethereum']->changePercent24Hr > 0) text-success @else text-danger @endif">{{ abs(round($coins['ethereum']->changePercent24Hr,2)) }}٪</span><i class="@if($coins['ethereum']->changePercent24Hr > 0) ft-arrow-up text-success @else ft-arrow-down text-danger @endif"></i>
                                     </div>
                                 </div>
-                                <div class="font-16">{{ $coins['ethereum']->price_in_toman }}</div>
+                                <div class="font-16 coinpriceToman" data-coin="{{ $coins['ethereum']->id }}">{{ $coins['ethereum']->price_in_toman }}</div>
                                 <hr>
-                                <div class="flexbox"><a href="/dashboard/buyoffer">خرید</a><a class="text-warning" href="/dashboard/buyoffer">فروش</a><a class="text-secondary" href="/dashboard/exchange">تبادل</a></div>
+                                <div class="flexbox" ><a href="/dashboard/buyoffer">خرید</a><a class="text-warning" href="/dashboard/buyoffer">فروش</a><a class="text-secondary" href="/dashboard/exchange">تبادل</a></div>
                             </div>
                         </div>
                     </div>
@@ -84,12 +84,12 @@ $activities = Activity::getActivities();
                                 <div class="mb-2"><i class="cc LTC-alt font-40 text-secondary mb-1"></i></div>
                                 <div class="mb-3 text-muted font-16">لایت کوین</div>
                                 <div class="d-flex justify-content-center align-items-center">
-                                    <div class="h5 m-0 font-20"><span>{{ number_format($coins['litecoin']->priceUsd,2) }}</span><span class="font-weight-normal"> $</span></div>
+                                    <div class="h5 m-0 font-20"><span>{{ number_format($coins['litecoin']->priceUsd,2) }}</span><span class="font-weight-normal">$</span></div>
                                     <div class="mx-3">
                                         <span class="@if($coins['litecoin']->changePercent24Hr > 0) text-success @else text-danger @endif">{{ abs(round($coins['litecoin']->changePercent24Hr,2)) }}٪</span><i class="@if($coins['litecoin']->changePercent24Hr > 0) ft-arrow-up text-success @else ft-arrow-down text-danger @endif"></i>
                                     </div>
                                 </div>
-                                <div class="font-16">{{ $coins['litecoin']->price_in_toman }}</div>
+                                <div class="font-16 coinpriceToman" data-coin="{{ $coins['litecoin']->id }}">{{ $coins['litecoin']->price_in_toman }}</div>
                                 <hr>
                                 <div class="flexbox"><a href="/dashboard/buyoffer">خرید</a><a class="text-warning" href="/dashboard/buyoffer">فروش</a><a class="text-secondary" href="/dashboard/exchange">تبادل</a></div>
                             </div>
@@ -101,12 +101,12 @@ $activities = Activity::getActivities();
                                 <div class="mb-2"><i class="cc USDT-alt font-40 text-success mb-1"></i></div>
                                 <div class="mb-3 text-muted font-16">تتر</div>
                                 <div class="d-flex justify-content-center align-items-center">
-                                    <div class="h5 m-0 font-20"><span>{{ number_format($coins['tether']->priceUsd,2) }}</span><span class="font-weight-normal"> $</span></div>
+                                    <div class="h5 m-0 font-20"><span>{{ number_format($coins['tether']->priceUsd,2) }}</span><span class="font-weight-normal">$</span></div>
                                     <div class="mx-3">
                                         <span class="@if($coins['tether']->changePercent24Hr > 0) text-success @else text-danger @endif">{{ abs(round($coins['tether']->changePercent24Hr,2)) }}٪</span><i class="@if($coins['tether']->changePercent24Hr > 0) ft-arrow-up text-success @else ft-arrow-down text-danger @endif"></i>
                                     </div>
                                 </div>
-                                <div class="font-16">{{ $coins['tether']->price_in_toman }}</div>
+                                <div class="font-16 coinpriceToman" data-coin="{{ $coins['tether']->id }}">{{ $coins['tether']->price_in_toman }}</div>
                                 <hr>
                                 <div class="flexbox"><a href="/dashboard/buyoffer">خرید</a><a class="text-warning" href="/dashboard/buyoffer">فروش</a><a class="text-secondary" href="/dashboard/exchange">تبادل</a></div>
                             </div>
@@ -127,46 +127,50 @@ $activities = Activity::getActivities();
                                 <div class="tab-content">
                                     <div id="menu1" class="tab-pane fade active show">
                                         <h5 class="box-title mb-4"><i class="ft-zap"></i>ایجاد پیشنهاد فروش</h5>
-                                        <h5 class="mb-3 mt-4">مقدار مورد نظر :</h5>
                                         <form action="/dashboard/newoffer" method="POST">
                                             @csrf
                                             <input type="hidden"  value="sell" name="type"/>
                                             <div class="form-group mb-5">
-                                                <select required name="coin" class="form-control coins_select" style="width: 100%">
-                                                    <option value=""></option>
-                                                    @foreach($offerablecoins as $offerablecoin)
-                                                    @if(isset($coins[strtolower($offerablecoin->name)]))
-                                                    <option value="{{ strtolower($offerablecoin->name) }}" data-price="{{ $coins[strtolower($offerablecoin->name)]->price_in_toman_int }}" data-icon="{{ url("/assets/icons/".strtolower($offerablecoin->type_name).".png") }}">{{ $offerablecoin->name }}</option>
-                                                    @endif
-                                                    @endforeach
-                                                </select>
                                                 <div class="form-row mt-1">
-                                                    <div class="col">
+                                                    <div class="col-md">
+                                                        <div style="width: 100%;">
+                                                            <select required name="coin" class="form-control coins_select" style="width: 100%">
+                                                                <option value=""></option>
+                                                                @foreach($offerablecoins as $offerablecoin)
+                                                                @if(isset($coins[strtolower($offerablecoin->name)]))
+                                                                <option value="{{ strtolower($offerablecoin->name) }}" data-symbol="{{ strtoupper($offerablecoin->type_name) }}" data-price="{{ $coins[strtolower($offerablecoin->name)]->price_in_toman_int }}" data-icon="{{ url("/assets/icons/".strtolower($offerablecoin->type_name).".png") }}">{{ $offerablecoin->name }}</option>
+                                                                @endif
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
                                                         <div class="input-group-icon input-group-icon-right">
                                                             <input class="form-control" type="text" name="coinـnum" required id="coin-num" placeholder="مقدار">
-                                                            <span class="input-icon input-icon-right coinicon"></span></div>
-                                                        <input class="form-control mt-1" type="text" name="mincoin" required placeholder="حداقل سفارش">
-
-                                                    </div>
-                                                    <div class="d-inline-flex justify-content-center align-items-center" style="width: 60px"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
-                                                    <div class="col d-flex justify-content-center flex-column">
-                                                        <div class="input-group-icon input-group-icon-right w-100 my-2">
-                                                            <input class="form-control" type="text" placeholder="قیمت به تومان" required name="price_toman" id="price-toman"><span class="input-icon input-icon-right">تومان</span>
+                                                            <span class="input-icon input-icon-right coinicon"></span>
                                                         </div>
-                                                        <div class="bg-warning text-white text-center rounded p-2 my-2">
-                                                            مبلغی که شما از فروش این مقدار ارز دیجیتال دریافت می‌کنید
+                                                        <input class="form-control mt-1" type="text" name="mincoin" required placeholder="حداقل سفارش">
+                                                    </div>
+                                                    <div class="col-md-1 d-inline-flex justify-content-center align-items-center"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
+                                                    <div class="col-md d-flex justify-content-center flex-column">
+                                                        <div class="input-group-icon input-group-icon-right w-100 my-2">
+                                                            <input class="form-control" type="text" placeholder="قیمت پیشنهادی شما" required name="price_toman" id="offerprice"><span class="input-icon input-icon-right">تومان</span>
+                                                        </div>
+                                                        <p>
+                                                            <span style="float:right;">قیمت پیشنهادی ما برای</span> <span id="price-toman"></span>
+                                                        </p>
+                                                        <div class="bg-warning text-white text-center rounded p-2 my-2" style="font-size: 12px;">
+                                                            مبلغی که شما از فروش <span id="selloffercoin"></span>  دریافت می‌کنید
                                                             <p class="text-center" id="totalsellprice">
-                                                                مبلغ را وارد کنید
+                                                                قیمت پیشنهادی خود را وارد کنید
                                                             </p>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-8">
+                                                <div class="col-md-8">
                                                     <ul type="disc">
                                                         <li>قیمت پیشنهادی ما همیشه با توجه نوسانات قیمت جهانی ارزهای دیجیتال و با نسبت ثابت تغییر خواهد کرد</li>
-                                                        <li>قیمت پیشنهادی ما همیشه ۲٪ بیشتر از قیمت چهانی ارز انتخابی خواهد بود.</li>
+                                                        <li>قیمت پیشنهادی ما همیشه ۱٪ بیشتر از قیمت جهانی ارز انتخابی خواهد بود.</li>
                                                     </ul>
 
                                                 </div>
@@ -178,44 +182,47 @@ $activities = Activity::getActivities();
                                     </div>
                                     <div id="menu2" class="tab-pane">
                                         <h5 class="box-title mb-4"><i class="ft-zap"></i>ایجاد پیشنهاد خرید</h5>
-                                        <h5 class="mb-3 mt-4">مقدار مورد نظر :</h5>
                                         <form action="/dashboard/newoffer" method="POST">
                                             @csrf
                                             <input type="hidden"  value="buy" name="type"/>
                                             <div class="form-group mb-5">
-                                                <select required name="coin" class="form-control coins_select" style="width: 100%">
-                                                    <option value=""></option>
-                                                    @foreach($offerablecoins as $offerablecoin)
-                                                    @if(isset($coins[strtolower($offerablecoin->name)]))
-                                                    <option value="{{ strtolower($offerablecoin->name) }}" data-price="{{ $coins[strtolower($offerablecoin->name)]->price_in_toman_int }}" data-icon="{{ url("/assets/icons/".strtolower($offerablecoin->type_name).".png") }}">{{ $offerablecoin->name }}</option>
-                                                    @endif
-                                                    @endforeach
-                                                </select>
                                                 <div class="form-row mt-1">
-                                                    <div class="col">
+                                                    <div class="col-md">
+                                                        <div style="width: 100%;">
+                                                            <select required name="coin" class="form-control coins_select" style="width: 100%">
+                                                                <option value=""></option>
+                                                                @foreach($offerablecoins as $offerablecoin)
+                                                                @if(isset($coins[strtolower($offerablecoin->name)]))
+                                                                <option value="{{ strtolower($offerablecoin->name) }}" data-symbol="{{ strtoupper($offerablecoin->type_name) }}" data-price="{{ $coins[strtolower($offerablecoin->name)]->price_in_toman_int }}" data-icon="{{ url("/assets/icons/".strtolower($offerablecoin->type_name).".png") }}">{{ $offerablecoin->name }}</option>
+                                                                @endif
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
                                                         <div class="input-group-icon input-group-icon-right">
                                                             <input class="form-control" type="text" name="coinـnum" required id="coinbuy-num" placeholder="مقدار">
                                                             <span class="input-icon input-icon-right coinicon"></span></div>
                                                         <input class="form-control mt-1" type="text" name="mincoin" required placeholder="حداقل سفارش">
-
                                                     </div>
-                                                    <div class="d-inline-flex justify-content-center align-items-center" style="width: 60px"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
-                                                    <div class="col d-flex justify-content-center flex-column">
+                                                    <div class="col-md-1 d-inline-flex justify-content-center align-items-center"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
+                                                    <div class="col-md d-flex justify-content-center flex-column">
                                                         <div class="input-group-icon input-group-icon-right w-100 my-2">
-                                                            <input class="form-control" type="text" placeholder="قیمت به تومان" required name="price_toman" id="pricebuy-toman"><span class="input-icon input-icon-right">تومان</span>
+                                                            <input class="form-control" type="text" placeholder="قیمت به تومان" required name="price_toman"><span class="input-icon input-icon-right">تومان</span>
                                                         </div>
-
+                                                        <p>
+                                                            <span style="float:right;">قیمت پیشنهادی ما برای</span> <span id="pricebuy-toman"></span>
+                                                        </p>
                                                     </div>
+
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-8">
+                                                <div class="col-md-8">
                                                     <ul type="disc">
                                                         <li>قیمت پیشنهادی ما همیشه با توجه نوسانات قیمت جهانی ارزهای دیجیتال و با نسبت ثابت تغییر خواهد کرد</li>
-                                                        <li>قیمت پیشنهادی ما همیشه ۲٪ کمتر از قیمت چهانی ارز انتخابی خواهد بود.</li>
+                                                        <li>قیمت پیشنهادی ما همیشه ۱٪ کمتر از قیمت جهانی ارز انتخابی خواهد بود.</li>
                                                     </ul>
                                                 </div>
-                                                <div class="col-4 text-right">
+                                                <div class="col-md-4 text-right">
                                                     <button class="btn btn-danger btn-rounded" type="submit" style="min-width: 200px">تکمیل سفارش</button>
                                                 </div>
                                             </div>
@@ -228,92 +235,40 @@ $activities = Activity::getActivities();
                     <div class="col-lg-4">
                         <div class="card card-fullheight">
                             <div class="card-header">
-                                <h4 class="m-0">تبادل ارز دیجیتال</h4>
+                                <h4 class="m-0">مبدل ارز</h4>
                             </div>
                             <div class="card-body">
                                 <form action="javascript:;">
                                     <div class="form-group mb-5">
                                         <div class="form-group">
-                                            <div class="input-group-icon input-group-icon-right"><input class="form-control" id="amount" type="number" step="0.0000001" min="0" required placeholder="مقدار ارز دیجیتال"><span class="input-icon input-icon-right"><i class="cc BCN-alt text-warning font-13"></i></span></div>
+                                            <div class="input-group-icon input-group-icon-right"><input class="form-control" id="amount" type="number" step="0.0000001" min="0" required placeholder="مقدار مورد نظر را وارد کنید"></div>
                                         </div>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group px-5">
                                         <div class="d-flex flex-column justify-content-center align-items-center">
                                             <select class="form-control my-1" required id="from_coin" data-icon="http://raya.webflaxco.ir/assets/img/raya-logo.png">
                                                 <option value="" data-icon="http://raya.webflaxco.ir/assets/img/raya-logo.png"></option>
                                                 @foreach($currencies as $currency)
-                                                <option value="{{ $currency->symbol }}" data-icon="/assets/icons/{{ $currency->symbol }}.png">{{ $currency->name }}</option>
+                                                <option value="{{ $currency->symbol }}" data-icon="https://simpleswap.io{{ $currency->image }}">{{ $currency->name }}</option>
                                                 @endforeach
                                             </select>
                                             <div class="d-inline-flex justify-content-center align-items-center my-1"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
                                             <select class="form-control my-1" id="to_coin" required>
                                                 <option value="" data-icon="http://raya.webflaxco.ir/assets/img/raya-logo.png"></option>
                                                 @foreach($currencies as $currency)
-                                                <option value="{{ $currency->symbol }}" data-icon="/assets/icons/{{ $currency->symbol }}.png">{{ $currency->name }}</option>
+                                                <option value="{{ $currency->symbol }}" data-icon="https://simpleswap.io{{ $currency->image }}">{{ $currency->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <input class="form-control" type="text" id="walletAddress" required placeholder="آدرس کیف پول مقصد را وارد کنید">
-                                    </div>
                                     <div class="text-right" style="display: flex;justify-content: center;align-items: flex-end;flex-direction: column;">
-                                        <div class="p-1 text-center w-100 " id="cointarget" style="font-weight: bold;font-size: 1.5rem;direction: ltr;">
-
-                                        </div>
-                                        <button class="btn btn-danger btn-rounded" id="exchangebtn" type="submit" style="min-width: 200px">تبادل</button>
-                                        <div class="p-1 text-left" id="msg">
-
+                                        <div class="p-1 text-center w-100 " id="cointarget" style="font-size: 1.5rem;direction: rtl;">
                                         </div>
                                     </div>
                                 </form>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-7">
-                        <div class="card card-fullheight">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between mb-4">
-                                    <div>
-                                        <h5 class="box-title mb-0">آخرین تراکنش ها</h5>
-                                    </div><a class="text-muted" href="#"><i class="ti-more-alt"></i></a>
-                                </div>
-                                <div class="card-fullwidth-block">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover">
-                                            <thead class="thead-light">
-                                                <tr>
-                                                    <th class="pl-4">نوع ارز</th>
-                                                    <th>مبلغ</th>
-                                                    <th class="pr-4">فعالیت</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($transactions as $transaction)
-                                                <tr>
-                                                    <td class="pl-4"><b>{{ $transaction->coin }}</b></td>
-                                                    <td>{{ $transaction->amount}}</td>
-                                                    <td class="text-success">{{ $transaction->type }}</td>
-                                                </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-5">
-                        <div class="card card-fullheight">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between mb-5">
-                                    <h5 class="box-title mb-0"><i class="ft-activity"></i> آخرین فعالیت های شما </h5>
-                                </div>
-                                <ul class="timeline timeline-default outline-points timeline-danger">
-                                    @foreach($activities as $activity)
-                                    <li class="timeline-item">{{ $activity->text }}<span class="font-13 text-muted ml-2">{{ Jalalian::forge($activity->created_at)->ago() }}</span></li>
-                                    @endforeach
-                                </ul>
+                            <div class="card-footer">
+                                <a class="btn btn-danger btn-rounded" href="/dashboard/exchange" style="min-width: 200px">تبادل</a>
                             </div>
                         </div>
                     </div>
@@ -377,7 +332,7 @@ $activities = Activity::getActivities();
                                     </div>
                                     <div>
                                         <ul class="nav line-tabs line-tabs-solid w-100" role="tablist">
-                                             <li class="nav-item">
+                                            <li class="nav-item">
                                                 <a class="nav-link d-flex align-items-center justify-content-center loadcoinoffers px-1" data-offer="sell" data-coin="bitcoin"data-toggle="tab" role="tab" aria-controls="profile" aria-selected="false">Bitcoin <i class="cc mx-2 BTC-alt font-20 text-warning mb-2"></i></a>
                                             </li>
                                             <li class="nav-item">
@@ -413,6 +368,56 @@ $activities = Activity::getActivities();
                             </div>
                         </div>
                     </div>                    
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-7">
+                        <div class="card card-fullheight">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-4">
+                                    <div>
+                                        <h5 class="box-title mb-0">آخرین تراکنش ها</h5>
+                                    </div><a class="text-muted" href="#"><i class="ti-more-alt"></i></a>
+                                </div>
+                                <div class="card-fullwidth-block">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th class="pl-4">نوع ارز</th>
+                                                    <th>مبلغ</th>
+                                                    <th class="pr-4">فعالیت</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($transactions as $transaction)
+                                                <tr>
+                                                    <td class="pl-4"><b>{{ $transaction->coin }}</b></td>
+                                                    <td>{{ $transaction->amount}}</td>
+                                                    <td class="text-success">{{ $transaction->type }}</td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="card card-fullheight">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-5">
+                                    <h5 class="box-title mb-0"><i class="ft-activity"></i> آخرین فعالیت های شما </h5>
+                                </div>
+                                <ul class="timeline timeline-default outline-points timeline-danger">
+                                    @foreach($activities as $activity)
+                                    <li class="timeline-item">{{ $activity->text }}<span class="font-13 text-muted ml-2">{{ Jalalian::forge($activity->created_at)->ago() }}</span></li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- END: Page content-->
@@ -471,7 +476,6 @@ $(document).ready(function () {
             $("#from_coin").trigger('change.select2');
             $("#to_coin").trigger('change.select2');
         }
-
     });
     $("#amount").on("input", function () {
         var from_coin = $("#from_coin").val();
@@ -480,7 +484,8 @@ $(document).ready(function () {
         if (from_coin !== "" && to_coin !== "") {
             if (amount !== "" && parseFloat(amount) > 0 && parseInt(amount) !== NaN) {
                 $.get("/get_estimate?from=" + from_coin + "&to=" + to_coin + "&amount=" + amount, {}, function (data) {
-                    $("#cointarget").text(amount + " " + from_coin + " = " + data.value + to_coin);
+                    $("#cointarget").html(amount + " " + from_coin.toUpperCase() + " = " + (Math.round((parseFloat(data.value) + Number.EPSILON) * 100) / 100)+ " " + to_coin.toUpperCase() + "<br>"
+                            + "<p style='font-size:14px;' class='text-muted mb-0'>" + "با دقت بیشتر : " + "</p><p style='font-size:14px;' class='text-muted'>" + data.value + to_coin.toUpperCase() + "</p>");
                 });
             }
         } else {

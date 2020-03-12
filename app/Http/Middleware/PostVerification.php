@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\User;
 
 class PostVerification {
 
@@ -20,7 +21,7 @@ class PostVerification {
             if ($select !== null) {
                 if ($select->verified_at !== null) {
                     session()->put('user', $select);
-                } elseif ($select->name !== null) {
+                } elseif ($select->files !== null) {
                     return response()->json(array("result" => false, "msg" => "حساب شما احراز هویت نشده!"));
                 } else {
                     return response()->json(array("result" => false, "msg" => "حساب شما احراز هویت نشده!"));

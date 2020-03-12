@@ -30,13 +30,13 @@ $(".coins_select").select2({
 });
 
 $("#from_coin").select2({
-    placeholder: "انتخاب یک کوین برای ارسال",
+    placeholder: "از",
     templateSelection: iformat,
     templateResult: iformat,
     allowHtml: true
 });
 $("#to_coin").select2({
-    placeholder: "انتخاب کوین دریافتی",
+    placeholder: "به",
     templateSelection: iformat,
     templateResult: iformat,
     allowHtml: true
@@ -52,8 +52,8 @@ $(document).ready(function () {
         columns: [
             {data: 'name'},
             {data: 'coin'},
-            {data: 'min_buy'},
             {data: 'amount'},
+            {data: 'min_buy'},
             {data: 'price_pre'},
             {data: 'created_at'},
             {data: 'action', orderable: false, searchable: false}
@@ -74,8 +74,8 @@ $(document).ready(function () {
         columns: [
             {data: 'name'},
             {data: 'coin'},
-            {data: 'min_buy'},
             {data: 'amount'},
+            {data: 'min_buy'},
             {data: 'price_pre'},
             {data: 'created_at'},
             {data: 'action', orderable: false, searchable: false}
@@ -100,10 +100,10 @@ $(document).ready(function () {
             buyersTable.ajax.url('/dashboard/getselloffers?coin=' + coin).load();
         }
     });
-    
-   $(".coins_select").change(function(){
-       var el = this;
-      $(this).parent().find(".coinicon").html('<img style="max-width: 25px;" src="' + $(this).find(":selected").attr('data-icon') + '"/>'); 
-   });
+
+    $(".coins_select").change(function () {
+        var el = this;
+        $(this).parent().find(".coinicon").html('<img style="max-width: 25px;" src="' + $(this).find(":selected").attr('data-icon') + '"/>');
+    });
 
 });

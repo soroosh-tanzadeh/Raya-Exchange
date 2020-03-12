@@ -6,7 +6,6 @@ use Ixudra\Curl\Facades\Curl;
 use App\Currency;
 use App\Http\Middleware\UserVerification;
 use App\Http\Middleware\PostVerification;
-
 use App\Http\Middleware\AdminMiddleware;
 use App\Activity;
 
@@ -65,6 +64,7 @@ Route::post("/dashboard/ticket/{ticket_id}/sendmessage", "DashboardController@se
 // Market Cap
 Route::get("/dashboard/market", "DashboardController@marketCap")->middleware(Authentication::class);
 Route::post("/getcoin", "DashboardController@getCoinPrice")->middleware(Authentication::class);
+Route::post("/getcoinIndex", "DashboardController@getCoinPriceIndex")->middleware(Authentication::class);
 
 // Wallet 
 Route::get("/dashboard/mywallet", "DashboardController@walletPage")->middleware(UserVerification::class);
@@ -84,10 +84,14 @@ Route::get('/dashboard/crypto', 'TransactionsController@crypto')->middleware(Use
 Route::get('/dashboard/rials', 'TransactionsController@rials')->middleware(UserVerification::class);
 Route::get('/dashboard/offerpage', 'PaymentController@offerPage')->middleware(UserVerification::class);
 
+Route::get('/dashboard/profile', function() {
+    return view("admin.users.profile", array("user" => session()->get("user"), "profile" => session()->get("user")));
+})->middleware(Authentication::class);
+
 
 //offers
-Route::get('/dashboard/getbuyoffers', 'OffersController@getBuyOffers')->middleware(UserVerification::class);
-Route::get('/dashboard/getselloffers', 'OffersController@getSellOffers')->middleware(UserVerification::class);
+Route::get('/dashboard/getbuyoffers', 'OffersController@getBuyOffers')->middleware(Authentication::class);
+Route::get('/dashboard/getselloffers', 'OffersController@getSellOffers')->middleware(Authentication::class);
 
 
 Route::get('/allcoins', 'ExchangeController@getcoins');
@@ -109,8 +113,6 @@ Route::get("/assets/icons/{iconfile}", function($iconfile) {
 //    $coinp = new App\coinPayments\CoinpaymentsAPI();
 //    return response()->json($coinp->GetRatesWithAccepted());
 //})->middleware(Authentication::class);
-
-
 // Wait to verify
 Route::get("/dashboard/notverified", function() {
     return view("dashboard.wait", array("user" => session()->get("user")));
@@ -140,6 +142,12 @@ Route::any("/getcoinhis", "DashboardController@coinHistory24")->middleware(UserV
 
 // Affilate 
 Route::get("/dashboard/affilate", "AffilateController@index")->middleware(UserVerification::class);
+Route::get("/dashboard/convert2btc", "AffilateController@convert2btc")->middleware(UserVerification::class);
+
+
+// Password 
+Route::post("/dashboard/passchange", "DashboardController@changePass")->middleware(UserVerification::class);
+Route::get("/dashboard/passchange", "DashboardController@changePassPge")->middleware(UserVerification::class);
 
 
 /**
@@ -164,11 +172,39 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     // Tickets
     Route::get("/admin/tickets", "AdminController@tickets");
     Route::get("/admin/tickets/new", "AdminController@showNewTicket");
-    Route::get("/admin/ticket/{ticket_id}", "AdminController@showTicket");
     Route::post("/admin/ticket/newticket", "AdminController@newTicket");
+    Route::get("/admin/ticket/close", "AdminController@closeTicket");
+    Route::get("/admin/ticket/{ticket_id}", "AdminController@showTicket");
     Route::post("/admin/ticket/{ticket_id}/sendmessage", "AdminController@sendMessage");
 
+    // Settings
+    Route::get("/admin/settings", "AdminController@showSettings");
+    Route::post("/admin/save-settings", "AdminController@saveOptions");
+
+
+    // Posts
+    Route::get("/admin/posts", "PostsController@list");
+    Route::get("/admin/posts/new", "PostsController@createPostPage");
+    Route::post("/admin/posts/edit/{id}", "PostsController@editPost");
+
+    Route::post("/admin/posts/new", "PostsController@createPost");
+    Route::get("/admin/posts/edit/{id}", "PostsController@editPostPage");
+    Route::get("/admin/posts/delete", "PostsController@deletePost");
+
+    Route::get("/admin/categories", "PostsController@showCategories");
+
+    Route::post("/admin/categories/new", "PostsController@showCategories");
+    Route::post("/admin/categories/delete", "PostsController@deleteCategory");
+    // End Posts
     //FAQ
     Route::get("/admin/faq", "AdminController@faqPage");
     Route::post("/admin/newfaq", "AdminController@newQuestion");
+
+
+    Route::get("/admin/getusers", "AdminController@getUsers");
+    Route::get("/admin/gettransactions", "AdminController@getTransactions");
+    Route::get("/admin/getbankaccounts", "AdminController@getBankAccounts");
+    
+    Route::get("/admin/transactions", "AdminController@transactions");
 });
+Route::get("/dashboard/post/{id}", "PostsController@showPost")->middleware(Authentication::class);

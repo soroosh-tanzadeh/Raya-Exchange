@@ -12,6 +12,15 @@ class Ticket extends Model {
         return $messages;
     }
 
+    public function addAdminMessage($text, $files) {
+        $message = new Message();
+        $message->files = json_encode($files);
+        $message->text = $text;
+        $message->ticket_id = $this->id;
+        $message->from = -1;
+        return $message->save();
+    }
+
     public function addMessage($text, $files) {
         $message = new Message();
         $message->files = json_encode($files);

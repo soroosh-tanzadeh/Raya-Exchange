@@ -14,6 +14,10 @@ use App\Wallet;
 use App\AffilateWallet;
 use App\Question;
 use App\FaqCategory;
+use App\Option;
+use Yajra\DataTables\Facades\DataTables;
+use Morilog\Jalali\Jalalian;
+use Carbon\Carbon;
 
 class AdminController extends Controller {
 
@@ -30,13 +34,11 @@ class AdminController extends Controller {
         $qeustiontext = $request->question;
         $answer = $request->answer;
         $category = $request->category;
-
         $question = new Question();
         $question->question = $qeustiontext;
         $question->answer = $answer;
         $question->category = $category;
-        
-        return response()->json(array("result" => $question->save()));
+        return response()->json(array("result" => $question->save(), "msg" => "با موفقیت ایجاد شد."));
     }
 
     public function faqPage(Request $request) {
@@ -48,7 +50,7 @@ class AdminController extends Controller {
         $user_id = $request->id;
         $user = User::find($user_id);
         $user->verified_at = time();
-        $wallets = array("btc" => "bitcoin", "eth" => "ethereum", "ltc" => "litecoin", "xrp" => "ripple");
+        $wallets = array("btc" => "bitcoin", "eth" => "ethereum", "ltc" => "litecoin", "xrp" => "ripple", "Tether USD (Omni Layer)" => "usdt", "Bitcoin Cash" => "bch");
         foreach ($wallets as $key => $value) {
             $wallet = new Wallet();
             $wallet->type = "coin";
@@ -91,8 +93,11 @@ class AdminController extends Controller {
     }
 
     public function tickets(Request $request) {
-        $tickets = Ticket::query()->paginate(10);
-        return view("admin.tickets.tickets", array("user" => session()->get("user"), "tickets" => $tickets));
+        $tickets = Ticket::query();
+        if ($request->has("type")) {
+            $tickets = $tickets->where("type", $request->type);
+        }
+        return view("admin.tickets.tickets", array("user" => session()->get("user"), "tickets" => $tickets->latest()->paginate(10)));
     }
 
     public function showTicket($ticket_id) {
@@ -113,19 +118,49 @@ class AdminController extends Controller {
         }
     }
 
+    public function closeTicket(Request $request) {
+        $ticket = Ticket::where("id", $request->ticket)->first();
+        $ticket->type = 3;
+        $ticket->status = "بسته شده";
+        $ticket->save();
+        return redirect("/admin/tickets");
+    }
+
+    public function showSettings() {
+        $options = Option::all();
+        return view("admin.settings", array("options" => $options, "user" => session()->get("user")));
+    }
+
+    public function saveOptions(Request $request) {
+        $keys = $request->input("key");
+        foreach ($keys as $key => $value) {
+            $option = Option::where("key", $key)->first();
+            $option->value = $value;
+            $option->save();
+        }
+        return redirect("/admin/settings");
+    }
+
     public function sendMessage($ticket_id, Request $request) {
         $ticket = Ticket::where("id", $ticket_id)->first();
         if ($ticket !== null) {
             $files = array();
-            foreach ($request->file('files') as $file) {
-                $name = $file->getClientOriginalName();
-                $path = $file->store('usersfiles');
-                $files[] = array("name" => url("/usersfiles/$path"), "name" => $name);
+            if ($request->has($files)) {
+                if (is_array($request->file('files'))) {
+                    foreach ($request->file('files') as $file) {
+                        $name = $file->getClientOriginalName();
+                        $path = $file->store('usersfiles');
+                        $files[] = array("link" => url("/$path"), "name" => $name);
+                    }
+                }
             }
-            $ticket->status = "2";
-            return $ticket->addMessage($request->text, $files);
+            $ticket->type = 2;
+            $ticket->status = "پاسخ پشتیبانی";
+            $ticket->save();
+            $ticket->addAdminMessage($request->text, $files);
+            return redirect("/admin/ticket/$ticket_id");
         } else {
-            return false;
+            return redirect("/admin/ticket/$ticket_id");
         }
     }
 
@@ -185,6 +220,78 @@ class AdminController extends Controller {
     public function users(Request $request) {
         $users = User::query()->latest()->paginate(25);
         return view("admin.users.index", array("users" => $users, "user" => session()->get("user")));
+    }
+
+    public function transactions(Request $request) {
+        return view("admin.transactions", array("user" => session()->get("user")));
+    }
+
+    public function getUsers() {
+        $users = User::latest();
+
+        return DataTables::of($users)
+                        ->editColumn("name", function($user) {
+                            return "<a href='/admin/users/$user->id'> <b>$user->name</b> </a>";
+                        })
+                        ->addColumn("status", function($user) {
+                            if ($user->verified_at != null) {
+                                return '<text class="text-success">تایید شده</text>';
+                            } else {
+                                return '<text class="text-warning">تایید نشده</text>';
+                            }
+                        })
+                        ->addColumn("signup_date", function ($user) {
+                            return Jalalian::forge($user->created_at)->ago();
+                        })
+                        ->rawColumns(["name", "status", "created_at"])
+                        ->make(true);
+    }
+
+    public function getTransactions(Request $request) {
+
+        $deposits = Transaction::query()->join("users", "transactions.user_id", "=", "users.id")->select(array("transactions.*", "users.name as user_name", "users.phone_number"));
+
+        if ($request->has("date")) {
+            if ($request->date === "d") {
+                $deposits = $deposits->whereDate('transactions.created_at', date("Y-m-d"));
+            } elseif ($request->date === "w") {
+                $deposits = $deposits->whereBetween('transactions.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+            } elseif ($request->date === "m") {
+                $deposits = $deposits->whereMonth('transactions.created_at', Carbon::now()->month);
+            } elseif ($request->date === "y") {
+                $deposits = $deposits->whereYear('transactions.created_at', Carbon::now()->year);
+            }
+        }
+
+        return DataTables::of($deposits)
+                        ->editColumn("created_at", function ($deposit) {
+                            return Jalalian::forge($deposit->created_at)->ago();
+                        })->editColumn("status", function ($deposit) {
+                            if ($deposit->status === "موفق") {
+                                return '<text class="text-success">موفق</text>';
+                            } else {
+                                return '<text class="text-danger">ناموفق</text>';
+                            }
+                        })->rawColumns(["status"])
+                        ->make(true);
+    }
+
+    public function getBankAccounts(DataTables $data) {
+        $bankAccounts = BankAccount::query()->latest();
+
+        return DataTables::of($bankAccounts)
+                        ->editColumn("created_at", function ($bankAccount) {
+                            return Jalalian::forge($bankAccount->created_at)->ago();
+                        })
+                        ->editColumn("is_active", function ($bankAccount) {
+                            if ($bankAccount->is_active) {
+                                return '<text class="text-success">تایید شده</text>';
+                            } else {
+                                return "<input type=\"submit\" value=\"تایید پرداخت\" class=\"btn btn-success\" onclick=\"comfirmBank(this)\" data-bankaccount=\"$bankAccount->id\" />";
+                            }
+                        })
+                        ->rawColumns(["is_active"])
+                        ->make(true);
     }
 
 }

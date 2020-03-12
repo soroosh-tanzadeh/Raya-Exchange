@@ -115,28 +115,28 @@
                         <form id="login-form" action="/dologin" method="post">
                             @csrf
                             <div class="mb-4">
-                                <div class="md-form mb-0"><input class="md-form-control" type="phone" name="email"><label>ایمیل</label></div>
+                                <div class="md-form mb-0"><input class="md-form-control" type="tel" name="email"><label>شماره موبایل</label></div>
                             </div>
                             <div class="mb-4">
                                 <div class="md-form mb-0"><input class="md-form-control" type="password" name="password"><label>رمز عبور</label></div>
                             </div>
                             <div class="flexbox mb-5">
-                                <button class="btn btn-primary" style="min-width: 100px">ورود</button>
+                                <button class="btn btn-primary" type="submit" style="min-width: 100px">ورود</button>
                             </div>
-                            <p class="mt-5 mb-4 text-muted text-center">یا با شبکه های اجتماعی وارد شوید</p>
+<!--                            <p class="mt-5 mb-4 text-muted text-center">یا با شبکه های اجتماعی وارد شوید</p>
                             <div class="mb-5">
                                 <button class="btn btn-google btn-block"><span class="btn-icon"><i class="fab fa-google-plus-g"></i>گوگل</span></button>
-                            </div>
+                            </div>-->
                             <br>
                             <p class="mt-5 mb-4 text-muted text-center">می‌خواهید در رایا <a  href="javascript:;" id="signupbtn">ثبت نام کنید؟</a></p>
                         </form>
                         <form id="signupForm" style="display: none;">
                             @csrf
                             <div class="mb-4">
-                                <div class="md-form mb-0"><input class="md-form-control" type="text" name="phone" id="vcodereceiver"><label id="vcoderlabel">ایمیل یا شماره موبایل</label></div>
+                                <div class="md-form mb-0"><input class="md-form-control" type="text" name="phone" id="vcodereceiver"><label id="vcoderlabel">شماره موبایل خود را وارد کنید</label></div>
                             </div>
                             <div class="flexbox mb-5">
-                                <button class="btn btn-primary" id="sendvcode" onclick="sendVcode();return false;" style="min-width: 100px">ارسال کد فعالسازی</button>
+                                <button class="btn btn-primary" id="sendvcode" onclick="sendVcode();return false;" style="min-width: 100px">ثبت‌نام</button>
                             </div>
                             <br>
                             <p class="mt-5 mb-4 text-muted text-center">در رایا حساب دارید؟<a  href="javascript:;" id="loginbtn">وارد شوید.</a></p>
@@ -163,8 +163,9 @@
                                     var cache_data;
                                     var vcode = false;
                                     function sendVcode() {
+
                                         if (vcode) {
-                                             var code = $('#vcodereceiver').val();
+                                            var code = $('#vcodereceiver').val();
                                             $.post("/verifyUser", {code: code}, function (data) {
                                                 if (data.result) {
                                                     window.location = "/dashboard/signup";
@@ -202,19 +203,19 @@
                                     }
                                     $(function () {
                                         $("#signupbtn").click(function () {
-                                            $("#login-form").hide();
-                                            $("#signupForm").show();
+                                            $("#login-form").hide(1000);
+                                            $("#signupForm").show(1000);
                                         });
                                         $("#loginbtn").click(function () {
-                                            $("#login-form").show();
-                                            $("#signupForm").hide();
+                                            $("#login-form").show(1000);
+                                            $("#signupForm").hide(1000);
                                         });
 
                                         $('#login-form').validate({
                                             rules: {
-                                                email: {
+                                                phone: {
                                                     required: true,
-                                                    email: true
+                                                    phone: true
                                                 },
                                                 password: {
                                                     required: true

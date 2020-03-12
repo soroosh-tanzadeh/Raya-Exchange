@@ -22,7 +22,7 @@ use Morilog\Jalali\Jalalian;
 <html lang="en">
     <head>
         @include("includes.head")
-        <title>Raya-EX | تراکنش‌های ریالی </title><!-- GLOBAL VENDORS-->
+        <title>Raya-EX | حساب‌های بانکی </title><!-- GLOBAL VENDORS-->
 
     </head>
     <body>
@@ -32,10 +32,10 @@ use Morilog\Jalali\Jalalian;
             <!-- BEGIN: Page heading-->
             <div class="page-heading">
                 <div class="page-breadcrumb">
-                    <h1 class="page-title page-title-sep">تراکنش‌ها</h1>
+                    <h1 class="page-title page-title-sep">ادمین</h1>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="/index"><i class="ft-home font-20"></i></a></li>
-                        <li class="breadcrumb-item">تراکنش‌های ریالی </li>
+                        <li class="breadcrumb-item">حساب‌های بانکی</li>
                     </ol>
                 </div>
             </div>
@@ -46,42 +46,17 @@ use Morilog\Jalali\Jalalian;
                         <div class="card">
                             <div class="card-body">
                                 <div class="table-responsive font-11">
-                                    <table class="table table-hover compact-table">
+                                    <table class="table table-hover compact-table" id="accounts">
                                         <thead class="thead-light">
                                             <tr>
                                                 <th>شماره</th>
-                                                <th>شماره کارت</th>
                                                 <th>شماره شبا</th>
+                                                <th>شماره کارت</th>
                                                 <th>شماره حساب</th>
                                                 <th>تاریخ ثبت</th>
                                                 <th>وضعیت تایید</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            @foreach($bankaccounts as $bankaccount)
-                                            <tr>
-                                                <td>{{ $bankaccount->id }}</td>
-                                                <td>
-                                                    <b>{{ $bankaccount->IBAN }}</b>
-                                                </td>
-                                                <td>
-                                                    <b>{{ $bankaccount->card_number }}</b>
-                                                </td>
-                                                <td>
-                                                    <b>{{ $bankaccount->account_number }}</b>
-                                                </td>
-                                                <td>{{ Jalalian::forge($bankaccount->created_at)->ago() }}</td>
-                                                <td>
-                                                    @if($bankaccount->is_active)
-                                                    <text class="text-success">تایید شده</text>
-                                                    @else
-                                                    <input type="submit" value="تایید پرداخت" class="btn btn-success comfirmbank" data-bankaccount="{{ $bankaccount->id }}" />
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                            @endforeach
-                                        </tbody>
-                                        {{ $bankaccounts->links() }}
                                     </table>
                                 </div>
                             </div>
@@ -93,5 +68,28 @@ use Morilog\Jalali\Jalalian;
         <!-- END: Page content-->
         <!-- END: Quick sidebar-->
         @include("includes.footer")
+        
+        
+        <script>
+            $(document).ready(function () {
+                $("#accounts").DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: '/admin/getbankaccounts',
+                    columns: [
+                        {data: 'id'},
+                        {data: 'IBAN'},
+                        {data: 'card_number'},
+                        {data: 'account_number'},
+                        {data: 'created_at'},
+                        {data: 'is_active'},
+                    ],
+                    "language": {
+                        "url": "/assets/persian.json"
+                    }
+                });
+            });
+        </script>
+        
     </body>
 </html>

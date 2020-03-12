@@ -45,7 +45,7 @@ class PaymentController extends Controller {
             $amount = $request->amount;
             if ($amount >= $offer->min_buy && $amount <= $offer->amount) {
                 $price = ($offer->price_pre * $amount) / $offer->max_buy;
-                
+
                 $payir->amount = $price * 10;
                 $payir->mobile = session()->get("user")->phone_number;
                 session()->put("coin_wallet", true);
@@ -89,7 +89,7 @@ class PaymentController extends Controller {
                 $userWallet->credit += round($price);
 
 
-                $coinamount = ($amount * Option::getOption("sell_fee")) + $amount;
+                $coinamount = $amount;
                 //////////////////////////////////////////////////////
                 $the_wallet = Wallet::where("user_id", $user->id)->where("name", $offer->coin)->first();
                 if ($the_wallet->cashable >= $coinamount) {
@@ -142,70 +142,84 @@ class PaymentController extends Controller {
         $payir->token = $request->token; // Pay.ir returns this token to your redirect url
         try {
             $verify = $payir->verify(); // returns verify result from pay.ir like (transId, cardNumber, ...)
-            $payment = Payment::where("transId", $verify['transId'])->first();
-            $user = session()->get("user");
-            if ($payment === null) {
-                $payment = new Payment();
-                $payment->amount = $verify['amount'];
-                $payment->user_id = $user->id;
-                $payment->transId = $verify['transId'];
-                $payment->save();
+            if ($result->status == 1) {
+                $payment = Payment::where("transId", $verify['transId'])->first();
+                $user = session()->get("user");
+                if ($payment === null) {
+                    $payment = new Payment();
+                    $payment->amount = $verify['amount'];
+                    $payment->user_id = $user->id;
+                    $payment->transId = $verify['transId'];
+                    $payment->save();
 
-                if (session()->has("rial_wallet")) {
-                    if (session()->pull("rial_wallet", false)) {
-                        $transaction = new Transaction();
-                        $transaction->user_id = $user->id;
-                        $transaction->amount = $verify['amount'];
-                        $transaction->coin = "تمان";
-                        $transaction->type = "شارژ حساب";
-                        $transaction->save();
+                    if (session()->has("rial_wallet")) {
+                        if (session()->pull("rial_wallet", false)) {
+                            $transaction = new Transaction();
+                            $transaction->user_id = $user->id;
+                            $transaction->amount = $verify['amount'];
+                            $transaction->coin = "تومان";
+                            $transaction->type = "شارژ حساب";
+                            $transaction->status = "موفق";
+                            $transaction->save();
 
-                        $rialWallet = Wallet::where("user_id", $user->id)->where("type", "rial")->first();
-                        $rialWallet->credit += $verify['amount'];
-                        $rialWallet->save();
+                            $rialWallet = Wallet::where("user_id", $user->id)->where("type", "rial")->first();
+                            $rialWallet->credit += $verify['amount'];
+                            $rialWallet->save();
+                        }
+                    } else {
+                        if (session()->pull("coin_wallet", false)) {
+                            $fee = Option::where("key", "sell_fee")->first()->value;
+
+                            $offer = session()->get("coin_offer");
+                            $transaction = new Transaction();
+                            $transaction->user_id = $user->id;
+                            $transaction->amount = $verify['amount'];
+                            $transaction->coin = "تومان";
+                            $transaction->type = "خرید ارز دیجیتال";
+                            $transaction->status = "موفق";
+                            $transaction->save();
+
+                            $the_offer = CoinOffer::where("id", $offer->id)->first();
+                            $amount = Cache::pull(session()->get("user")->id . "_$payir->token" . "_coin$offer->id");
+
+                            $price = (($the_offer->price_pre * $amount) / $the_offer->max_buy);
+                            $price = $price - ($price * Option::getOption("admin_fee"));
+
+                            // Adding Buy fee to admin wallet
+                            $adminwallet = Wallet::where("type", "rial")->where("type_name", "admin")->first();
+                            $adminwallet->credit += ($price * Option::getOption("admin_fee"));
+                            $adminwallet->cashable += ($price * Option::getOption("admin_fee"));
+
+                            $the_offer->amount -= $amount;
+                            $the_offer->save();
+
+                            $the_wallet = Wallet::where("user_id", $the_offer->user_id)->where("name", $the_offer->coin)->first();
+                            $the_wallet->credit -= $amount;
+                            $the_wallet->save();
+
+                            $user_wallet = Wallet::where("user_id", $user->id)->where("name", $the_offer->coin)->first();
+                            $user_wallet->credit += $amount;
+                            $user_wallet->cashable += $amount;
+                            $user_wallet->save();
+
+                            $rialWallet = Wallet::where("user_id", $the_offer->user_id)->where("type", "rial")->first();
+                            $rialWallet->credit += $price;
+                            $rialWallet->save();
+                        }
                     }
+                    return redirect("/dashboard/mywallet");
                 } else {
-                    if (session()->pull("coin_wallet", false)) {
-                        $fee = Option::where("key", "sell_fee")->first()->value;
-
-                        $offer = session()->get("coin_offer");
-                        $transaction = new Transaction();
-                        $transaction->user_id = $user->id;
-                        $transaction->amount = $verify['amount'];
-                        $transaction->coin = "تومان";
-                        $transaction->type = "خرید ارز دیجیتال";
-                        $transaction->save();
-
-                        $the_offer = CoinOffer::where("id", $offer->id)->first();
-                        $amount = Cache::pull(session()->get("user")->id . "_$payir->token" . "_coin$offer->id");
-
-                        $price = (($the_offer->price_pre * $amount) / $the_offer->max_buy);
-                        $price = $price - ($price * Option::getOption("admin_fee"));
-                        
-                        // Adding Buy fee to admin wallet
-                        $adminwallet = Wallet::where("type", "rial")->where("type_name", "admin")->first();
-                        $adminwallet->credit += ($price * Option::getOption("admin_fee"));
-                        $adminwallet->cashable += ($price * Option::getOption("admin_fee"));
-
-                        $the_offer->amount -= $amount;
-                        $the_offer->save();
-
-                        $the_wallet = Wallet::where("user_id", $the_offer->user_id)->where("name", $the_offer->coin)->first();
-                        $the_wallet->credit -= $amount;
-                        $the_wallet->save();
-
-                        $user_wallet = Wallet::where("user_id", $user->id)->where("name", $the_offer->coin)->first();
-                        $user_wallet->credit += $amount;
-                        $user_wallet->cashable += $amount;
-                        $user_wallet->save();
-
-                        $rialWallet = Wallet::where("user_id", $the_offer->user_id)->where("type", "rial")->first();
-                        $rialWallet->credit += $price;
-                        $rialWallet->save();
-                    }
+                    return redirect("/dashboard/error");
                 }
-                return redirect("/dashboard/mywallet");
             } else {
+                $transaction = new Transaction();
+                $transaction->user_id = $user->id;
+                $transaction->amount = $verify['amount'];
+                $transaction->coin = "تومان";
+                $transaction->type = "شارژ حساب";
+                $transaction->status = "ناموفق";
+                $transaction->save();
+
                 return redirect("/dashboard/error");
             }
         } catch (VerifyException $e) {

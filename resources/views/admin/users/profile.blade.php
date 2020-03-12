@@ -26,7 +26,7 @@ use Morilog\Jalali\Jalalian;
 
     </head>
     <body>
-        @include("includes.adminheader")
+        @include("includes.header")
         <!-- BEGIN: Content-->
         <div class="page-content fade-in-up">
             <!-- BEGIN: Page heading-->
@@ -81,7 +81,6 @@ use Morilog\Jalali\Jalalian;
                                 <div class=" mt-4">
                                     <h4>مدارک</h4>
                                     <div class="row">
-
                                         <?php
                                         $files = json_decode($profile->files);
                                         ?>
@@ -93,10 +92,19 @@ use Morilog\Jalali\Jalalian;
                                     </div>
                                 </div>
                             </div>
+                            @if($user->is_admin)
                             <div class="card-footer justify-content-end d-flex">
                                 <input type="submit" class="comfirmuser btn btn-success" data-user="{{ $profile->id }}" value="تایید کاربر" />
                                 <a href="/admin/tickets/new?user={{ $profile->id }}" class="btn btn-warning mx-2 text-white" >ارسال تیکت</a>
                             </div>
+                            @else
+                            <div class="card-footer">
+                                @if($user->verified_at === null)
+                                <p class="text-warning">اطلاعات شما ثبت شده و در دست بررسی قرار دارد پس از تایید به شما اطلاع داده می‌شود.</p>
+                                @endif
+                                <input type="submit" class="editInfo btn btn-success" data-user="{{ $profile->id }}" value="درخواست تغییر اطلاعات" />
+                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -105,5 +113,6 @@ use Morilog\Jalali\Jalalian;
         <!-- END: Page content-->
         <!-- END: Quick sidebar-->
         @include("includes.footer")
+        <script src="/assets/js/profile.js"></script>
     </body>
 </html>

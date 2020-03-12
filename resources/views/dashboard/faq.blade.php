@@ -24,8 +24,63 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <link href="/assets/vendors/themify-icons/themify-icons.css" rel="stylesheet" />
         <link href="/assets/vendors/line-awesome/css/line-awesome.min.css" rel="stylesheet" />
         <link href="/assets/vendors/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet" /><!-- PAGE LEVEL VENDORS-->
-        <title>Raya-EX | آموزش</title><!-- GLOBAL VENDORS-->
-
+        <title>Raya-EX | سوالات متداول</title><!-- GLOBAL VENDORS-->
+        <style>.faq-tabs .nav-link {
+                min-width: 100px;
+                padding: 1rem;
+                border: 1px dashed;
+                margin-bottom: 1rem;
+                background-color: #fff;
+                box-shadow: 0 1px 15px 1px rgba(62,57,107,.07);
+            }
+            .faq-tabs .nav-link.active {
+                color: #fff;
+                border-color: #2949ef;
+                background-color: #2949ef;
+            }
+            .faq-tabs .nav-link.active .faq-item-text {
+                color: rgba(255,255,255,.5)!important;
+            }
+            .faq-tabs .nav-link.active i {
+                color: #fff !important;
+            }
+            .faq-list>li {
+                padding: .75rem 0;
+            }
+            .faq-list>li>a {
+                display: block;
+                position: relative;
+                color: inherit;
+                font-weight: 500;
+                font-size: 16px;
+            }
+            .faq-list>li>a:after {
+                position: absolute;
+                right: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                font-family: 'themify';
+                content: "\e61a";
+                speak: none;
+                font-style: normal;
+                font-weight: normal;
+                font-variant: normal;
+                text-transform: none;
+                line-height: 1;
+                -webkit-font-smoothing: antialiased;
+            }
+            .faq-list>li>a[aria-expanded=true] {
+                color: #2949ef;
+            }
+            .faq-list>li>a[aria-expanded=true]:after {
+                content: "\e622";
+            }
+            .faq-answer {
+                padding: 1rem 0;
+                margin-top: 1rem;
+                color: #6c757d;
+            }
+        </style>
     </head>
     <body>
         <div class="modal fade" id="paymodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -51,7 +106,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         @if($user->is_admin)
         <div class="modal fade" id="new-question-dialog" aria-labelledby="new-question-dialog" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
-                <form class="modal-content" method="POST" action="/admin/newfaq">
+                <form class="modal-content" method="POST" id="newfaq" action="javascript:;" data-action="/admin/newfaq">
+                    @csrf
                     <div class="modal-header p-4">
                         <h5 class="modal-title">سوال جدید</h5><button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                     </div>
@@ -104,7 +160,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                     <div class="nav nav-pills flex-column faq-tabs" role="tablist">
                                         @if(count($categories) > 0)
                                         @foreach($categories as $category)
-                                        <a class="nav-link media align-items-center" data-toggle="pill" href="#faq-group-{{ $category->id }}" role="tab">
+                                        <a class="tablinks nav-link media align-items-center" data-toggle="pill" href="#faq-group-{{ $category->id }}" role="tab">
                                             <i class="ti-{{ $category->icon }} font-26 mr-3"></i>
                                             <div class="media-body">
                                                 <div class="mb-1 h6">{{ $category->name }}</div>
@@ -120,7 +176,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         </div>
                     </div>
                     <div class="col-lg-9">
-
                         <div class="card">
                             <div class="card-body">
                                 <div class="flexbox mb-4">
@@ -142,10 +197,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                             @if(count($questions) > 0)
                                             @foreach($questions as $question)
                                             <li>
-                                                <a data-toggle="collapse" href="#faq1-1" aria-expanded="true"> 
+                                                <a data-toggle="collapse" href="#faq1-1" class="collapsed" aria-expanded="true"> 
                                                     {{ $question->question }}
                                                 </a>
-                                                <div class="collapse show" id="faq1-1">
+                                                <div class="collapse" id="faq1-1">
                                                     <div class="faq-answer">
                                                         {{ $question->answer }}
                                                     </div>
@@ -154,11 +209,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                             @endforeach
                                         </ul>
                                         @else
-                                        هیچ دسته وجود ندارد
+                                        هیچ سوالی وجود ندارد
                                         @endif
                                     </div>
                                     @endforeach
-
                                 </div>
                             </div>
                         </div>
@@ -167,7 +221,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </div>
 
         </div><!-- BEGIN: Footer-->
-
         @include("includes.footer")
+        <script>
+            $(".tablinks:first").click();
+            var form = document.querySelector('#newfaq');
+            form.onsubmit = function () {
+                var action = $(form).data("action");
+                $.ajax({
+                    url: action,
+                    data: $(form).serialize(),
+                    type: "POST",
+                    complete: function (jqXHR, textStatus) {
+                        $("#submitPost").prop("disabled", false);
+                    },
+                    success: function (data, textStatus, jqXHR) {
+                        if (data.result) {
+                            Swal.fire("موفقیت آمیز بود!", data.msg, "success").then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire("خطا", data.msg, "error");
+                        }
+                    }
+                })
+                return false;
+            };
+        </script>
+
     </body>
 </html>

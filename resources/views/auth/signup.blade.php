@@ -52,7 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <div class="card">
                     <div class="card-body">
                         <h5 class="box-title"><i class="ft-user"></i> اطلاعات کاربری </h5>
-                        <form class="pill-steps expand-md" id="form-wizard-responsive" method="POST" action="/dosignup" novalidate="novalidate" enctype="multipart/form-data">
+                        <form class="pill-steps expand-md" id="form-wizard-responsive" method="POST" action="/dosignup" enctype="multipart/form-data">
                             <h6>مشخصات فردی</h6>
                             <fieldset>
                                 @csrf
@@ -67,30 +67,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                     <div class="input-group-icon input-group-icon-left mb-4"><span class="input-icon input-icon-left"><i class="ft-home"></i></span><input class="form-control required" type="text" name="address" placeholder="آدرس محل سکونت">
                                     </div>
                                 </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <div class="input-group-icon input-group-icon-left mb-4">
-                                            <label>استان</label>
-                                            <select class="form-control" id="country" name="province">
-                                                <option value="خرسان رضوی">خراسان رضوی</option>
-                                                <option value="تهران">تهران</option>
+                                <div>
+                                    <div class="ir-select form-row">
+                                        <div class="form-group col-md-6">
+                                            <div class="input-group-icon input-group-icon-left mb-4">
+                                                <label>استان محل سکونت:</label>
+                                                <select class="ir-province form-control" required name="province"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="inputState">شهر</label>
+                                            <select class="ir-city form-control" required name="city">
+                                                <option value="">یک استان را انتخاب کنید</option>
                                             </select>
                                         </div>
+                                        <div class="form-group col-md-2">
+                                            <label for="inputZip">کد پستی</label><input class="form-control" id="inputZip" type="text" name="postalcode" pattern="\b(?!(\d)\1{3})[13-9]{4}[1346-9][013-9]{5}\b" title="کد پستی" required>
+                                        </div>
                                     </div>
-                                    <div class="form-group col-md-4">
-                                        <label for="inputState">شهرستان</label>
-                                        <select class="form-control" id="inputState" name="city">
-                                            <option value="مشهد">مشهد</option>
-                                            <option value="تهران">تهران</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="inputZip">کد پستی</label><input class="form-control" id="inputZip" type="text" name="postalcode">
-                                    </div>
-                                </div>
-                                <label>کد معرف</label>
-                                <div class="input-group-icon input-group-icon-left mb-4">
-                                    <span class="input-icon input-icon-left"><i class="ft-user-check"></i></span><input class="form-control" type="text" placeholder="کد معرف" name="affilate">
                                 </div>
                             </fieldset>
                             <h6>تصاویر سلفی و کارت </h6>
@@ -99,14 +93,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                     <div class="col-md-6 my-2">
                                         <label>کشور</label>
                                         <select class="form-control" id="country">
-                                            <option>Iran</option>
+                                            <option>ایران</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6 my-2">
                                         <div class="input-group-icon input-group-icon-left mb-4">
                                             <label class="active">شماره ملی</label>
                                             <div class="input-group-icon input-group-icon-left mb-4">
-                                                <span class="input-icon input-icon-left"><i class="ft-user"></i></span><input maxLength="10" class="form-control required" type="text" name="nationalcode" placeholder="شماره کارت ملی">
+                                                <span class="input-icon input-icon-left"><i class="ft-user"></i></span><input class="form-control required" required type="digit" name="nationalcode" placeholder="شماره کارت ملی">
                                             </div>  
                                         </div>
                                     </div>
@@ -114,7 +108,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                 <div class="container-fluid">
                                     <div class="row">
                                         <div class="col-md-6 pt-2 px-1  d-flex justify-content-center align-items-center">
-                                            <input type="file" class="fileselect" name="fileBack" data-binded="#backdropzone" id="file-back" style="display: none;" />
+                                            <input type="file" class="fileselect" name="fileBack" data-binded="#backdropzone" required id="file-back" style="position: absolute;opacity: 0; z-index: -10;" />
                                             <div class="dropzone openfile w-100" id="backdropzone" data-target="#file-back">
                                                 <div class="dz-message"><i class="ti-import text-primary font-40"></i>
                                                     <div class="mt-3 font-20">برای انتخاب فایل کلیک کنید</div>
@@ -126,7 +120,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                             </div>
                                         </div>
                                         <div class="col-md-6 pt-2 px-1  d-flex justify-content-center align-items-center">
-                                            <input type="file" class="fileselect" name="fileFront" data-binded="#frontdropzone" id="file-front" style="display: none;" />
+                                            <input type="file" class="fileselect" name="fileFront" data-binded="#frontdropzone" required id="file-front" style="position: absolute;opacity: 0; z-index: -10;" " />
                                             <div class="dropzone openfile w-100" id="frontdropzone" data-target="#file-front">
                                                 <div class="dz-message"><i class="ti-import text-primary font-40"></i>
                                                     <div class="mt-3 font-20">برای انتخاب فایل کلیک کنید</div>
@@ -138,7 +132,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                             </div>
                                         </div>
                                         <div class="col-md-12 pt-2 px-1  d-flex justify-content-center align-items-center">
-                                            <input type="file" class="fileselect" name="selfiImage" data-binded="#selfidropzone" id="file-selfi" style="display: none;" />
+                                            <input type="file" class="fileselect" name="selfiImage" data-binded="#selfidropzone" required id="file-selfi" style="position: absolute;opacity: 0; z-index: -10;"  />
                                             <div class="dropzone openfile w-100" id="selfidropzone" data-target="#file-selfi">
                                                 <div class="dz-message"><i class="ti-import text-primary font-40"></i>
                                                     <div class="mt-3 font-20">برای انتخاب فایل کلیک کنید</div>
@@ -208,10 +202,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
             });
         </script>
-        <script src="/assets/vendors/jquery-validation/dist/jquery.validate.min.js"></script>
+        <script src="/assets/vendors/jquery-validation/dist/jquery.validate.js"></script>
         <script src="/assets/vendors/jquery-steps/build/jquery.steps.min.js"></script><!-- CORE SCRIPTS-->
         <script src="/assets/js/app.js"></script><!-- PAGE LEVEL SCRIPTS-->
         <script src="/assets/js/signup.js" type="text/javascript"></script>
+        <script src="/assets/js/irancities.js"></script>
 
     </body>
 </html>

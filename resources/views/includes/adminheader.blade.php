@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <li><a href="/admin"><i class="sidebar-item-icon ft-home"></i><span class="nav-label">داشبورد</span></a></li>
                 <li><a href="/admin/users"><i class="sidebar-item-icon ft-users"></i><span class="nav-label">کاربران</span></a></li>
                 <li><a href="/admin/bankaccounts"><i class="sidebar-item-icon fas fa-credit-card"></i><span class="nav-label">حساب‌های بانکی</span></a></li>
+                <li><a href="/admin/transactions"><i class="sidebar-item-icon fas fa-credit-card"></i><span class="nav-label">تراکنش‌ها</span></a></li>
                 <li><a href="javascript:;"><i class="sidebar-item-icon ft-dollar-sign"></i><span class="nav-label">درخواست‌ها</span><i class="arrow la la-angle-right"></i></a>
                     <ul class="nav-2-level">
                         <li><a href="/dashboard/cryptopays"><i class="cc sidebar-item-icon BTC-alt"></i><span class="nav-label">برداشت از کیف‌پول ارزی</span></a></li>
@@ -33,8 +34,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     </ul>
                 </li>
                 <li><a href="/admin/tickets"><i class="sidebar-item-icon ft-inbox"></i><span class="nav-label">تیکت‌ها</span></a></li>
-                <li><a href="/admin/faq"><i class="sidebar-item-icon ft-book-open"></i><span class="nav-label">آموزش</span></a></li>
-
+                <li><a href="/admin/faq"><i class="sidebar-item-icon ft-help-circle"></i><span class="nav-label">سوالات متداول</span></a></li>
+                <li><a href="/admin/settings"><i class="sidebar-item-icon ft-book-open"></i><span class="nav-label">تنظیمات</span></a></li>
             </ul>
         </div>
         <!-- END: Sidebar-->

@@ -15,6 +15,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
+<?php 
+    use Morilog\Jalali\Jalalian;
+?>
 
 <html lang="en">
     <head>
@@ -39,10 +42,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <div class="row">
                     <div class="col-lg-3 col-md-4"><a class="btn btn-danger btn-rounded btn-block shadow font-weight-strong" href="/dashboard/tickets/new"><span class="btn-icon"><i class="ti-plus font-18"></i>ایجاد</span></a>
                         <div class="nav flex-column mt-5 mb-4">
-                            <a class="flexbox py-2 hover-link mb-1" href="?type=alltickets"><span class="d-flex align-items-center"><i class="ft-inbox mr-3 font-16"></i>همه تیکت&zwnj;ها</span></a>
-                            <a class="flexbox py-2 hover-link mb-1" href="?type=user"><span class="d-flex align-items-center"><i class="ft-star mr-3 font-16"></i>پاسخ کاربر</span></a>
-                            <a class="flexbox py-2 hover-link mb-1" href="?type=admin"><span class="d-flex align-items-center"><i class="ft-send mr-3 font-16"></i>پاسخ پیشتیبانی</span></a>
-                            <a class="flexbox py-2 hover-link mb-1" href="?type=closed"><span class="d-flex align-items-center"><i class="ft-mail mr-3 font-16"></i>بسته شده</span></a>
+                            <a class="flexbox py-2 hover-link mb-1" href="?"><span class="d-flex align-items-center"><i class="ft-inbox mr-3 font-16"></i>همه تیکت&zwnj;ها</span></a>
+                            <a class="flexbox py-2 hover-link mb-1" href="?type=1"><span class="d-flex align-items-center"><i class="ft-star mr-3 font-16"></i>پاسخ کاربر</span></a>
+                            <a class="flexbox py-2 hover-link mb-1" href="?type=2"><span class="d-flex align-items-center"><i class="ft-send mr-3 font-16"></i>پاسخ پیشتیبانی</span></a>
+                            <a class="flexbox py-2 hover-link mb-1" href="?type=3"><span class="d-flex align-items-center"><i class="ft-mail mr-3 font-16"></i>بسته شده</span></a>
                         </div>
                         <hr class="my-4">
 
@@ -69,7 +72,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                     <th>عنوان تیکت</th>
                                                     <th>وضعیت</th>
                                                     <th>تاریخ ایجاد</th>
-
                                                 </tr>
                                             </thead>
                                             <tbody class="rowlinkx" data-link="row">
@@ -78,21 +80,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                     <td class="check-cell rowlink-skip text-center"><label class="checkbox checkbox-danger check-single"><input class="mail-check" type="checkbox"><span></span></label></td>
                                                     <td class="text-center"><a href="/dashboard/ticket/{{$ticket->id}}" class="link text-black">{{ $ticket->name }}</a></td>
                                                     <td class="text-center">
-                                                        @if($ticket->type === 1)
+                                                        @if($ticket->type === '1')
+                                                        <span class="text-success">
+                                                            {{ $ticket->status }}
+                                                        </span>
+                                                        @elseif($ticket->type === '2')
                                                         <span class="text-warning">
                                                             {{ $ticket->status }}
                                                         </span>
-                                                        @elseif($ticket->type === 2)
-                                                        <span class="text-green">
-                                                            {{ $ticket->status }}
-                                                        </span>
                                                         @else
-                                                        <span class="text-green">
+                                                       <span class="text-danger">
                                                             {{ $ticket->status }}
                                                         </span>
                                                         @endif
                                                     </td>
-                                                    <td class="text-center">{{ $ticket->created_at }}</td>
+                                                    <td class="text-center">{{ Jalalian::forge($ticket->updated_at)->ago() }}</td>
                                                 </tr>
                                                 @endforeach
                                             </tbody>
@@ -101,14 +103,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         <p class="px-5 m-0 text-center">هیچ تیکتی ثبت نشده.</p>
                                         @endif
                                     </div>
-                                    <!--                                <ul class="pagination pagination-circle justify-content-end p-4">
-                                                                        <li class="page-item"><a class="page-link" href="#" aria-label="Previous"><i class="ti-angle-left" aria-hidden="true"></i><span class="sr-only">Previous</span></a></li>
-                                                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                                        <li class="page-item"><a class="page-link" href="#"><i class="la la-ellipsis-h"></i></a></li>
-                                                                        <li class="page-item"><a class="page-link" href="#" aria-label="Next"><i class="ti-angle-right" aria-hidden="true"></i><span class="sr-only">Next</span></a></li>
-                                                                    </ul>-->
+                                     {{ $tickets->links() }}
                                 </div>
                             </div>
                         </div>

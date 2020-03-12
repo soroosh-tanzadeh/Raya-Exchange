@@ -134,7 +134,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         <div class="card">
                             <div  class="card-body">
                                 <h6>تخمین ارزش دارایی</h6>
-                                <p class="text-muted"> <span class="mx-2">{{ number_format($wealth * $usdprice) }} تومان</span> <span class="mx-3">{{ number_format($wealth,2) }} $</span> <span class="mx-3">{{ number_format($wealth / $coinsprice['BTC']->priceUsd,4) }} BTC</span></p>
+                                <p class="text-muted"> <span class="mx-2">{{ number_format($wealth * $usdprice) }} تومان</span> <span class="mx-3">{{ number_format($wealth,2) }} $</span> <span class="mx-3">{{ number_format($wealth / $coinsprice['BTC']->priceUsd,8) }} BTC</span></p>
                                 <div class="table-responsive">
                                     <table class="table table-hover table-inbox w-100" id="market-table">
                                         <thead>
@@ -157,8 +157,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                 <td>{{ number_format($rialWallet->credit / $coinsprice['BTC']->price_in_toman_int,4) }}</td>
                                                 <td>{{ number_format($rialWallet->cashable) }}</td>
                                                 <td>
-                                                    <a class="btn btn-danger btn-sm btn-rounded ml-2 text-white" href="/dashboard/checkouts">برداشت</a>
-                                                    <a class="btn btn-primary btn-sm btn-rounded ml-2 text-white" data-toggle="modal" data-target="#paymodal" href="#paymodal">واریز</a>
+                                                    <a class="btn btn-danger btn-sm btn-rounded m-2 text-white" href="/dashboard/checkouts">برداشت</a>
+                                                    <a class="btn btn-primary btn-sm btn-rounded m-2 text-white" data-toggle="modal" data-target="#paymodal" href="#paymodal">واریز</a>
                                                 </td>
                                             </tr>
 
@@ -178,10 +178,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                 @endif
                                                 <td>{{ $coinWallet->cashable }}</td>
                                                 <td>
-                                                    <a class="btn btn-success btn-sm btn-rounded ml-2 text-white" href="/dashboard/myoffers">خرید و فروش</a>
-                                                    <a class="btn btn-warning btn-sm btn-rounded ml-2 text-white" href="/dashboard/exchange">تبادل</a>
-                                                    <a class="btn btn-danger btn-sm btn-rounded ml-2 text-white recievecoin"  data-coin="{{ $coinWallet->type_name }}">برداشت</a>
-                                                    <a class="btn btn-primary btn-sm btn-rounded ml-2 text-white paycoin" data-coin="{{ $coinWallet->type_name }}">واریز</a>
+                                                    <a class="btn btn-success btn-sm btn-rounded m-2 text-white" href="/dashboard/myoffers">خرید و فروش</a>
+                                                    <a class="btn btn-warning btn-sm btn-rounded m-2 text-white" href="/dashboard/exchange">تبادل</a>
+                                                    <a class="btn btn-danger btn-sm btn-rounded m-2 text-white recievecoin"  data-coin="{{ $coinWallet->type_name }}">برداشت</a>
+                                                    <a class="btn btn-primary btn-sm btn-rounded m-2 text-white paycoin" data-coin="{{ $coinWallet->type_name }}">واریز</a>
                                                 </td>
                                             </tr>
                                             @endforeach

@@ -29,7 +29,7 @@ $(".coins_select").select2({
     placeholder: "انتخاب یک کوین برای پیشنهاد",
     templateSelection: iformat,
     templateResult: iformat,
-    allowHtml: true
+    allowHtml: true,
 });
 
 $(document).ready(function () {

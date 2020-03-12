@@ -39,6 +39,10 @@ class OffersController extends Controller {
                             $price_in_toman = $price . " تومان";
                         }
                         return $price_in_toman;
+                    })->editColumn('amount', function($offer) {
+                        return number_format($offer->amount, 8);
+                    })->editColumn('min_buy', function($offer) {
+                        return number_format($offer->min_buy, 8);
                     })->editColumn('coin', function($offer) {
                         $requestURL = "https://api.coincap.io/v2/assets";
                         $response = Curl::to($requestURL)
@@ -52,6 +56,7 @@ class OffersController extends Controller {
                         return ($coins[$offer->coin]->symbol) . ' <img src="/assets/icons/' . strtolower($coins[$offer->coin]->symbol) . '.png" style="max-width: 30px;"/>';
                     })->rawColumns(['coin', 'action'])->make(true);
         } else {
+            $offers = $offers->whereRaw("coin != 'bitcoin'")->whereRaw("coin != 'etheruem'")->whereRaw(" coin != 'teather'");
             return Datatables::eloquent($offers)->addColumn('action', function ($offer) {
                         return '<a data-toggle="tooltip" title="" data-original-title="خرید" href="/dashboard/offerpage?offer=' . $offer->id . '" class="text-success font-18"><i class="ft-thumbs-up"></i></a>';
                     })->editColumn('created_at', function($offer) {
@@ -73,6 +78,10 @@ class OffersController extends Controller {
                             $price_in_toman = $price . " تومان";
                         }
                         return $price_in_toman;
+                    })->editColumn('amount', function($offer) {
+                        return number_format($offer->amount, 8);
+                    })->editColumn('min_buy', function($offer) {
+                        return number_format($offer->min_buy, 8);
                     })->editColumn('coin', function($offer) {
                         $requestURL = "https://api.coincap.io/v2/assets";
                         $response = Curl::to($requestURL)
@@ -116,6 +125,10 @@ class OffersController extends Controller {
                             $price_in_toman = $price . " تومان";
                         }
                         return $price_in_toman;
+                    })->editColumn('amount', function($offer) {
+                        return number_format($offer->amount, 8);
+                    })->editColumn('min_buy', function($offer) {
+                        return number_format($offer->min_buy, 8);
                     })->editColumn('coin', function($offer) {
                         $requestURL = "https://api.coincap.io/v2/assets";
                         $response = Curl::to($requestURL)
@@ -129,6 +142,7 @@ class OffersController extends Controller {
                         return ($coins[$offer->coin]->symbol) . ' <img src="/assets/icons/' . strtolower($coins[$offer->coin]->symbol) . '.png" style="max-width: 30px;"/>';
                     })->rawColumns(['coin', 'action'])->make(true);
         } else {
+            $offers = $offers->whereRaw("coin != 'bitcoin'")->whereRaw("coin != 'etheruem'")->whereRaw(" coin != 'teather' ");
             return Datatables::eloquent($offers)->addColumn('action', function ($offer) {
                         return '<a data-toggle="tooltip" title="" data-original-title="خرید" href="/dashboard/offerpage?offer=' . $offer->id . '" class="text-success font-18"><i class="ft-shopping-cart"></i></a>';
                     })->editColumn('created_at', function($offer) {
@@ -150,6 +164,10 @@ class OffersController extends Controller {
                             $price_in_toman = $price . " تومان";
                         }
                         return $price_in_toman;
+                    })->editColumn('amount', function($offer) {
+                        return number_format($offer->amount, 8);
+                    })->editColumn('min_buy', function($offer) {
+                        return number_format($offer->min_buy, 8);
                     })->editColumn('coin', function($offer) {
                         $requestURL = "https://api.coincap.io/v2/assets";
                         $response = Curl::to($requestURL)

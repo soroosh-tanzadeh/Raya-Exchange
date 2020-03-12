@@ -13,15 +13,19 @@ class ExchangeController extends Controller {
         $coins = (array) Curl::to("https://api.simpleswap.io/get_all_currencies")->asJson()->get();
         $exchanges = Exchange::query()->where("user_id", session()->get("user")->id)->latest()->paginate(10);
         foreach ($exchanges as $exchange) {
-            $exchange->status = Exchange::getExchangeStatus($exchange->exchange_id);
+            if ((strtotime($exchange->created_at) + (60 * 20)) - (time()) < 0) {
+                $exchange->status = -5;
+            } else {
+                $exchange->status = Exchange::getExchangeStatus($exchange->exchange_id);
+            }
             $exchange->save();
         }
         return view("dashboard.market.exchange", array("user" => session()->get("user"), "exchanges" => $exchanges, "currencies" => ((array) $coins)));
     }
-    
-    public function getcoins(Request $request){
+
+    public function getcoins(Request $request) {
         $coins = (array) Curl::to("https://api.simpleswap.io/get_all_currencies")->asJson()->get();
-        foreach ($coins as $coin){
+        foreach ($coins as $coin) {
             echo "<option value='$coin->symbol'>$coin->name</option>\n";
         }
     }

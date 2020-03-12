@@ -168,30 +168,42 @@ $(document).ready(function () {
     })
 
     $(".coins_select").change(function () {
-        $("#coin-num").trigger("input");
-        $("#coinbuy-num").trigger("input");
+        if ($("#coin-num").val() !== "") {
+            $("#coin-num").trigger("input");
+        }
+        if ($("#coinbuy-num").val() !== "") {
+            $("#coinbuy-num").trigger("input");
+        }
     });
 
     $("#coin-num").on("input", function () {
         var coin = parseFloat($("#coin-num").val());
-        var toman = coin * parseInt($("#coin-num").parent().parent().parent().parent().find(".coins_select :selected").attr("data-price"));
-        toman = (toman * 0.02) + toman;
-        var total = toman - (toman * adminfee);
-        $("#totalsellprice").text(numeral(parseInt(total)).format('0,0') + " تومان");
-        $("#price-toman").val(numeral(parseInt(toman)).format('0,0'));
+        var coinsymbol = $("#coin-num").parent().parent().parent().parent().find(".coins_select :selected").data("symbol");
+        if (coinsymbol !== undefined) {
+            var toman = coin * parseInt($("#coin-num").parent().parent().parent().parent().find(".coins_select :selected").attr("data-price"));
+            toman = (toman * 0.02) + toman;
+            var total = toman - (toman * adminfee);
+            $("#selloffercoin").text(coin + ""+coinsymbol.toUpperCase());
+            $("#price-toman").html("<span style='float:right' class='mx-1'>" + coin + "" + coinsymbol + " : </span> <span style='float:right;'>" + numeral(parseInt(toman)).format('0,0') + "</span");
+        }
     });
 
-    $("#price-toman").on("input", function () {
+    $("#offerprice").on("input", function () {
         toman = parseInt(numeral($(this).val()).value());
         var total = toman - (toman * adminfee);
+        
         $("#totalsellprice").text(numeral(parseInt(total)).format('0,0') + " تومان");
     });
 
     $("#coinbuy-num").on("input", function () {
         var coin = parseFloat($("#coinbuy-num").val());
-        var toman = coin * parseInt($("#coinbuy-num").parent().parent().parent().parent().find(".coins_select :selected").attr("data-price"));
-        toman = toman - (toman * 0.02);
-        $("#pricebuy-toman").val(numeral(parseInt(toman)).format('0,0'));
+        var coinsymbol = $("#coinbuy-num").parent().parent().parent().parent().find(".coins_select :selected").data("symbol");
+        if (coinsymbol !== undefined) {
+            var toman = coin * parseInt($("#coinbuy-num").parent().parent().parent().parent().find(".coins_select :selected").attr("data-price"));
+            toman = toman - (toman * 0.02);
+            $("#pricebuy-toman").html("<span style='float:right' class='mx-1'>" + coin + "" + coinsymbol + " : </span> <span style='float:right;'>" + numeral(parseInt(toman)).format('0,0') + "</span");
+            //  $("#pricebuy-toman").val(numeral(parseInt(toman)).format('0,0'));
+        }
     });
 
     $("#coinamount").on("input", function () {
@@ -242,7 +254,19 @@ $(document).ready(function () {
         $('#quick-sidebar').backdrop();
     });
 
+
+
+    setInterval(function () {
+        $(".coinpriceToman").each(function () {
+            var coin_id = $(this).attr("data-coin");
+            var element = this;
+            $.post("/getcoinIndex", {_token: $('meta[name="csrf-token"]').attr('content'), id: coin_id.toLowerCase()}, function (data) {
+                $(element).text(data.price_in_toman);
+            });
+        });
+    }, 10000);
 });
+
 
 function submitAjaxForm(form) {
     var data = $(form).serialize();

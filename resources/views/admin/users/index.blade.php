@@ -22,7 +22,7 @@ use Morilog\Jalali\Jalalian;
 <html lang="en">
     <head>
         @include("includes.head")
-        <title>Raya-EX | تراکنش‌های ریالی </title><!-- GLOBAL VENDORS-->
+        <title>Raya-EX | کاربران</title><!-- GLOBAL VENDORS-->
 
     </head>
     <body>
@@ -46,42 +46,19 @@ use Morilog\Jalali\Jalalian;
                         <div class="card">
                             <div class="card-body">
                                 <div class="table-responsive font-11">
-                                    <table class="table table-hover compact-table">
+                                    <table class="table table-hover compact-table" id="users">
                                         <thead class="thead-light">
                                             <tr>
                                                 <th>شماره</th>
                                                 <th>نام و نام‌خانوادگی</th>
                                                 <th>شماره موبایل</th>
-                                                <th>شماره ایمیل</th>
+                                                <th> ایمیل</th>
                                                 <th>تاریخ ثبت‌نام</th>
                                                 <th>وضعیت تایید</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach($users as $user)
-                                            <tr>
-                                                <td>{{ $user->id }}</td>
-                                                <td>
-                                                    <a href="/admin/users/{{ $user->id }}"> <b>{{ $user->name }}</b> </a>
-                                                </td>
-                                                <td>
-                                                    <b>{{ $user->phone_number }}</b>
-                                                </td>
-                                                <td>
-                                                    <b>{{ $user->email }}</b>
-                                                </td>
-                                                <td>{{ Jalalian::forge($user->created_at)->ago() }}</td>
-                                                <td>
-                                                    @if($user->verified_at != null)
-                                                    <text class="text-success">تایید شده</text>
-                                                    @else
-                                                    <text class="text-warning">تایید نشده</text>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                            @endforeach
-                                        </tbody>
-                                        {{ $users->links() }}
+
                                     </table>
                                 </div>
                             </div>
@@ -93,5 +70,26 @@ use Morilog\Jalali\Jalalian;
         <!-- END: Page content-->
         <!-- END: Quick sidebar-->
         @include("includes.footer")
+
+        <script>
+            $(document).ready(function () {
+                $("#users").DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: '/admin/getusers',
+                    columns: [
+                        {data: 'id'},
+                        {data: 'name'},
+                        {data: 'phone_number'},
+                        {data: 'email'},
+                        {data: 'signup_date'},
+                        {data: 'status'},
+                    ],
+                    "language": {
+                        "url": "/assets/persian.json"
+                    }
+                });
+            });
+        </script>
     </body>
 </html>

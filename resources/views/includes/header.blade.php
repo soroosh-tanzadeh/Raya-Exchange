@@ -24,9 +24,9 @@ $headcoins = Exchange::getCoins();
 $headerWallets = Wallet::getWallets();
 ?>
 
-  @if($user->is_admin)
-    @include("includes.adminheader")
-  @else
+@if($user->is_admin)
+@include("includes.adminheader")
+@else
 <div class="modal fade" id="buycoinmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -96,13 +96,8 @@ $headerWallets = Wallet::getWallets();
                         <li><a href="/dashboard/crypto"><i class="sidebar-item-icon ft-layers"></i><span class="nav-label">ارز دیجیتال</span></a></li>
                     </ul>
                 </li>
-                <li><a href="javascript:;"><i class="sidebar-item-icon ft-trending-up"></i><span class="nav-label">معاملات ارزی</span><i class="arrow la la-angle-right"></i></a>
-                    <ul class="nav-2-level">
-                        <!-- 2-nd level-->
-                        <li><a href="/dashboard/exchange"><i class="sidebar-item-icon ft-layers"></i><span class="nav-label">تبادل ارز</span></a></li>
-                        <li><a href="/dashboard/market"><i class="sidebar-item-icon ft-layers"></i><span class="nav-label">قیمت لحظه‌ای</span></a></li>
-                    </ul>
-                </li>
+                <li><a href="/dashboard/exchange"><i class="sidebar-item-icon fas fa-exchange-alt"></i><span class="nav-label">معاملات ارز</span></a></li>
+                <li><a href="/dashboard/market"><i class="sidebar-item-icon ft-trending-up"></i><span class="nav-label">قیمت لحظه‌ای ارز‌دیجیتال</span></a></li>
                 <li><a href="/dashboard/affilate"><i class="sidebar-item-icon ft-users"></i><span class="nav-label">کسب درآمد</span></a></li>
                 <li><a href="javascript:;"><i class="sidebar-item-icon ft-shopping-cart"></i><span class="nav-label">مالی</span><i class="arrow la la-angle-right"></i></a>
                     <ul class="nav-2-level">
@@ -111,9 +106,7 @@ $headerWallets = Wallet::getWallets();
                     </ul>
                 </li>
                 <li><a href="/dashboard/tickets"><i class="sidebar-item-icon ft-mail"></i><span class="nav-label">تیکت</span></a></li>
-                <li><a href="/dashboard/knowledge"><i class="sidebar-item-icon ft-book-open"></i><span class="nav-label">آموزش</span></a></li>
                 <li><a href="/dashboard/faq"><i class="sidebar-item-icon ft-help-circle"></i><span class="nav-label">سوالات متداول</span></a></li>
-
             </ul>
         </div>
         <!-- END: Sidebar-->
@@ -137,54 +130,151 @@ $headerWallets = Wallet::getWallets();
                             </div>
                             <div class="custom-scroll position-relative mb-3" style="height:320px;">
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-xl-4">
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="media w-100"><i class="cc BTC-alt font-40 text-warning mr-4"></i>
                                                     <div class="media-body">
                                                         <div class="mb-2 text-muted font-16">کیف پول بیت کوین</div> 
-                                                        <div class="d-flex" style="word-break:break-word"><span class="h5 mb-0 font-20"><span>{{ $headerWallets['BTC']->credit }}</span><span class="font-weight-normal">BTC</span></span><span class="mx-3"></span>قابل برداشت : ‌{{ $headerWallets['BTC']->cashable }}</div>
+                                                        <div class="d-lg-flex" style="word-break:break-word">
+                                                            <div class="h5 mb-0 font-20"><span>{{ $headerWallets['btc']->credit }}</span>
+                                                                <span class="font-weight-normal">BTC</span>
+                                                            </div>
+                                                            <span class="mx-3">
+                                                                قابل برداشت : ‌{{ $headerWallets['btc']->cashable }}
+                                                            </span>
+                                                        </div>
+                                                        <div><a class="btn btn-primary btn-sm btn-rounded ml-2 text-white paycoin" data-coin="btc">واریز</a><a class="btn btn-danger btn-sm btn-rounded ml-2 text-white recievecoin" data-coin="btc">برداشت</a></div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-xl-4">
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="media w-100"><i class="cc ETH-alt font-40 text-primary mr-4"></i>
                                                     <div class="media-body">
                                                         <div class="mb-2 text-muted font-16">کیف پول اتریم</div>
-                                                        <div class="d-flex" style="word-break:break-word"><span class="h5 mb-0 font-20"><span>{{ $headerWallets['ETH']->credit }}</span><span class="font-weight-normal">ETH</span></span><span class="mx-3">قابل برداشت : ‌{{ $headerWallets['ETH']->cashable }}</span></div>
+                                                        <div class="d-lg-flex" style="word-break:break-word">
+                                                            <div class="h5 mb-0 font-20">
+                                                                <span>{{ $headerWallets['eth']->credit }}</span>
+                                                                <span class="font-weight-normal">ETH</span>
+                                                            </div>
+                                                            <div class="mx-3">قابل برداشت : ‌{{ $headerWallets['eth']->cashable }}
+                                                            </div>
+                                                        </div>
+                                                        <div><a class="btn btn-primary btn-sm btn-rounded ml-2 text-white paycoin" data-coin="eth">واریز</a><a class="btn btn-danger btn-sm btn-rounded ml-2 text-white recievecoin" data-coin="eth">برداشت</a></div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-xl-4">
                                         <div class="card">
                                             <div class="card-body media">
                                                 <div class="media w-100"><i class="cc LTC-alt font-40 text-secondary mr-4"></i>
                                                     <div class="media-body">
                                                         <div class="mb-2 text-muted font-16">کیف پول لایت کوین</div>
-                                                        <div class="d-flex" style="word-break:break-word"><span class="h5 mb-0 font-20"><span>{{ $headerWallets['LTC']->credit }}</span><span class="font-weight-normal">LTC</span></span><span class="mx-3">قابل برداشت : ‌{{ $headerWallets['LTC']->cashable }}</span></div>
+                                                        <div class="d-lg-flex" style="word-break:break-word">
+                                                            <div class="h5 mb-0 font-20">
+                                                                <span>{{ $headerWallets['ltc']->credit }}</span><span class="font-weight-normal">LTC</span>
+                                                            </div>
+                                                            <div class="mx-3">قابل برداشت :
+                                                                ‌{{ $headerWallets['ltc']->cashable }}
+                                                            </div>
+                                                        </div>
+                                                        <div><a class="btn btn-primary btn-sm btn-rounded ml-2 text-white paycoin" data-coin="ltc">واریز</a><a class="btn btn-danger btn-sm btn-rounded ml-2 text-white recievecoin" data-coin="ltc">برداشت</a></div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-xl-4">
                                         <div class="card">
                                             <div class="card-body media">
                                                 <div class="media w-100"><i class="cc XRP-alt font-40 text-primary mr-4"></i>
                                                     <div class="media-body">
                                                         <div class="mb-2 text-muted font-16">کیف پول ریپل</div>
-                                                        <div class="d-flex" style="word-break:break-word"><span class="h5 mb-0 font-20"><span>{{ $headerWallets['XRP']->credit }}</span><span class="font-weight-normal">XRP</span></span><span class="mx-3">قابل برداشت : ‌{{ $headerWallets['XRP']->cashable }}</span></div>
+                                                        <div class="d-lg-flex" style="word-break:break-word">
+                                                            <div class="h5 mb-0 font-20">
+                                                                <span>{{ $headerWallets['xrp']->credit }}</span>
+                                                                <span class="font-weight-normal">XRP</span>
+                                                            </div>
+                                                            <div class="mx-3">قابل برداشت : ‌{{ $headerWallets['xrp']->cashable }}</div>
+                                                        </div>
+                                                        <div><a class="btn btn-primary btn-sm btn-rounded ml-2 text-white paycoin" data-coin="xrp">واریز</a><a class="btn btn-danger btn-sm btn-rounded ml-2 text-white recievecoin" data-coin="xrp">برداشت</a></div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-xl-4">
+                                        <div class="card">
+                                            <div class="card-body media">
+                                                <div class="media w-100">
+                                                    <img src="http://dashboard.raya.webflaxco.ir/assets/icons/usdt.png" style="max-width: 40px;" class="mx-2">
+                                                    <div class="media-body">
+                                                        <div class="mb-2 text-muted font-16">کیف پول تتر</div>
+                                                        <div class="d-lg-flex" style="word-break:break-word">
+                                                            <div class="h5 mb-0 font-20">
+                                                                <span>{{ $headerWallets['usdt']->credit }}</span>
+                                                                <span class="font-weight-normal">USDT</span>
+                                                            </div>
+                                                            <div class="mx-3">قابل برداشت : ‌{{ $headerWallets['usdt']->cashable }}</div>
+                                                        </div>
+                                                        <div><a class="btn btn-primary btn-sm btn-rounded ml-2 text-white paycoin" data-coin="usdt">واریز</a><a class="btn btn-danger btn-sm btn-rounded ml-2 text-white recievecoin" data-coin="usdt">برداشت</a></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-4">
+                                        <div class="card">
+                                            <div class="card-body media">
+                                                <div class="media w-100">
+                                                    <img src="http://dashboard.raya.webflaxco.ir/assets/icons/bch.png" style="max-width: 40px;" class="mx-2">
+                                                    <div class="media-body">
+                                                        <div class="mb-2 text-muted font-16">کیف پول بیت‌کوین کش</div>
+                                                        <div class="d-lg-flex" style="word-break:break-word">
+                                                            <div class="h5 mb-0 font-20"><span>{{ $headerWallets['bch']->credit }}</span>
+                                                                <span class="font-weight-normal">BCH</span>
+                                                            </div>
+                                                            <div class="mx-3">قابل برداشت : ‌{{ $headerWallets['bch']->cashable }}</div>
+                                                        </div>
+                                                        <div><a class="btn btn-primary btn-sm btn-rounded ml-2 text-white paycoin" data-coin="bch">واریز</a><a class="btn btn-danger btn-sm btn-rounded ml-2 text-white recievecoin" data-coin="bch">برداشت</a></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-4">
+                                        <div class="card">
+                                            <div class="card-body media">
+                                                <div class="media w-100">
+                                                    <img src="http://dashboard.raya.webflaxco.ir/assets/icons/money.png" style="max-width: 40px;" class="mx-2">
+                                                    <div class="media-body">
+                                                        <div class="mb-2 text-muted font-16">کیف پول تومان</div>
+                                                        <div class="d-lg-flex" style="word-break:break-word">
+                                                            <div class="h5 mb-0 font-20"><span>{{ $headerWallets['Rial']->credit }}</span>
+                                                                <span class="font-weight-normal">Toman</span>
+                                                            </div>
+                                                            <div class="mx-3">قابل برداشت : ‌{{ $headerWallets['Rial']->cashable }}</div>
+                                                        </div>
+                                                        <div>
+                                                            <a class="btn btn-danger btn-sm btn-rounded ml-2 text-white" href="/dashboard/checkouts">برداشت</a>
+                                                            <a class="btn btn-primary btn-sm btn-rounded ml-2 text-white" data-toggle="modal" data-target="#paymodal" href="#paymodal">واریز</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12 pb-3 text-left px-5">
+                                        <a class="btn btn-danger btn-sm btn-rounded ml-2 text-white float-left" href="/dashboard/mywallet">همه کیف‌پول‌ها</a>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -236,7 +326,7 @@ $headerWallets = Wallet::getWallets();
                                 <div class="media-body">
                                     <h5 class="mb-1">{{ $user->name }}</h5>
                                 </div>
-                            </div><a class="dropdown-item d-flex align-items-center" href="#"><i class="ft-user mr-3 font-18 text-muted"></i>اطلاعات کاربری</a><a class="dropdown-item d-flex align-items-center" href="#"><i class="ft-lock mr-3 font-18 text-muted"></i>تغییر رمز عبور</a>
+                            </div><a class="dropdown-item d-flex align-items-center" href="/dashboard/profile"><i class="ft-user mr-3 font-18 text-muted"></i>اطلاعات کاربری</a><a class="dropdown-item d-flex align-items-center" href="/dashboard/passchange"><i class="ft-lock mr-3 font-18 text-muted"></i>تغییر رمز عبور</a>
                             <div class="dropdown-divider my-3"></div>
                             <div class="mx-4"><a class="btn btn-link p-0" href="/logout"><span class="btn-icon"><i class="ft-power mr-2 font-18"></i>خروج</span></a></div>
                         </div>
@@ -255,11 +345,10 @@ $headerWallets = Wallet::getWallets();
                                     <div>
                                         <img src="{{ $headcoin->icon }}" alt="bitcoin">
                                         <b>{{ $headcoin->name }}
-                                            <span>{{ $headcoin->price_in_toman }}</span>
-                                            <p>
-                                                <span class="mt-1 @if($headcoin->changePercent24Hr > 0) text-success @else text-danger @endif">{{ abs(round($headcoin->changePercent24Hr,2)) }}٪</span>
-                                                <i class="@if($headcoin->changePercent24Hr > 0) ft-arrow-up text-success @else ft-arrow-down text-danger @endif"></i>
-                                            </p>
+                                            <span class="coinpriceToman" data-coin="{{ $headcoin->id }}">{{ $headcoin->price_in_toman }}</span>
+                                            <span>
+                                                <span class="mt-1 @if($headcoin->changePercent24Hr > 0) text-success @else text-danger @endif">{{ abs(round($headcoin->changePercent24Hr,2)) }}٪</span><i class="@if($headcoin->changePercent24Hr > 0) ft-arrow-up text-success @else ft-arrow-down text-danger @endif"></i>
+                                            </span>
                                         </b>
                                     </div>
                                 </li>

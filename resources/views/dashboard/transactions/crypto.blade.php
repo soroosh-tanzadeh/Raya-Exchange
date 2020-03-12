@@ -110,7 +110,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                             <b>{{ $deposit->coin }}</b>
                                                         </td>
                                                         <td>{{ $deposit->amount }}</td>
-                                                        <td>{{ Jalalian::forge($checkout->created_at)->ago() }}</td>
+                                                        <td>{{ Jalalian::forge($deposit->created_at)->ago() }}</td>
                                                         <td>
                                                             @if($deposit->confirmed)
                                                             <text class="text-success">نهایی شده</text>

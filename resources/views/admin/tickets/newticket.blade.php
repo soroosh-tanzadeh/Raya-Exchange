@@ -19,9 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html lang="en">
     <head>
         @include("includes.head")
+        <title>RayaEx | تیکت جدید</title>
     </head>
     <body>
-        @include("includes.adminheader")
+        @include("includes.header")
         <div class="page-content fade-in-up">
             <!-- BEGIN: Page heading-->
             <div class="page-heading">
@@ -32,61 +33,80 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     </ol>
                 </div>
             </div>
-            <div class="card ticket-upload" style="border-radius:0px 0px 0px;">
-                <div class="show-tickets card border-0">
-
-                </div>
-                <div class="specitickets">
-                    <form action="/admin/ticket/newticket" method="POST" enctype="multipart/form-data">
+            <div class="card p-4" style="border-radius:0px 0px 0px;">
+                <div class="card-body">
+                    <form action="/admin/ticket/newticket" id="newticket" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <input type="hidden" name="user_id" value="{{ $touser }}" />
-                        <div class="row m-0">
-                            <div class="d-none d-sm-flex justify-content-center col-sm-2 align-items-center">
-                                <button class="btn btn-primary d-flex justify-content-center align-items-center" style="height: fit-content;"><i class="fas fa-paper-plane" style="font-size: 210%;"></i></button>
+                        <select class="form-control border-0 d-none"  name="priority">
+                            <option value="1">کم</option>
+                        </select>
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="display_name">موضوع تیکت</label>
+                                <input class="form-control" name="name" type="text" required="">
                             </div>
-
-                            <div class="col-12 col-sm-8">
-                                <div class="row">
-                                    <div class="col-6 px-0 py-2">
-                                        <input class="form-control border-0" name="name" placeholder="موضوع تیکت">
-                                    </div>
-                                    <div class="col-6 px-0 py-2">
-                                        <select class="form-control border-0" name="priority">
-                                            <option value="-1">اولویت تیکت</option>
-                                            <option value="1">کم</option>
-                                            <option value="2">متوسط</option>
-                                            <option value="3">بالا</option>
-                                            <option value="4">بسیار بالا</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-12 px-0 py-2">
-                                        <div class="part">
-                                            <select class="form-control border-0 w-100" name="to">
-                                                <option value="-1">بخش</option>
-                                                <option value="crypto">پبشتیبانی ارز دیجیتال</option>
-                                                <option value="tech">پبشتیبانی فنی</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 px-0 pt-2 pb-4">
-                                        <div class="message ">
-                                            <textarea class="form-control border-0" name="text" placeholder="پیام خود را وارد کنید..."></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-sm-2 justify-content-center align-items-center d-flex py-sm-0 py-3">
-                                <input type="file" id="pin" name="files[]" multiple style="display: none;"><p onclick="$('#pin').click();" class="mx-2 mx-sm-0"><i class="fas fa-paperclip" style="font-size: 210%;"></i></p>
-                                <div class="d-block d-sm-none">
-                                    <button class="btn btn-primary d-flex justify-content-center align-items-center" id="sendTicket" type="submit"><i class="fas fa-paper-plane"></i></button>
-                                </div>
+                            <div class="col-6">
+                                <label for="to">بخش</label>
+                                <select class="form-control border-0 w-100" name="to" required="">
+                                    <option value="" disabled selected>بخش</option>
+                                    <option value="خرید و فروش">خرید و فروش</option>
+                                    <option value="تبادل ارز">تبادل ارز</option>
+                                    <option value="پشتیبانی فنی">پشتیبانی فنی</option>
+                                    <option value="غیره">غیره</option>
+                                </select>
                             </div>
                         </div>
+                        <label for="text" class="mt-2">پیام</label>
+                        <input name="text" type="hidden" id="tickettext">
+                        <div id="editor-container">
+                            <p></p>
+                        </div>
+                        <div class="col-12 py-2">
+                            <h4>ضمینه</h4>
+                            <p class="text-muted">امکان انتخاب چند فایل وجود دارد</p>
+                            <input type="file" id="pin" name="files[]" multiple>
+                            <div class="d-block d-sm-none">
+                            </div>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary float-left" type="submit">ارسال تیکت</button>
+                        </div>                        
                     </form>
                 </div>
             </div>
         </div>
         @include("includes.footer")
-
+        <script>
+            $('#editor-container').summernote({
+                toolbar: [
+                    // [groupName, [list of button]]
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']]
+                ]
+            });
+            var form = document.querySelector('#newticket');
+            form.onsubmit = function () {
+                // Populate hidden form on submit
+                var html = $('#editor-container').summernote('code');
+                $("#tickettext").val(html);
+                console.log("Submitted", $(form).serialize(), $(form).serializeArray());
+                $.ajax({
+                    url: "/admin/ticket/newticket",
+                    data: $(form).serialize(),
+                    type: "POST",
+                    success: function (data, textStatus, jqXHR) {
+                        window.location = data.redirect;
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        Swal.fire("خطا", "خطا در برقراری ارتباط!", "error");
+                    }
+                });
+                return false;
+            };
+        </script>
     </body>
 </html>

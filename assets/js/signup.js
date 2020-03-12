@@ -27,7 +27,12 @@ function enterphone() {
 }
 
 $(document).ready(function () {
-
+    $.validator.addMethod("regex",
+            function (value, element, regexp) {
+                var re = new RegExp(regexp);
+                return this.optional(element) || re.test(value);
+            }, "مقدار ورودی را بررسی کنید"
+            );
     $("#form,#ok,#timerbox,#form-title").hide();
     var form = $("#form-wizard-responsive");
     form.steps({
@@ -47,6 +52,19 @@ $(document).ready(function () {
             }
             // Disable validation on fields that are disabled or hidden.
             form.validate().settings.ignore = ":disabled,:hidden";
+
+            if (!(/\b(?!(\d)\1{3})[13-9]{4}[1346-9][013-9]{5}\b/.test($("#inputZip").val()))) {
+                $("#inputZip").addClass("is-invalid");
+                return false;
+            }
+
+            if ($("input[name='nationalcode']").val() !== "") {
+                if (!isValidNationalCode($("input[name='nationalcode']").val())) {
+                    $("input[name='nationalcode']").addClass("is-invalid");
+                    return false;
+                }
+            }
+
             // Start validation; Prevent going forward if false
             return form.valid();
         },
@@ -57,7 +75,7 @@ $(document).ready(function () {
         onFinished: function (event, currentIndex) {
             if ($("#password1").val() === $("#password2").val()) {
                 form.submit();
-            }else{
+            } else {
                 $("#password2").addClass("is-invalid");
                 var error = '<label id="password2-error" class="invalid-feedback active" for="password2" style="">رمز عبور و تاییدیه آن برابر نیست</label>'
                 $("#password2").parent().append(error);
@@ -84,3 +102,21 @@ $(document).ready(function () {
     });
 });
 
+function isValidNationalCode(code) {
+    if (code.length !== 10 || /(\d)(\1){9}/.test(code))
+        return false;
+
+    var sum = 0,
+            chars = code.split('');
+
+    for (var i = 0; i < 9; i++)
+        sum += +chars[i] * (10 - i);
+
+    var lastDigit,
+            remainder = sum % 11;
+
+    lastDigit = remainder < 2 ? remainder : 11 - remainder;
+
+    return +chars[9] === lastDigit;
+}
+;

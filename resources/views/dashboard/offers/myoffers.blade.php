@@ -70,9 +70,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                     <table class="table table-hover compact-table">
                                         <thead class="thead-light">
                                             <tr>
-                                                <th>ارز</th>
+                                                <th>شماره سفارش</th>
+                                                <th>نوع ارز</th>
                                                 <th>مقدار</th>
-                                                <th>قیمت - در این لحظه</th>
+                                                <th>قیمت در لحظه سفارش</th>
+                                                <th>نوع معامله</th>
                                                 <th>تاریخ ایجاد</th>
                                                 <th>وضعیت</th>
                                                 <th></th>
@@ -81,6 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         <tbody>
                                             @foreach($offers as $offer)
                                             <tr>
+                                                <td>{{ $offer->id }}</td>
                                                 <td>
                                                     {{ $offer->coin }}
                                                     <img src="/assets/icons/{{ strtolower($coins[$offer->coin]->symbol) }}.png" style="max-width: 30px;"/>
@@ -88,7 +91,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                 </td>
                                                 <td>{{ $offer->amount }}</td>
                                                 <td><?php
-                                                    $priceInToman = $coins[$offer->coin]->price_in_toman_int * $offer->amount;
+                                                    $priceInToman = ($offer->price_pre * $offer->amount) / $offer->max_buy;
                                                     $price_in_toman = "";
                                                     if (($priceInToman >= 1000) & ($priceInToman < 1000000)) {
                                                         $price = $priceInToman / 1000;
@@ -107,18 +110,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                     ?></td>
                                                 <td>{{ $offer->created_at }}</td>
                                                 <td>
-                                                    @if($offer->is_selled)
-                                                    <text class="text-success"> فروخته شده</text>
+                                                    @if($offer->type === "sell")
+                                                    فروش
                                                     @else
-                                                    <text class="text-warning">  در انتظار خریدار</text>
+                                                    خرید
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    @if($offer->is_active)
-                                                    <input type="button" class="btn btn-danger canceloffer" data-offer="{{ $offer->id }}" value="لغو پیشنهاد" />
+                                                    @if($offer->is_selled)
+                                                    فروخته شده
                                                     @else
-                                                    <text class="text-danger">لغو شده</text>
+                                                    در انتظار خریدار
                                                     @endif
+                                                </td>
+                                                <td>
+                                                    <input type="button" class="btn btn-danger" value="لغو پیشنهاد" />
                                                 </td>
                                             </tr>
                                             @endforeach

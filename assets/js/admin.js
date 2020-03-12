@@ -55,39 +55,7 @@ $(document).ready(function () {
         });
     });
     $(".comfirmbank").click(function () {
-        theresult = false;
-        thebtn = this;
-        var bank = $(this).attr("data-bankaccount");
-        Swal.fire({
-            title: 'آیا از تایید این حساب بانکی اطمینان دارید؟',
-            text: "!این عملیات غیرقابل بازگشت است",
-            icon: 'warning',
-            showLoaderOnConfirm: true,
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'بله، تایید شود',
-            cancelButtonText: 'انصراف',
-            showLoaderOnConfirm: true,
-            preConfirm: function () {
-                return new Promise(function (resolve) {
-                    $.ajax({
-                        url: '/admin/comfirmbankaccount',
-                        type: 'POST',
-                        data: {_token: $('meta[name="csrf-token"]').attr('content'), id: bank},
-                    }).done(function (response) {
-                        swal('با موفقیت تایید شد', response.message, response.status);
-                        $(thebtn).parent().html('<text class="text-success">تایید شده</text>');
-                    }).fail(function () {
-                        swal('خطا..', 'مشکلی در ارتباط با سرور به وجود اومده!', 'error');
-                    });
-                });
-            }
-        }).then((result) => {
-            if (result.value) {
-                theresult = true;
-            }
-        });
+
     });
     $(".comfirmuser").click(function () {
         theresult = false;
@@ -126,3 +94,38 @@ $(document).ready(function () {
     });
 });
 
+function comfirmBank(element) {
+    theresult = false;
+    thebtn = element;
+    var bank = $(element).attr("data-bankaccount");
+    Swal.fire({
+        title: 'آیا از تایید این حساب بانکی اطمینان دارید؟',
+        text: "!این عملیات غیرقابل بازگشت است",
+        icon: 'warning',
+        showLoaderOnConfirm: true,
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'بله، تایید شود',
+        cancelButtonText: 'انصراف',
+        showLoaderOnConfirm: true,
+        preConfirm: function () {
+            return new Promise(function (resolve) {
+                $.ajax({
+                    url: '/admin/comfirmbankaccount',
+                    type: 'POST',
+                    data: {_token: $('meta[name="csrf-token"]').attr('content'), id: bank},
+                }).done(function (response) {
+                    swal('با موفقیت تایید شد', response.message, response.status);
+                    $(thebtn).parent().html('<text class="text-success">تایید شده</text>');
+                }).fail(function () {
+                    swal('خطا..', 'مشکلی در ارتباط با سرور به وجود اومده!', 'error');
+                });
+            });
+        }
+    }).then((result) => {
+        if (result.value) {
+            theresult = true;
+        }
+    });
+}

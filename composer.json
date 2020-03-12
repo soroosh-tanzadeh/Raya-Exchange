@@ -13,6 +13,8 @@
         "guzzlehttp/guzzle": "^6.5",
         "hexters/coinpayment": "^2.0",
         "ixudra/curl": "^6.18",
+        "jenssegers/date": "^3.5",
+        "kordy/ticketit": "0.*",
         "laravel/framework": "^6.0",
         "laravel/socialite": "^4.3",
         "laravel/tinker": "^1.0",

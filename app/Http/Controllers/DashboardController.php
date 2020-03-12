@@ -19,16 +19,21 @@ use App\Activity;
 use App\BankAccount;
 use App\FaqCategory;
 use App\coinPayments\CoinpaymentsAPI;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller {
 
     public function index() {
         $currencies = Curl::to("https://api.simpleswap.io/get_all_currencies")->asJson()->get();
-        $requestURL = "https://api.coincap.io/v2/assets";
-        $response = Curl::to($requestURL)
-                ->get();
+        $response = Cache::remember('coin-assets', 10000, function () {
+                    $requestURL = "https://api.coincap.io/v2/assets";
+                    return Curl::to($requestURL)
+                                    ->asJson()
+                                    ->get();
+                });
         $offerablecoins = Wallet::where("type", "coin")->where("user_id", session()->get("user")->id)->get();
-        $coins_raw = json_decode($response)->data;
+        $coins_raw = $response->data;
         $coins = array();
         $usdprice = Currency::where("code", "USD")->first()->price;
         foreach ($coins_raw as $coin) {
@@ -50,19 +55,29 @@ class DashboardController extends Controller {
             $coins[$coin->id] = $coin;
         }
 
-        $chart = Curl::to("https://api.coincap.io/v2/assets/bitcoin/history")
-                ->withData(array('interval' => "d1"))
-                ->get();
-        $chart = json_decode($chart)->data;
+        $chart = Cache::remember('bitcoin-history', 10000, function () {
+                    return Curl::to("https://api.coincap.io/v2/assets/bitcoin/history")
+                                    ->withData(array('interval' => "d1"))
+                                    ->asJson()
+                                    ->get();
+                });
+
+
+        $chart = $chart->data;
         $outputChart = "[";
         foreach ($chart as $value) {
             $outputChart .= "{x: new Date($value->time),y: $value->priceUsd},";
         }
         $outputChart .= "]";
-        $chart = Curl::to("https://api.coincap.io/v2/assets/ethereum/history")
-                ->withData(array('interval' => "d1"))
-                ->get();
-        $chart = json_decode($chart)->data;
+        $chart = Cache::remember('ethereum-history', 10000, function () {
+                    return Curl::to("https://api.coincap.io/v2/assets/ethereum/history")
+                                    ->withData(array('interval' => "d1"))
+                                    ->asJson()
+                                    ->get();
+                });
+
+
+        $chart = $chart->data;
         $liteoutputChart = "[";
         foreach ($chart as $value) {
             $liteoutputChart .= "{x: new Date($value->time),y: $value->priceUsd},";
@@ -83,9 +98,13 @@ class DashboardController extends Controller {
 
     public function walletPage(Request $request) {
         $requestURL = "https://api.coincap.io/v2/assets";
-        $response = Curl::to($requestURL)
-                ->get();
-        $coins_raw = json_decode($response)->data;
+        $response = Cache::remember('coin-assets', 10000, function () {
+                    $requestURL = "https://api.coincap.io/v2/assets";
+                    return Curl::to($requestURL)
+                                    ->asJson()
+                                    ->get();
+                });
+        $coins_raw = $response->data;
         $coins = array();
         $usdprice = Currency::where("code", "USD")->first()->price;
         foreach ($coins_raw as $coin) {
@@ -126,10 +145,13 @@ class DashboardController extends Controller {
 
     public function offerPage(Request $request) {
         $offerablecoins = Wallet::where("type", "coin")->where("user_id", session()->get("user")->id)->get();
-        $requestURL = "https://api.coincap.io/v2/assets";
-        $response = Curl::to($requestURL)
-                ->get();
-        $coins_raw = json_decode($response)->data;
+        $response = Cache::remember('coin-assets', 10000, function () {
+                    $requestURL = "https://api.coincap.io/v2/assets";
+                    return Curl::to($requestURL)
+                                    ->asJson()
+                                    ->get();
+                });
+        $coins_raw = $response->data;
         $coins = array();
         $usdprice = Currency::where("code", "USD")->first()->price;
         foreach ($coins_raw as $coin) {
@@ -151,18 +173,28 @@ class DashboardController extends Controller {
             $coins[$coin->id] = $coin;
         }
 
-        $chart_btc = Curl::to("https://api.coincap.io/v2/assets/bitcoin/history")
-                ->withData(array('interval' => "d1"))
-                ->get();
-        $chart_ltc = Curl::to("https://api.coincap.io/v2/assets/litecoin/history")
-                ->withData(array('interval' => "d1"))
-                ->get();
-        $chart_xrp = Curl::to("https://api.coincap.io/v2/assets/ripple/history")
-                ->withData(array('interval' => "d1"))
-                ->get();
-        $bitcoinChart = json_decode($chart_btc)->data;
-        $litecoinChart = json_decode($chart_ltc)->data;
-        $ripplecoinChart = json_decode($chart_xrp)->data;
+        $chart_btc = Cache::remember('bitcoin-history', 10000, function () {
+                    return Curl::to("https://api.coincap.io/v2/assets/bitcoin/history")
+                                    ->withData(array('interval' => "d1"))
+                                    ->asJson()
+                                    ->get();
+                });
+        $chart_ltc = Cache::remember('litecoin-history', 10000, function () {
+                    return Curl::to("https://api.coincap.io/v2/assets/litecoin/history")
+                                    ->withData(array('interval' => "d1"))
+                                    ->asJson()
+                                    ->get();
+                });
+
+        $chart_xrp = Cache::remember('litecoin-history', 10000, function () {
+                    return Curl::to("https://api.coincap.io/v2/assets/ripple/history")
+                                    ->withData(array('interval' => "d1"))
+                                    ->asJson()
+                                    ->get();
+                });
+        $bitcoinChart = $chart_btc->data;
+        $litecoinChart = $chart_ltc->data;
+        $ripplecoinChart = $chart_xrp->data;
         $outputChart = array("bitcoin" => "", "litecoin" => "", "ripple" => "");
         $usdprice = Currency::where("code", "USD")->first()->price;
         foreach ($bitcoinChart as $value) {
@@ -184,8 +216,13 @@ class DashboardController extends Controller {
         $offers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("user_id", session()->get('user')->id)->select('users.name', 'coin_offers.*')->paginate(10);
         $buyoffers = CoinOffer::join("users", "users.id", "=", "coin_offers.buy_by")->where("is_active", true)->where("is_selled", true)->select('users.name', 'coin_offers.*')->limit(10)->get();
         $accounts = BankAccount::where("user_id", session()->get("user")->id)->get();
-
-        return view("dashboard.offers.index", array("user" => session()->get("user"), "offerablecoins" => $offerablecoins, "coins" => $coins, "chart" => $outputChart, "offers" => $offers, "buyoffers" => $buyoffers, "bankaccounts" => $accounts));
+        
+        $toRun = "";
+        if($request->has("error")){ 
+            $toRun = "<script> Swal.fire('خطا', '$request->error', 'error'); </script>";
+        }
+        
+        return view("dashboard.offers.index", array("user" => session()->get("user"), "toRun" => $toRun,"offerablecoins" => $offerablecoins, "coins" => $coins, "chart" => $outputChart, "offers" => $offers, "buyoffers" => $buyoffers, "bankaccounts" => $accounts));
     }
 
     public function myoffers(Request $request) {
@@ -244,10 +281,13 @@ class DashboardController extends Controller {
     }
 
     public function coinHistory24(Request $request) {
-        $coinhis = Curl::to("https://api.coincap.io/v2/assets/$request->coin/history")
-                ->withData(array('interval' => "m1"))
-                ->asJson()
-                ->get();
+        $coinhis = Cache::remember("$request->coin-history", 10000, function () {
+                    return Curl::to("https://api.coincap.io/v2/assets/$request->coin/history")
+                                    ->withData(array('interval' => "m1"))
+                                    ->asJson()
+                                    ->get();
+                });
+
         $output = "";
         $coinhis = $coinhis->data;
         foreach ($coinhis as $data) {
@@ -272,6 +312,9 @@ class DashboardController extends Controller {
                 $coin->coin = $coin_type;
                 $coin->price_pre = $price;
                 $coin->min_buy = $minbuy;
+                if ($minbuy > $coin_num) {
+                    return redirect("/dashboard/buyoffer?error=حداقل خرید نمی‌تواند از مقدار بیشتر باشد!");
+                }
                 $coin->max_buy = $coin_num;
                 $coin->type = "buy";
                 $wallet->cashable -= $price;
@@ -292,16 +335,19 @@ class DashboardController extends Controller {
             $price = $request->price_toman;
             $minbuy = $request->mincoin;
             $wallet = Wallet::where("user_id", $user->id)->where("name", $coin_type)->first();
-            if ($wallet->cashable >= $coin_num - ($coin_num * ($fee))) {
+            if ($wallet->cashable >= $coin_num) {
                 $coin = new CoinOffer();
                 $coin->user_id = session()->get("user")->id;
                 $coin->amount = $coin_num;
                 $coin->coin = $coin_type;
                 $coin->price_pre = $price;
                 $coin->min_buy = $minbuy;
+                if ($minbuy > $coin_num) {
+                    return redirect("/dashboard/buyoffer?error=حداقل خرید نمی‌تواند از مقدار بیشتر باشد!");
+                }
                 $coin->max_buy = $coin_num;
                 $coin->type = "sell";
-                $wallet->cashable -= $coin_num + ($coin_num * ($fee));
+                $wallet->cashable -= $coin_num;
 
                 if ($coin->save() && $wallet->save()) {
                     Activity::addActivity("ایجاد پیشنهاد فروش جدید");
@@ -395,7 +441,7 @@ class DashboardController extends Controller {
 
     public function tickets(Request $request) {
         $user = session()->get("user");
-        $tickets = Ticket::where("user_id", $user->id)->get();
+        $tickets = Ticket::where("user_id", $user->id)->latest()->paginate(10);
         return view("dashboard.tickets.tickets", array("user" => session()->get("user"), "tickets" => $tickets));
     }
 
@@ -434,14 +480,15 @@ class DashboardController extends Controller {
                 if (is_array($request->file('files'))) {
                     foreach ($request->file('files') as $file) {
                         $name = $file->getClientOriginalName();
-                        $path = $file->store('usersfiles');
-                        $files[] = array("link" => url("/files/$path"), "name" => $name);
+                        $path = $file->store('files');
+                        $files[] = array("link" => url("/$path"), "name" => $name);
                     }
                 }
             }
             $ticket->type = 1;
             $ticket->status = "پاسخ کاربر";
             $ticket->addMessage($request->text, $files);
+            $ticket->save();
             return redirect("/dashboard/ticket/$ticket_id");
         } else {
             return redirect("/dashboard/ticket/$ticket_id");
@@ -481,34 +528,37 @@ class DashboardController extends Controller {
         }
     }
 
-//    public function getCoins(DataTables $dataTables) {
-//
-//
-//        return $dataTables->collection($collection)->editColumn('icon', '<img src="{{ $icon }}" style="max-width: 30px"/>')->addColumn('price_in_toman', function ($coin) {
-//                    $usdprice = Currency::where("code", "USD")->first()->price;
-//                    $priceInToman = (int) ($coin->priceUsd * $usdprice);
-//                    if (($priceInToman >= 1000) & ($priceInToman < 1000000)) {
-//                        $price = $priceInToman / 1000;
-//                        return $price . " هزار تومان";
-//                    } elseif ($priceInToman >= 1000000 & ($priceInToman < 1000000000)) {
-//                        $price = $priceInToman / 1000000;
-//                        return $price . " میلیون تومان";
-//                    } elseif ($priceInToman >= 1000000000) {
-//                        $price = $priceInToman / 1000000000;
-//                        return $price . " میلیارد تومان";
-//                    } else {
-//                        $price = $priceInToman;
-//                        return $price . " تومان";
-//                    }
-//                })->editColumn('priceUsd', '{{(float)$priceUsd}}$')->editColumn('supply', '{{(int)$supply}}')->rawColumns(['icon'])->toJson();
-//    }
+    public function changePass(Request $request) {
+        $user = session()->get("user");
+        $upass = Crypt::decryptString($user->password);
+        $pass = $request->currentpass;
+        if ("$upass" === "$pass") {
+            $user = User::find($user->id);
+            $password = $request->pass;
+            $user->password = Crypt::encryptString($password);
+            $user->save();
+            return response()->json(array("result" => true, "msg" => "رمزعبور با موفقیت تغییر کرد!"));
+        } else {
+            return response()->json(array("result" => false, "msg" => "رمزعبور فعلی اشتباه است!"));
+        }
+    }
+
+    public function changePassPge(Request $request) {
+        return view("dashboard.pass", array("user" => session()->get("user")));
+    }
+
+    private $coin_index_id = '';
 
     public function getCoinPrice(Request $request) {
-        $requestURL = "https://api.coincap.io/v2/assets";
-        $response = Curl::to($requestURL)
-                ->withData(array('ids' => $request->id))
-                ->asJson()
-                ->get();
+        $this->coin_index_id = $request->id;
+        $response = Cache::remember("$request->id-assets", 10000, function () {
+                    $requestURL = "https://api.coincap.io/v2/assets";
+                    return Curl::to($requestURL)
+                                    ->withData(array('ids' => $this->coin_id))
+                                    ->asJson()
+                                    ->get();
+                });
+
         $coins = $response->data;
         $output = array();
         $usdprice = Currency::where("code", "USD")->first()->price;
@@ -535,63 +585,82 @@ class DashboardController extends Controller {
         return response()->json($output[0]);
     }
 
+    private $coin_id = '';
+
+    public function getCoinPriceIndex(Request $request) {
+        $this->coin_id = $request->id;
+        $response = Cache::remember("$request->id-assets", 10000, function () {
+                    $requestURL = "https://api.coincap.io/v2/assets";
+                    return Curl::to($requestURL)
+                                    ->withData(array('ids' => $this->coin_id))
+                                    ->asJson()
+                                    ->get();
+                });
+        $coins = $response->data;
+        $output = array();
+        $usdprice = Currency::where("code", "USD")->first()->price;
+        foreach ($coins as $coin) {
+            $priceInToman = (int) ($coin->priceUsd * $usdprice);
+            if (($priceInToman >= 1000) & ($priceInToman < 1000000)) {
+                $price = $priceInToman / 1000;
+                $coin->price_in_toman = $price . " هزار تومان";
+            } elseif ($priceInToman >= 1000000 & ($priceInToman < 1000000000)) {
+                $price = $priceInToman / 1000000;
+                $coin->price_in_toman = $price . " میلیون تومان";
+            } elseif ($priceInToman >= 1000000000) {
+                $price = $priceInToman / 1000000000;
+                $coin->price_in_toman = $price . " میلیارد تومان";
+            } else {
+                $price = $priceInToman;
+                $coin->price_in_toman = $price . " تومان";
+            }
+
+            $coin->price_in_toman_int = $priceInToman;
+            $output[] = $coin;
+            $coin->priceUsd = number_format(round($coin->priceUsd, 5), 5);
+        }
+        return response()->json($output[0]);
+    }
+
+    private $market_page = 0;
+
     public function marketCap(Request $request) {
         $max = 100;
         $offset = 0;
-        $page = 1;
+        $this->market_page = 1;
         if ($request->has("page")) {
             $offset = ($request->page - 1) * 10;
-            $page = $request->page;
+            $this->market_page = $request->page;
         }
+        $coins = Cache::remember("marketCap_page$this->market_page", 10000, function () {
+                    return Curl::to("https://api.coingecko.com/api/v3/coins/markets")
+                                    ->withData(array("vs_currency" => "usd", "per_page" => 10, "page" => $this->market_page, "price_change_percentage" => "7d,24h", "sparkline" => "true"))
+                                    ->asJson()
+                                    ->get();
+                });
 
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => "api.coincap.io/v2/assets?limit=10&offset=$offset",
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "GET",
-        ));
-        $response = curl_exec($curl);
-        curl_close($curl);
-        $data = json_decode($response);
-        $coins = $data->data;
         $output = array();
+
         foreach ($coins as $coin) {
-            $coinhis = Curl::to("https://api.coincap.io/v2/assets/$coin->id/history")
-                    ->withData(array('interval' => "d1"))
-                    ->asJson()
-                    ->get();
-            $historydata = "";
-            $coinhis = $coinhis->data;
-            foreach ($coinhis as $hisdata) {
-                $price = $hisdata->priceUsd;
-                $power = pow(10, strlen((string) round($price)));
-                $historydata .= ($price / $power) . ", ";
-            }
-            $coin_icon = Common::getIconPath() . "/" . strtolower($coin->symbol) . ".png";
-            $client = new Client();
-            if (Common::url_exists($coin_icon)) {
-                $coin->icon = $coin_icon;
-            } else {
-                $coin->icon = Common::getLogoPath();
-            }
-            $coin->history = $historydata;
             $output[] = $coin;
         }
-        return view("dashboard.market.coins", array("user" => session()->get("user"), "coins" => $output, "page" => $page));
+
+        return view("dashboard.market.coins", array("user" => session()->get("user"), "coins" => $output, "page" => $this->market_page));
     }
 
+    private $coindetial_index = '';
+
     public function coinDetail(Request $request) {
-        $start = 7300 * 8.64e+7;
-        $now = time() * 1000;
-        $json = Curl::to("https://api.coincap.io/v2/assets/$request->coin/history")
-                ->withData(array("start" => $now - $start, "end" => $now, "interval" => "d1"))
-                ->asJson()
-                ->get();
+        $this->coindetial_index = $request->coin;
+        $json = Cache::remember("coinDetail-$request->coin", 10000, function () {
+                    $start = 7300 * 8.64e+7;
+                    $now = time() * 1000;
+                    return Curl::to("https://api.coincap.io/v2/assets/$this->coindetial_index/history")
+                                    ->withData(array("start" => $now - $start, "end" => $now, "interval" => "d1"))
+                                    ->asJson()
+                                    ->get();
+                });
+
         if ($json->data !== null) {
             $data = $json->data;
             $output = array();

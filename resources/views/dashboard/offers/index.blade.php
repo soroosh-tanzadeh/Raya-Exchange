@@ -129,46 +129,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                 <div class="tab-content">
                                     <div id="menu1" class="tab-pane fade active show">
                                         <h5 class="box-title mb-4"><i class="ft-zap"></i>ایجاد پیشنهاد فروش</h5>
-                                        <h5 class="mb-3 mt-4">مقدار مورد نظر :</h5>
                                         <form action="/dashboard/newoffer" method="POST">
                                             @csrf
                                             <input type="hidden"  value="sell" name="type"/>
                                             <div class="form-group mb-5">
-                                                <select required name="coin" class="form-control coins_select" style="width: 100%">
-                                                    <option value=""></option>
-                                                    @foreach($offerablecoins as $offerablecoin)
-                                                    @if(isset($coins[strtolower($offerablecoin->name)]))
-                                                    <option value="{{ strtolower($offerablecoin->name) }}" data-price="{{ $coins[strtolower($offerablecoin->name)]->price_in_toman_int }}" data-icon="{{ url("/assets/icons/".strtolower($offerablecoin->type_name).".png") }}">{{ $offerablecoin->name }}</option>
-                                                    @endif
-                                                    @endforeach
-                                                </select>
                                                 <div class="form-row mt-1">
-                                                    <div class="col">
+                                                    <div class="col-md">
+                                                        <div style="width: 100%;">
+                                                            <select required name="coin" class="form-control coins_select" style="width: 100%">
+                                                                <option value=""></option>
+                                                                @foreach($offerablecoins as $offerablecoin)
+                                                                @if(isset($coins[strtolower($offerablecoin->name)]))
+                                                                <option value="{{ strtolower($offerablecoin->name) }}" data-symbol="{{ strtoupper($offerablecoin->type_name) }}" data-price="{{ $coins[strtolower($offerablecoin->name)]->price_in_toman_int }}" data-icon="{{ url("/assets/icons/".strtolower($offerablecoin->type_name).".png") }}">{{ $offerablecoin->name }}</option>
+                                                                @endif
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
                                                         <div class="input-group-icon input-group-icon-right">
                                                             <input class="form-control" type="text" name="coinـnum" required id="coin-num" placeholder="مقدار">
-                                                            <span class="input-icon input-icon-right coinicon"></span></div>
-                                                        <input class="form-control mt-1" type="text" name="mincoin" required placeholder="حداقل سفارش">
-
-                                                    </div>
-                                                    <div class="d-inline-flex justify-content-center align-items-center" style="width: 60px"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
-                                                    <div class="col d-flex justify-content-center flex-column">
-                                                        <div class="input-group-icon input-group-icon-right w-100 my-2">
-                                                            <input class="form-control" type="text" placeholder="قیمت به تومان" required name="price_toman" id="price-toman"><span class="input-icon input-icon-right">تومان</span>
+                                                            <span class="input-icon input-icon-right coinicon"></span>
                                                         </div>
-                                                        <div class="bg-warning text-white text-center rounded p-2 my-2">
-                                                            مبلغی که شما از فروش این مقدار ارز دیجیتال دریافت می‌کنید
+                                                        <input class="form-control mt-1" type="text" name="mincoin" required placeholder="حداقل سفارش">
+                                                    </div>
+                                                    <div class="col-md-1 d-inline-flex justify-content-center align-items-center"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
+                                                    <div class="col-md d-flex justify-content-center flex-column">
+                                                        <div class="input-group-icon input-group-icon-right w-100 my-2">
+                                                            <input class="form-control" type="text" placeholder="قیمت پیشنهادی شما" required name="price_toman" id="offerprice"><span class="input-icon input-icon-right">تومان</span>
+                                                        </div>
+                                                        <p>
+                                                            <span style="float:right;">قیمت پیشنهادی ما برای</span> <span id="price-toman"></span>
+                                                        </p>
+                                                        <div class="bg-warning text-white text-center rounded p-2 my-2" style="font-size: 12px;">
+                                                            مبلغی که شما از فروش <span id="selloffercoin"></span>  دریافت می‌کنید
                                                             <p class="text-center" id="totalsellprice">
-                                                                مبلغ را وارد کنید
+                                                                 قیمت پیشنهادی خود را وارد کنید
                                                             </p>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-8">
+                                                <div class="col-md-8">
                                                     <ul type="disc">
                                                         <li>قیمت پیشنهادی ما همیشه با توجه نوسانات قیمت جهانی ارزهای دیجیتال و با نسبت ثابت تغییر خواهد کرد</li>
-                                                        <li>قیمت پیشنهادی ما همیشه ۲٪ بیشتر از قیمت چهانی ارز انتخابی خواهد بود.</li>
+                                                        <li>قیمت پیشنهادی ما همیشه ۱٪ بیشتر از قیمت جهانی ارز انتخابی خواهد بود.</li>
                                                     </ul>
 
                                                 </div>
@@ -180,44 +184,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                     </div>
                                     <div id="menu2" class="tab-pane">
                                         <h5 class="box-title mb-4"><i class="ft-zap"></i>ایجاد پیشنهاد خرید</h5>
-                                        <h5 class="mb-3 mt-4">مقدار مورد نظر :</h5>
                                         <form action="/dashboard/newoffer" method="POST">
                                             @csrf
                                             <input type="hidden"  value="buy" name="type"/>
                                             <div class="form-group mb-5">
-                                                <select required name="coin" class="form-control coins_select" style="width: 100%">
-                                                    <option value=""></option>
-                                                    @foreach($offerablecoins as $offerablecoin)
-                                                    @if(isset($coins[strtolower($offerablecoin->name)]))
-                                                    <option value="{{ strtolower($offerablecoin->name) }}" data-price="{{ $coins[strtolower($offerablecoin->name)]->price_in_toman_int }}" data-icon="{{ url("/assets/icons/".strtolower($offerablecoin->type_name).".png") }}">{{ $offerablecoin->name }}</option>
-                                                    @endif
-                                                    @endforeach
-                                                </select>
                                                 <div class="form-row mt-1">
-                                                    <div class="col">
+                                                    <div class="col-md">
+                                                        <div style="width: 100%;">
+                                                            <select required name="coin" class="form-control coins_select" style="width: 100%">
+                                                                <option value=""></option>
+                                                                @foreach($offerablecoins as $offerablecoin)
+                                                                @if(isset($coins[strtolower($offerablecoin->name)]))
+                                                                <option value="{{ strtolower($offerablecoin->name) }}" data-symbol="{{ strtoupper($offerablecoin->type_name) }}" data-price="{{ $coins[strtolower($offerablecoin->name)]->price_in_toman_int }}" data-icon="{{ url("/assets/icons/".strtolower($offerablecoin->type_name).".png") }}">{{ $offerablecoin->name }}</option>
+                                                                @endif
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
                                                         <div class="input-group-icon input-group-icon-right">
                                                             <input class="form-control" type="text" name="coinـnum" required id="coinbuy-num" placeholder="مقدار">
                                                             <span class="input-icon input-icon-right coinicon"></span></div>
                                                         <input class="form-control mt-1" type="text" name="mincoin" required placeholder="حداقل سفارش">
-
                                                     </div>
-                                                    <div class="d-inline-flex justify-content-center align-items-center" style="width: 60px"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
-                                                    <div class="col d-flex justify-content-center flex-column">
+                                                    <div class="col-md-1 d-inline-flex justify-content-center align-items-center"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
+                                                    <div class="col-md d-flex justify-content-center flex-column">
                                                         <div class="input-group-icon input-group-icon-right w-100 my-2">
-                                                            <input class="form-control" type="text" placeholder="قیمت به تومان" required name="price_toman" id="pricebuy-toman"><span class="input-icon input-icon-right">تومان</span>
+                                                            <input class="form-control" type="text" placeholder="قیمت به تومان" required name="price_toman"><span class="input-icon input-icon-right">تومان</span>
                                                         </div>
-
+                                                        <p>
+                                                            <span style="float:right;">قیمت پیشنهادی ما برای</span> <span id="pricebuy-toman"></span>
+                                                        </p>
                                                     </div>
+
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-8">
+                                                <div class="col-md-8">
                                                     <ul type="disc">
                                                         <li>قیمت پیشنهادی ما همیشه با توجه نوسانات قیمت جهانی ارزهای دیجیتال و با نسبت ثابت تغییر خواهد کرد</li>
-                                                        <li>قیمت پیشنهادی ما همیشه ۲٪ کمتر از قیمت چهانی ارز انتخابی خواهد بود.</li>
+                                                        <li>قیمت پیشنهادی ما همیشه ۱٪ کمتر از قیمت جهانی ارز انتخابی خواهد بود.</li>
                                                     </ul>
                                                 </div>
-                                                <div class="col-4 text-right">
+                                                <div class="col-md-4 text-right">
                                                     <button class="btn btn-danger btn-rounded" type="submit" style="min-width: 200px">تکمیل سفارش</button>
                                                 </div>
                                             </div>
@@ -315,5 +322,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         @include("includes.footer") 
         <script src="/assets/js/offers.js"></script>
+        {!! $toRun !!}
     </body>
 </html>

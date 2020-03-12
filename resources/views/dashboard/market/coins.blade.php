@@ -75,79 +75,90 @@ $usdprice = Currency::where("code", "USD")->first()->price;
                                             <th>قیمت به تومان</th>
                                             <th>حجم بازار (دلار)</th>
                                             <th>میزان عرضه</th>
-                                            <th>تغییرات قیمت نسبت به روز گذشته</th>
-                                            <th>نمودار تعییرات / هفتگی</th>
-                                            <th>تبادل</th>
+                                            <th>روزانه</th>
+                                            <th>هفتگی</th>
+                                            <th>نمودار هفتگی</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody class="rowlinkx" data-link="row">
+                                        <?php $i = 0*$page; ?>
                                         @foreach($coins as $coin)
+                                        <?php $i++; ?>
                                         <tr data-coin="{{ $coin->id }}">
-                                            <td class="coinrow clickable" data-coin="{{ $coin->id }}">{{ $coin->rank }}</td>
-                                            <td class="coinrow clickable" data-coin="{{ $coin->id }}"><img src="{{ $coin->icon }}" style="max-width: 30px"/></td>
+                                            <td class="coinrow clickable" data-coin="{{ $coin->id }}">{{ $i }}</td>
+                                            <td class="coinrow clickable" data-coin="{{ $coin->id }}"><img src="{{ $coin->image }}" style="max-width: 30px"/></td>
                                             <td class="showCoin coinrow clickable" data-coin="{{ $coin->id }}">{{ $coin->name }}</td>
-                                            <td class="coinprice coinrow clickable" data-coin="{{ $coin->id }}" data-price="{{ round($coin->priceUsd,5) }}">{{ number_format(round($coin->priceUsd,5),5) }}$</td>
+                                            <td class="coinprice coinrow clickable" data-coin="{{ $coin->id }}" data-price="{{ round($coin->current_price,5) }}">{{ number_format(round($coin->current_price,5),2) }}$</td>
                                             <td class="coinprice-toman coinrow clickable" data-coin="{{ $coin->id }}"><?php
-                                                $priceInToman = (int) ($coin->priceUsd * $usdprice);
+                                                $priceInToman = (int) ($coin->current_price * $usdprice);
                                                 if (($priceInToman >= 1000) & ($priceInToman < 1000000)) {
                                                     $price = $priceInToman / 1000;
-                                                    echo $price . "<br>".  "<div class='priceunit'>" ." هزار تومان" . "</div>";
+                                                    echo $price . "<br>" . "<div class='priceunit'>" . " هزار تومان" . "</div>";
                                                 } elseif ($priceInToman >= 1000000 & ($priceInToman < 1000000000)) {
                                                     $price = $priceInToman / 1000000;
-                                                    echo $price . "<br>".  "<div class='priceunit'>" ." میلیون تومان". "</div>";
+                                                    echo $price . "<br>" . "<div class='priceunit'>" . " میلیون تومان" . "</div>";
                                                 } elseif ($priceInToman >= 1000000000) {
                                                     $price = $priceInToman / 1000000000;
-                                                    echo $price . "<br>".  "<div class='priceunit'>" ." میلیارد تومان". "</div>";
+                                                    echo $price . "<br>" . "<div class='priceunit'>" . " میلیارد تومان" . "</div>";
                                                 } else {
                                                     $price = $priceInToman;
-                                                    echo $price . "<br>".  "<div class='priceunit'>" ." تومان". "</div>";
+                                                    echo $price . "<br>" . "<div class='priceunit'>" . " تومان" . "</div>";
                                                 }
                                                 ?></td>
                                             <td class="coinrow clickable" data-coin="{{ $coin->id }}">
                                                 <?php
-                                                $marketCapUsd = round($coin->marketCapUsd, 3);
+                                                $marketCapUsd = round(($coin->market_cap * $coin->current_price), 3);
                                                 if (($marketCapUsd >= 1000) & ($marketCapUsd < 1000000)) {
                                                     $cap = $marketCapUsd / 1000;
-                                                    echo $cap . "<br>".  "<div class='priceunit'>" ." هزار دلار". "</div>";
+                                                    echo $cap . "<br>" . "<div class='priceunit'>" . " هزار دلار" . "</div>";
                                                 } elseif ($marketCapUsd >= 1000000 & ($marketCapUsd < 1000000000)) {
                                                     $cap = $marketCapUsd / 1000000;
-                                                    echo $cap . "<br>".  "<div class='priceunit'>" ." میلیون دلار". "</div>";
+                                                    echo $cap . "<br>" . "<div class='priceunit'>" . " میلیون دلار" . "</div>";
                                                 } elseif ($marketCapUsd >= 1000000000) {
                                                     $cap = $marketCapUsd / 1000000000;
-                                                    echo $cap . "<br>".  "<div class='priceunit'>" ." میلیارد دلار". "</div>";
+                                                    echo $cap . "<br>" . "<div class='priceunit'>" . " میلیارد دلار" . "</div>";
                                                 } else {
                                                     $cap = $marketCapUsd;
-                                                    echo $cap . "<br>".  "<div class='priceunit'>" ." تومان". "</div>";
+                                                    echo $cap . "<br>" . "<div class='priceunit'>" . " تومان" . "</div>";
                                                 }
                                                 ?>
                                             </td>
                                             <td class="coinrow clickable" data-coin="{{ $coin->id }}">
                                                 <?php
-                                                $supply = round($coin->supply, 4);
+                                                $supply = round($coin->circulating_supply, 4);
                                                 if (($supply >= 1000) & ($supply < 1000000)) {
                                                     $asupply = $supply / 1000;
-                                                    echo $asupply .  "<br>".  "<div class='priceunit'>" ." هزار $coin->symbol". "</div>";
+                                                    echo $asupply . "<br>" . "<div class='priceunit'>" . " هزار $coin->symbol" . "</div>";
                                                 } elseif ($supply >= 1000000 & ($supply < 1000000000)) {
                                                     $asupply = $supply / 1000000;
-                                                    echo $asupply .  "<br>".  "<div class='priceunit'>" ." میلیون $coin->symbol". "</div>";
+                                                    echo $asupply . "<br>" . "<div class='priceunit'>" . " میلیون $coin->symbol" . "</div>";
                                                 } elseif ($supply >= 1000000000) {
                                                     $asupply = $supply / 1000000000;
-                                                    echo $asupply .  "<br>".  "<div class='priceunit'>" ." میلیارد $coin->symbol". "</div>";
+                                                    echo $asupply . "<br>" . "<div class='priceunit'>" . " میلیارد $coin->symbol" . "</div>";
                                                 } else {
                                                     $asupply = $supply;
-                                                    echo $asupply .  "<br>".  "<div class='priceunit'>" ." $coin->symbol". "</div>";
+                                                    echo $asupply . "<br>" . "<div class='priceunit'>" . " $coin->symbol" . "</div>";
                                                 }
                                                 ?>
                                             </td>
                                             <td class="coinchange">
-                                                @if($coin->changePercent24Hr < 0)
-                                                <text class="text-danger change">{{ number_format(round($coin->changePercent24Hr,2),2) }}%</text>
+                                                @if($coin->price_change_percentage_24h_in_currency < 0)
+                                                <text class="text-danger change">{{ number_format(round($coin->price_change_percentage_24h_in_currency,2),2) }}%</text>
                                                 @else
-                                                <text class="text-success change">{{ round($coin->changePercent24Hr,2) }}%</text>
+                                                <text class="text-success change">{{ round($coin->price_change_percentage_24h_in_currency,2) }}%</text>
                                                 @endif
                                             </td>
-                                            <td class="spark-line">{{ $coin->history }}</td>
-                                            <td><a href="/dashboard/exchange" target="_blank" class="btn btn-outline-primary"><i class="fas fa-exchange-alt font-16"></i></a></td>
+                                            <td class="coinchangeWeek">
+                                                @if($coin->price_change_percentage_7d_in_currency < 0)
+                                                <text class="text-danger change">{{ number_format(round($coin->price_change_percentage_7d_in_currency,2),2) }}%</text>
+                                                @else
+                                                <text class="text-success change">{{ round($coin->price_change_percentage_7d_in_currency,2) }}%</text>
+                                                @endif
+                                            </td>
+                                            <td class="spark-line">{{ implode(",",$coin->sparkline_in_7d->price) }}</td>
+                                            <td><a href="/dashboard/exchange" class="btn btn-outline-primary"><i class="fas fa-exchange-alt font-16"></i></a>
+                                                <a href="/dashboard/buyoffer" class="btn btn-outline-secondary"><i class="ft-shopping-cart font-16"></i></a></td>
                                         </tr>
                                         @endforeach
                                     </tbody>
@@ -279,6 +290,7 @@ $(document).ready(function () {
         });
     });
     $("#market-table").dataTable({
+        responsive: true,
         "language": {
             "url": "{{ url('/assets/persian.json') }}"
         },
@@ -325,7 +337,7 @@ $(document).ready(function () {
                 }
             });
         });
-    }, 5000);
+    }, 10000);
 });
         </script>
     </body>

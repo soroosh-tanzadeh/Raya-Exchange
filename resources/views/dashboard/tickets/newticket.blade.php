@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </div>
             <div class="card p-4" style="border-radius:0px 0px 0px;">
                 <div class="card-body">
-                    <form action="/dashboard/ticket/newticket" id="newticket" method="POST" enctype="multipart/form-data">
+                    <form action="javascript:;" id="newticket" method="POST" enctype="multipart/form-data">
                         @csrf
                         <select class="form-control border-0 d-none"  name="priority">
                             <option value="1">کم</option>
@@ -49,13 +49,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                 <label for="to">بخش</label>
                                 <select class="form-control border-0 w-100" name="to" required="">
                                     <option value="" disabled selected>بخش</option>
-                                    <option value="crypto">پبشتیبانی ارز دیجیتال</option>
-                                    <option value="tech">پبشتیبانی فنی</option>
+                                    <option value="خرید و فروش">خرید و فروش</option>
+                                    <option value="تبادل ارز">تبادل ارز</option>
+                                    <option value="پشتیبانی فنی">پشتیبانی فنی</option>
+                                    <option value="غیره">غیره</option>
                                 </select>
                             </div>
                         </div>
                         <label for="text" class="mt-2">پیام</label>
-                        <input name="text" type="hidden">
+                        <input name="text" type="hidden" id="tickettext">
                         <div id="editor-container">
                             <p></p>
                         </div>
@@ -90,7 +92,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             form.onsubmit = function () {
                 // Populate hidden form on submit
                 var html = $('#editor-container').summernote('code');
-                text.value = html;
+                $("#tickettext").val(html);
                 console.log("Submitted", $(form).serialize(), $(form).serializeArray());
                 $.ajax({
                     url: "/dashboard/ticket/newticket",

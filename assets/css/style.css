@@ -42,8 +42,6 @@ table tr th {
 }
 .card-message{
     background:#BFC8FA;
-    border-radius:0px 280px 0px 0px;
-
 }
 .chat{
     overflow-y:scroll;
@@ -56,19 +54,6 @@ table tr th {
     text-align:justify;
 }
 .card-message-2{
-    background:#DEE2E6;
-    border-radius:280px 0px 0px 0px;
-}
-.text-message-2{
-    margin-left:140px;
-    margin-top:25px;
-    margin-bottom:0px;
-    text-align:justify;
-}
-.card-mobomessage{
-    background:#BFC8FA;
-}
-.card-mobomessage2{
     background:#DEE2E6;
 }
 body,.apexcharts-legend-text,.apexcharts-tooltip-y-group,.apexcharts-xaxis-title-text,.apexcharts-tooltip-title,.apexcharts-yaxis-label
@@ -354,6 +339,13 @@ body.drawer-sidebar .content-area {
 .dropdown-menu.dropdown-menu-right.show {
     transform: translate3d(0px,30px,0px) !important;
 }
+
+@media (max-width: 768px){
+    .dropdown-menu.dropdown-menu-right.show {
+        transform: translate3d(-60px,30px,0px) !important;
+    }
+}
+
 /*************/
 .input-group-append {
     margin-left:0 !important;
@@ -1082,4 +1074,18 @@ div.stockTicker .quote {
 }
 #editor-container{
     height: 200px !important;
+}
+.counter{
+    border: 2px solid #CCC;
+    border-radius: 15px;
+    text-align: center;
+    direction: ltr;
+    padding: 0 15px 0 15px;
+    width: 100px;
+    color: #FFF;
+    background: royalblue;
+}
+#file-front-error,#file-back-error,#file-selfi-error{
+    position: absolute !important;
+    right: 50px;
 }

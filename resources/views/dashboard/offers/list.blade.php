@@ -31,23 +31,23 @@ use Morilog\Jalali\Jalalian;
             <!-- BEGIN: Page heading-->
             <div class="page-heading"> 
                 <div class="page-breadcrumb">
-                    <h1 class="page-title page-title-sep">خرید و فروش ارز</h1>
+                    <h1 class="page-title page-title-sep">جدول خرید و فروش</h1>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html"><i class="la la-home font-20"></i></a></li>
-                        <li class="breadcrumb-item">خرید پیشنهاد جدید</li>
+                        <li class="breadcrumb-item">جدول خرید و فروش</li>
                     </ol>
                 </div>
             </div><!-- BEGIN: Page content-->
             <div>
                 <div class="row">
-                    <div class="col-lg-4">
-                        <div class="card">
+                    <div class="col-lg-4 my-2">
+                        <div class="card h-100">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between mb-2">
                                     <div class="d-flex"><i class="cc BCN mr-3 font-40 text-warning" title="BCN" style="line-height: 1"></i>
                                         <div>
                                             <h5 class="font-18 mb-2 font-weight-normal">BTC</h5>
-                                            <div class="text-muted">بیت کوین</div>
+                                            <div class="text-muted">بیت‌کوین</div>
                                         </div>
                                     </div>
                                     <div>
@@ -69,8 +69,8 @@ use Morilog\Jalali\Jalalian;
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="card">
+                    <div class="col-lg-4 my-2">
+                        <div class="card h-100">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between mb-2">
                                     <div class="d-flex"><i class="cc ETC-alt mr-3 font-40 text-primary" title="ETC" style="line-height: 1"></i>
@@ -98,14 +98,14 @@ use Morilog\Jalali\Jalalian;
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="card">
+                    <div class="col-lg-4 my-2">
+                        <div class="card h-100">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between mb-2">
                                     <div class="d-flex"><i class="cc LTC mr-3 font-40 text-secondary" title="LTC" style="line-height: 1"></i>
                                         <div>
                                             <h5 class="font-18 mb-2 font-weight-normal">LTC</h5>
-                                            <div class="text-muted">لایت کوین</div>
+                                            <div class="text-muted">لایت‌کوین</div>
                                         </div>
                                     </div>
                                     <div>
