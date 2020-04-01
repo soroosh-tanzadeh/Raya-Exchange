@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,7 +8,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="keywords" content="admin template, angular admin template, bootstrap admin template, modern admin template, modern design admin template, dashboard template, responsive admin template, angular web app, crypto dashboard, bitcoin dashboard">
-        <title>Raya Exchange | login</title><!-- GLOBAL VENDORS-->
+        <title>RayaEX | ورود</title><!-- GLOBAL VENDORS-->
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700%7CRoboto:300,400,500,600,700" media="all">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
         <link href="/assets/vendors/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet" />
@@ -14,231 +16,321 @@
         <link href="/assets/vendors/line-awesome/css/line-awesome.min.css" rel="stylesheet" /><!-- PAGE LEVEL VENDORS-->
         <!-- THEME STYLES-->
         <link href="/assets/css/app.min.css" rel="stylesheet" /><!-- PAGE LEVEL STYLES-->
+        <link href="/assets/vendors/sweetalert2/dist/sweetalert2.css" rel="stylesheet" /><!-- PAGE RTL STYLES-->
         <link href="/assets/css/style.css" rel="stylesheet" /><!-- PAGE RTL STYLES-->
-        <style>.login-page {
-                display: flex;
-                justify-content: flex-end;
-                flex: 1 0 auto;
-                height: 100%;
-                background: url('/assets/img/blog/01.jpeg') no-repeat center center;
-                background-size: cover;
-            }
-            .login-page:before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.6);
-            }
-            .login-content {
-                width: 500px;
-                height: 100%;
-                overflow-y: auto;
-                z-index: 10;
-                position: relative;
-            }
-            .login-content>.card {
-                margin: 0;
-                height: 100%;
-                min-height: 100%;
-                box-shadow: none;
-                border-radius: 0;
-                background-color: #fff;
-            }
-            .auth-brand-text {
-                font-size: 24px;
-            }
-            .auth-welcome-box {
-                height: 100%;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                align-items: flex-start;
-                flex-grow: 1;
-                flex-basis: 0;
-                padding: 20px;
-                max-width: 100%;
-                color: #eee;
-                z-index: 2;
-                padding: 2rem;
-            }
-            .auth-features-box {
-                display: flex;
-                align-items: center;
-                flex-wrap: wrap;
-            }
-            .auth-features-box>div {
-                padding: 5px;
-                margin-right: 1rem;
-                margin-bottom: 1rem;
-                text-align: center;
-            }
-            .auth-features-box .features-icon {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                height: 60px;
-                width: 60px;
-                border-radius: 50%;
-                font-size: 24px;
-                background-color: rgba(0, 0, 0, .5);
-            }
-            @media (max-width: 767.98px) {
-                .login-content {
-                    width: 100%;
-                }
-            }
-        </style>
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <meta name="jeeb-verification" content="O4AQ3GUGYFFGJRFHUXRK7VE6LV7K2Q">
+        <script src="/resources/js/app.js" type="text/javascript"></script>
+        <style>body {
+                background-color: #eff4ff;
+            }
+            .auth-wrapper {
+                flex: 1 0 auto;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 50px 15px 30px 15px;
+            }
+            .auth-content {
+                max-width: 900px;
+                flex-basis: 900px;
+                box-shadow: 0 1px 15px 1px rgba(62, 57, 107, .07);
+            }
+            .home-link {
+                position: absolute;
+                left: 5px;
+                top: 10px;
+            }
+        </style>
     </head>
 
     <body>
-        <div class="login-page">
-            <div class="auth-welcome-box text-white pl-lg-5 d-none d-lg-flex">
-                <div><a class="btn btn-link home-link text-white-50 pl-lg-5" href="index.html"><span class="btn-icon"><i class="ti-arrow-left font-20"></i>رفتن به برگه اصلی</span></a></div>
-                <div class="pl-lg-5">
-                    <h4 class="font-40 mb-4">پیوستن به گروه ما</h4>
-                    <p class="mb-0">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ, <br>	و با استفاده از طراحان گرافیک است. چاپگرها و متون. <br>بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است.</p>
-                </div>
-                <div class="pl-lg-5 font-13"><span class="text-white-50">2019 © تمامی حقوق محفوظ است</span><span class="pl-5"><a class="text-white" href="#" style="border-bottom: 1px solid;">درباره</a><a class="ml-3 text-white" href="#" style="border-bottom: 1px solid;">سیاست</a></span></div>
-            </div>
-            <div class="login-content">
-                <div class="card">
-                    <div class="card-body bg-white p-5">
-                        <h3 class="mb-4 text-primary text-center">
-                            <img src="/assets/img/raya-logo.png" style="max-height: 100px">
-                        </h3>
-                        <div class="font-18 text-center mb-5">ورود به حساب کاربری</div>
-                        <form id="login-form" action="/dologin" method="post">
-                            @csrf
-                            <div class="mb-4">
-                                <div class="md-form mb-0"><input class="md-form-control" type="tel" name="email"><label>شماره موبایل</label></div>
+        <div class="page-wrapper">
+            <div class="auth-wrapper">
+                <div class="row auth-content mx-0">
+                    <div class="col-md-6 bg-white p-5">
+                        <div>
+                            <form id="login-form" action="/dologin" method="post" <?php if (isset($user_referral_id)) { ?> style="display:none;" <?php } ?>>
+                                <div class="text-center mb-5">
+                                    <h4 class="mb-3">ورود به حساب کاربری</h4>
+                                </div>
+                                @csrf
+                                <div class="form-group mb-4">
+                                    <input class="form-control" type="tel" name="email" placeholder="شماره موبایل" title="این فیلد اجباری است.">
+                                </div>
+                                <div class="form-group mb-4">
+                                    <input class="form-control" type="password" name="password" placeholder="رمز عبور" title="این فیلد اجباری است.">
+                                </div>
+                                <div class="flexbox my-5">
+                                    <div class="text-muted" style="font-size: 11px" id="logintext">
+                                        حساب کاربری ندارید؟
+                                        <a class="ml-2" href="#" style="border-bottom: 1px solid" onclick="$('#login-form').hide(1000); $('#signupForm').show(1000); $(this).parent().hide()">ایجاد حساب</a>
+                                    </div>
+                                    <a href="/forgot-password" style="font-size: 11px">رمز عبور خود را فراموش کرده اید؟</a>
+                                </div>
+                                <div class="text-center"><button class="btn btn-primary btn-rounded" style="min-width: 200px">
+                                        ورود
+                                    </button></div>
+                            </form>
+                            <form id="signupForm" action="javascript:;" <?php if (!isset($user_referral_id)) { ?> style="display:none;" <?php } ?>>
+                                <div class="text-center mb-5">
+                                    <h4 class="mb-3">ایجاد حساب</h4>
+                                </div>
+                                @csrf
+                                <div class="mb-4">
+                                    <input class="form-control" placeholder="نام و نام خانوادگی" type="text" name="name" id="fullname">
+                                </div>
+                                <div class="mb-4">
+                                    <input class="form-control" placeholder="شماره موبایل" type="text" name="phone" id="vcodereceiver" pattern="^(\+98|0)?9\d{9}$" title="شماره موبایل نامعتبر است.">
+                                </div>
+                                <div id="passs">
+                                    <div class="mb-4">
+                                        <input class="form-control" placeholder="رمز عبور" type="password" name="password" id="password1" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title=" رمزعبور حداقل از ۸ کاراکتر و شامل حروف کوچک ، بزرگ و عدد باشد. ">
+                                    </div>
+                                    <div class="mb-4">
+                                        <input class="form-control" placeholder="تکرار رمزعبور" type="password" id="password2">
+                                    </div>  
+                                </div>
+                                <div class="flexbox mb-5">
+                                    <button class="btn btn-primary btn-rounded" id="sendvcode" onclick="sendVcode(); return false;" style="min-width: 100px">
+                                        ثبت‌نام
+                                        <div class="lds-dual-ring float-left loader" style="display: none"></div>
+                                    </button>
+                                </div>
+                                <br>
+                                <p class="mt-5 mb-4 text-muted text-center"> حساب کاربری دارید؟<a  href="javascript:;" onclick="$('#login-form').show(1000); $('#signupForm').hide(1000); $('#logintext').show();" id="loginbtn">وارد شوید.</a></p>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-md-6 bg-danger text-white p-5 d-flex flex-column justify-content-center">
+                        <div class="h-100 ">
+                            <div class="d-flex h-100 justify-content-center align-items-center flex-column w-100">
+                                <div class="bg-white rounded-lg p-3 shadow">
+                                    <img src="/assets/img/raya-logo.png" style="max-width: 150px"/>
+                                </div>
+                                <h4 class="my-4">RayaEX</h4>
                             </div>
-                            <div class="mb-4">
-                                <div class="md-form mb-0"><input class="md-form-control" type="password" name="password"><label>رمز عبور</label></div>
-                            </div>
-                            <div class="flexbox mb-5">
-                                <button class="btn btn-primary" type="submit" style="min-width: 100px">ورود</button>
-                            </div>
-<!--                            <p class="mt-5 mb-4 text-muted text-center">یا با شبکه های اجتماعی وارد شوید</p>
-                            <div class="mb-5">
-                                <button class="btn btn-google btn-block"><span class="btn-icon"><i class="fab fa-google-plus-g"></i>گوگل</span></button>
-                            </div>-->
-                            <br>
-                            <p class="mt-5 mb-4 text-muted text-center">می‌خواهید در رایا <a  href="javascript:;" id="signupbtn">ثبت نام کنید؟</a></p>
-                        </form>
-                        <form id="signupForm" style="display: none;">
-                            @csrf
-                            <div class="mb-4">
-                                <div class="md-form mb-0"><input class="md-form-control" type="text" name="phone" id="vcodereceiver"><label id="vcoderlabel">شماره موبایل خود را وارد کنید</label></div>
-                            </div>
-                            <div class="flexbox mb-5">
-                                <button class="btn btn-primary" id="sendvcode" onclick="sendVcode();return false;" style="min-width: 100px">ثبت‌نام</button>
-                            </div>
-                            <br>
-                            <p class="mt-5 mb-4 text-muted text-center">در رایا حساب دارید؟<a  href="javascript:;" id="loginbtn">وارد شوید.</a></p>
-                        </form>
+                        </div>
+                        <div class="flexbox font-13 text-white-50 justify-content-center align-items-center">
+                            <span>2020 © طراحی و توسعه توسط <a style="color: #FFF;" class="bold mx-1" href="https://webflax.ir">وب‌فلکس</a></span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div><!-- BEGIN: Page backdrops-->
         <div class="sidenav-backdrop backdrop"></div>
         <div class="preloader-backdrop">
-            <div class="page-preloader">Loading</div>
+            <div class="page-preloader">در حال بارگذاری</div>
         </div><!-- END: Page backdrops-->
         <!-- CORE PLUGINS-->
+        <link href="/assets/vendors/toastr/build/toastr.min.css" rel="stylesheet" /><!-- PAGE RTL STYLES-->
         <script src="/assets/vendors/jquery/dist/jquery.min.js"></script>
         <script src="/assets/vendors/bootstrap/dist/js/bootstrap.bundle.min.js"></script><!-- PAGE LEVEL PLUGINS-->
         <script src="/assets/vendors/jquery-validation/dist/jquery.validate.min.js"></script><!-- CORE SCRIPTS-->
         <script src="/assets/js/app.min.js"></script><!-- PAGE LEVEL SCRIPTS-->
+        <script src="/assets/vendors/sweetalert2/dist/sweetalert2.all.js"></script><!-- PAGE LEVEL SCRIPTS-->
+        <script src="/assets/vendors/toastr/build/toastr.min.js"></script><!-- PAGE LEVEL SCRIPTS-->
         <script>
+
+                                    $(".form-control").change(function () {
+                                    if (this.hasAttribute("pattern")) {
+                                    var regex = new RegExp($(this).attr("pattern"));
+                                    if ((regex.test($(this).val()))) {
+                                    $(this).removeClass("is-invalid");
+                                    $(this).parent().find('.text-danger').remove();
+                                    $(this).addClass("is-valid");
+                                    } else {
+                                    $(this).addClass("is-invalid");
+                                    $(this).parent().find('.text-danger').remove();
+                                    $('<small class="text-danger">' + $(this).attr("title") + '</small>').insertAfter(this);
+                                    }
+                                    } else {
+                                    $(this).removeClass("is-invalid");
+                                    $(this).parent().find('.text-danger').remove();
+                                    $(this).addClass("is-valid");
+                                    }
+                                    });
                                     $.ajaxSetup({
-                                        headers: {
-                                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                        }
+                                    headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                    }
                                     });
                                     var cache_data;
                                     var vcode = false;
                                     function sendVcode() {
-
-                                        if (vcode) {
-                                            var code = $('#vcodereceiver').val();
-                                            $.post("/verifyUser", {code: code}, function (data) {
-                                                if (data.result) {
-                                                    window.location = "/dashboard/signup";
-                                                    vcode = true;
-                                                } else {
-                                                    alert("کد وارد شده نامعتبر است");
-                                                }
-                                            });
-                                        } else {
-                                            var vcoder = $('#vcodereceiver').val();
-                                            emailReg = /[\w\.-]+@[\w\.-]+\.\w{2,4}/;
-                                            intRegex = /[0-9 -()+]+$/;
-                                            var type = "";
-                                            if (emailReg.test(vcoder) && vcoder !== '') {
-                                                alert("شماره موبایل وارد شده نا معتبر است");
-                                                return;
-                                            } else if ((vcoder.length > 6) && (intRegex.test(vcoder))) {
-                                                type = "phone";
-                                            } else {
-                                                alert("شماره موبایل وارد شده نا معتبر است");
-                                                return;
-                                            }
-                                            cache_data = vcoder;
-                                            $.post("/sendvcode", {type: type, receiver: vcoder}, function (data) {
-                                                if (data.result.IsSuccessful) {
-                                                    $("#vcodereceiver").val("");
-                                                    $("#vcoderlabel").text("کد فعال سازی");
-                                                    $("#sendvcode").text("تایید");
-                                                    vcode = true;
-                                                } else {
-                                                    alert("خطا در ارسال کد فعال سازی!");
-                                                }
-                                            });
-                                        }
-                                    }
-                                    $(function () {
-                                        $("#signupbtn").click(function () {
-                                            $("#login-form").hide(1000);
-                                            $("#signupForm").show(1000);
-                                        });
-                                        $("#loginbtn").click(function () {
-                                            $("#login-form").show(1000);
-                                            $("#signupForm").hide(1000);
-                                        });
-
-                                        $('#login-form').validate({
-                                            rules: {
-                                                phone: {
-                                                    required: true,
-                                                    phone: true
-                                                },
-                                                password: {
-                                                    required: true
-                                                }
+                                    if (vcode) {
+                                    var code = $('#vcodereceiver').val();
+                                    $.ajax({
+                                    url: "/verifyUser",
+                                            type: 'POST',
+                                            data: {code: code},
+                                            beforeSend: function (xhr) {
+                                            $("#sendvcode").prop("disabled", true);
                                             },
+                                            success: function (data, textStatus, jqXHR) {
+                                            if (data.result) {
+                                            window.location = "/dashboard";
+                                            vcode = true;
+                                            } else {
+                                            $("#vcodereceiver").addClass("is-invalid");
+                                            $("#vcodereceiver").parent().find('.text-danger').remove();
+                                            $('<small class="text-danger">کد وارد شده نامعتبر است.</small>').insertAfter("#vcodereceiver");
+                                            }
+                                            },
+                                            complete: function (jqXHR, textStatus) {
+                                            $("#sendvcode").prop("disabled", false);
+                                            }
+                                    });
+                                    } else {
+                                    var pass1 = $("#password1").val();
+                                    var pass2 = $("#password2").val();
+                                    var name = $("#fullname").val();
+                                    var canPass = true;
+                                    var vcoder = $('#vcodereceiver').val();
+                                    if (name === "") {
+                                    $("#fullname").addClass("is-invalid");
+                                    $("#fullname").parent().find('.text-danger').remove();
+                                    $('<small class="text-danger">این فیلد اجباری است.</small>').insertAfter("#fullname");
+                                    canPass = false;
+                                    }
+                                    if (pass1 === '') {
+                                    $("#password1").addClass("is-invalid");
+                                    $("#password1").parent().find('.text-danger').remove();
+                                    $('<small class="text-danger">این فیلد اجباری است.</small>').insertAfter("#password1");
+                                    canPass = false;
+                                    } else {
+                                    passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
+                                    if (!(passwordRegex.test(pass1))) {
+                                    $("#password1").addClass("is-invalid");
+                                    $("#password1").parent().find('.text-danger').remove();
+                                    $('<small class="text-danger">رمزعبور حداقل از ۸ کاراکتر  و شامل حروف کوچک ، بزرگ و عدد باشد.</small>').insertAfter("#password1");
+                                    canPass = false;
+                                    }
+                                    }
+                                    if (pass2 === '') {
+                                    $("#password2").addClass("is-invalid");
+                                    $("#password2").parent().find('.text-danger').remove();
+                                    $('<small class="text-danger">این فیلد اجباری است.</small>').insertAfter("#password2");
+                                    canPass = false;
+                                    }
+
+                                    if (vcoder === '') {
+                                    $("#vcodereceiver").addClass("is-invalid");
+                                    $("#vcodereceiver").parent().find('.text-danger').remove();
+                                    $('<small class="text-danger">این فیلد اجباری است.</small>').insertAfter("#vcodereceiver");
+                                    canPass = false;
+                                    }
+                                    if (canPass) {
+                                    if (pass1 === pass2) {
+                                    intRegex = /^(\+98|0)?9\d{9}$/;
+                                    var type = "phone";
+                                    if (!(intRegex.test(vcoder) && vcoder !== '')) {
+                                    $("#vcodereceiver").addClass("is-invalid");
+                                    $("#vcodereceiver").parent().find('.text-danger').remove();
+                                    $('<small class="text-danger">.شماره موبایل وارد شده نامعتبر است</small>').insertAfter("#vcodereceiver");
+                                    return;
+                                    }
+                                    cache_data = vcoder;
+                                    $(".text-danger").remove();
+                                    $.ajax({
+                                    url: "/newuser",
+                                            type: 'POST',
+                                            data: {_token: $('meta[name="csrf-token"]').attr('content'), type: type, password: pass1, name: name, receiver: vcoder},
+                                            beforeSend: function (xhr) {
+                                            $(".loader").show();
+                                            $("#sendvcode").prop("disabled", true);
+                                            },
+                                            success: function (data, textStatus, jqXHR) {
+                                            if (data.result.IsSuccessful) {
+                                            $("#vcodereceiver").attr("placeholder", "کد تایید را وارد کنید");
+                                            $("#vcodereceiver").removeClass("is-invalid");
+                                            $("#vcodereceiver").removeAttr("pattern");
+                                            $(".text-danger").remove();
+                                            $("#vcodereceiver").val("");
+                                            $("#passs").hide();
+                                            $("#fullname").hide();
+                                            $("#sendvcode").text("تایید کد")
+
+                                                    vcode = true;
+                                            } else {
+                                            $("#vcodereceiver").addClass("is-invalid");
+                                            $("#vcodereceiver").parent().find('.text-danger').remove();
+                                            $('<small class="text-danger">شماره موبایل تکراری است.</small>').insertAfter("#vcodereceiver");
+                                            }
+                                            },
+                                            complete: function (jqXHR, textStatus) {
+                                            $("#sendvcode").prop("disabled", false);
+                                            $(".loader").hide();
+                                            }
+                                    });
+                                    } else {
+                                    $("#password2").addClass("is-invalid");
+                                    $("#password2").parent().find('.text-danger').remove();
+                                    $('<small class="text-danger">رمزعبور و تاییدیه آن برابر نیست</small>').insertAfter("#password2");
+                                    return;
+                                    }
+                                    }
+                                    }
+                                    }
+
+
+                                    $(function () {
+                                    $('#login-form').validate({
+                                    rules: {
+                                    email: {
+                                    required: true
+                                    },
+                                            password: {
+                                            required: true
+                                            }
+                                    },
                                             errorClass: 'invalid-feedback',
                                             validClass: 'valid-feedback',
                                             errorPlacement: function (error, element) {
-                                                if (element.hasClass('md-form-control')) {
-                                                    error.insertAfter(element.closest('.md-form'));
-                                                } else {
-                                                    error.insertAfter(element);
-                                                }
+                                            if (element.hasClass('md-form-control')) {
+                                            error.insertAfter(element.closest('.md-form'));
+                                            } else {
+                                            error.insertAfter(element);
+                                            }
                                             },
                                             highlight: function (e) {
-                                                $(e).addClass("invalid").removeClass('valid');
+                                            $(e).addClass("is-invalid").removeClass('is-valid');
                                             },
                                             unhighlight: function (e) {
-                                                $(e).removeClass("invalid").addClass('valid');
+                                            $(e).removeClass("is-invalid").addClass('is-valid');
                                             },
-                                        });
+                                    });
                                     });
         </script>
+
+        <script>
+
+            toastr.options = {
+            "closeButton": false,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": false,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+            }
+            @if (isset($error))
+                    toastr["error"]("شماره موبایل یا رمزعبور اشتباه است", "خطا");
+            @endif
+
+            @if (isset($torun))
+            {!! $torun !!}}
+            @endif
+        </script>
+
     </body>
 
 </html>

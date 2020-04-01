@@ -8,7 +8,7 @@
  */
 (function( factory ) {
 	if ( typeof define === "function" && define.amd ) {
-		define( ["jquery"], factory );
+		define( ["jquery"], factory );  
 	} else if (typeof module === "object" && module.exports) {
 		module.exports = factory( require( "jquery" ) );
 	} else {
@@ -362,7 +362,7 @@ $.extend( $.validator, {
 	},
 
 	messages: {
-		required: "!اجباری است",
+		required: ".این فیلد اجباری است",
 		remote: "Please fix this field.",
 		email: "Please enter a valid email address.",
 		url: "Please enter a valid URL.",

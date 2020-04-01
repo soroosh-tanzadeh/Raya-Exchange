@@ -32,10 +32,10 @@ use Morilog\Jalali\Jalalian;
             <!-- BEGIN: Page heading-->
             <div class="page-heading">
                 <div class="page-breadcrumb">
-                    <h1 class="page-title page-title-sep">کابران</h1>
+                    <h1 class="page-title page-title-sep">پروفایل شما</h1>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="/index"><i class="ft-home font-20"></i></a></li>
-                        <li class="breadcrumb-item">کاربران</li>
+                        <li class="breadcrumb-item">پروفایل</li>
                     </ol>
                 </div>
             </div>
@@ -45,74 +45,123 @@ use Morilog\Jalali\Jalalian;
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4>کاربر شماره {{ $profile->id }}</h4>
+                                <h4>{{ $profile->name }}</h4>
                             </div>
                             <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <label>نام و نام‌خانوادگی</label>
-                                        <input type="text" class="form-control" name="" value="{{ $profile->name }}" readonly="readonly" />
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>شماره ملی</label>
-                                        <input type="text" class="form-control" name="" value="{{ $profile->nationalcode }}" readonly="readonly" />
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>شماره تماس</label>
-                                        <input type="text" class="form-control" name="" value="{{ $profile->phone_number }}" readonly="readonly" />
-                                    </div>
-                                </div>
-                                <div class="row mt-4">
-                                    <div class="col-md-4">
-                                        <label>استان</label>
-                                        <input type="text" class="form-control" name="" value="{{ $profile->province }}" readonly="readonly" />
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>شهر</label>
-                                        <input type="text" class="form-control" name="" value="{{ $profile->city }}" readonly="readonly" />
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>آدرس</label>
-                                        <textarea class="form-control" rows="3" cols="20" readonly="readonly">
-                                            {{ $profile->address }}
-                                        </textarea>
-                                    </div>
-                                </div>
-                                <div class=" mt-4">
-                                    <h4>مدارک</h4>
+                                <form data-action="/admin/edituser" action="javascript:;" data-btn="#useredit" onsubmit="submitAjaxForm(this);" method="POST" id="userform">
+                                    @csrf
+                                    @if($user->is_admin)
+                                    <input type="hidden" name="user_id" value="{{ $profile->id }}">
+                                    @endif
                                     <div class="row">
-                                        <?php
-                                        $files = json_decode($profile->files);
-                                        ?>
-                                        @foreach($files as $file)
-                                        <div class="col-md-4 p-2">
-                                            <img src="{{ url($file) }}" style="width: 100%"/>
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-1">
+                                                <label>نام و نام‌خانوادگی</label>
+                                                <input type="text" class="form-control" name="name" required value="{{ $profile->name }}" @if(!$user->is_admin) readonly="readonly" @endif />
+                                            </div>
                                         </div>
-                                        @endforeach
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-1">
+                                                <label>کد ملی</label>
+                                                <input type="text" class="form-control" name="nationalcode" required value="{{ $profile->nationalcode }}" @if(!$user->is_admin) readonly="readonly" @endif />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-4">
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-1">
+                                                <label>تلفن ثابت</label>
+                                                <input type="text" class="form-control" name="telephone" pattern="^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$" title="تلفن ثابت نامعتبر است." required value="{{ $profile->telephone }}" @if(!$user->is_admin) readonly="readonly" @endif />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-1">
+                                                <label>ایمیل</label>
+                                                <input type="email" class="form-control" name="email" pattern="^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$" title="ایمیل نامعتبر است." required value="{{ $profile->email }}" @if(!$user->is_admin) readonly="readonly" @endif />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-1">
+                                                <label>تلفن همراه</label>
+                                                <input type="text" class="form-control" name="phone_number" pattern="^(\+98|0)?9\d{9}$" title="شماره تلفن همراه نامعتبر است." required value="{{ $profile->phone_number }}" @if(!$user->is_admin) readonly="readonly" @endif />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-4">
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-1">
+                                                <label>کدپستی</label>
+                                                <input type="text" class="form-control" name="postalcode" required value="{{ $profile->postalcode }}" @if(!$user->is_admin) readonly="readonly" @endif />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-1">
+                                                <label>استان</label>
+                                                <input type="text" class="form-control" name="province" required value="{{ $profile->province }}" @if(!$user->is_admin) readonly="readonly" @endif />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-1">
+                                                <label>شهر</label>
+                                                <input type="text" class="form-control" name="city" required value="{{ $profile->city }}" @if(!$user->is_admin) readonly="readonly" @endif />
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12 mt-4">
+                                            <div class="form-group mb-1">
+                                                <label>آدرس</label>
+                                                <textarea class="form-control" rows="3" cols="20" required name="address" @if(!$user->is_admin) readonly="readonly" @endif>
+                                                          {{ $profile->address }}
+                                            </textarea>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            @if($user->is_admin)
-                            <div class="card-footer justify-content-end d-flex">
-                                <input type="submit" class="comfirmuser btn btn-success" data-user="{{ $profile->id }}" value="تایید کاربر" />
-                                <a href="/admin/tickets/new?user={{ $profile->id }}" class="btn btn-warning mx-2 text-white" >ارسال تیکت</a>
-                            </div>
-                            @else
-                            <div class="card-footer">
-                                @if($user->verified_at === null)
-                                <p class="text-warning">اطلاعات شما ثبت شده و در دست بررسی قرار دارد پس از تایید به شما اطلاع داده می‌شود.</p>
+                            </form>
+
+                            <div class=" mt-4">
+                                <?php
+                                $files = json_decode($profile->files);
+                                ?>
+                                @if($files !== null)
+                                <h4>مدارک</h4>
+                                <div class="row">
+                                    @foreach($files as $file)
+                                    <div class="col-md-4 p-2">
+                                        <img src="{{ url($file) }}" style="width: 100%"/>
+                                    </div>
+                                    @endforeach
+                                </div>
                                 @endif
-                                <input type="submit" class="editInfo btn btn-success" data-user="{{ $profile->id }}" value="درخواست تغییر اطلاعات" />
-                            </div>
+
+                            </div> 
+                        </div>
+                        @if($user->is_admin)
+                        <div class="card-footer justify-content-end d-flex">
+                            <input type="button" id="useredit" class="btn btn-dark mx-2 btn-rounded" data-user="{{ $profile->id }}" value="ویرایش مشخصات" />
+                            @if($user->id !== $profile->id)
+                            <input type="button" class="comfirmuser btn btn-success btn-rounded" data-user="{{ $profile->id }}" value="تایید کاربر" />
+                            <a href="/admin/tickets/new?user={{ $profile->id }}" class="btn btn-warning btn-rounded mx-2 text-white" >ارسال تیکت</a>
                             @endif
                         </div>
+                        @else
+                        <div class="card-footer justify-content-end d-flex">
+                            @if($user->verified_at === null && $user->files !== null)
+                            <p class="text-warning">اطلاعات شما ثبت شده و در دست بررسی قرار دارد پس از تایید به شما اطلاع داده می‌شود.</p>
+                            @elseif($user->verified_at === null)
+                            <a type="submit" class="btn btn-primary btn-rounded" href="/dashboard/signup" >تکمیل اطلاعات کاربری</a>
+                            @else
+                            <a class="btn btn-primary btn-rounded" href="/dashboard/changeinfo">درخواست تغییر اطلاعات</a>
+                            @endif
+                        </div>
+                        @endif
                     </div>
                 </div>
-            </div>
+            </div> 
         </div>
-        <!-- END: Page content-->
-        <!-- END: Quick sidebar-->
-        @include("includes.footer")
-        <script src="/assets/js/profile.js"></script>
-    </body>
+    </div>
+    <!-- END: Page content-->
+    <!-- END: Quick sidebar-->
+    @include("includes.footer")
+    <script src="/assets/js/profile.js"></script>
+</body>
 </html>

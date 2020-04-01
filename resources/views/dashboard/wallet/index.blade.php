@@ -15,6 +15,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
+
+
+<?php
+
+use Morilog\Jalali\Jalalian;
+?>
+
 <html lang="en">
     <head>
         @include("includes.head")
@@ -22,28 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     </head>
     <body>
-        <div class="modal fade" id="paymodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">شارژ کیف‌پول ریالی</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="/payir/pay" method="GET">
-                            <label>مبلغ شارژ (تومان)</label>
-                            <input type="number" name="amount" class="form-control" value="" style="width: 100%;margin-bottom: 10px;" placeholder="مبلغ مورد نظر خود را وارد کنید" />
-                            <input class="btn btn-primary" type="submit" value="پرداخت" />
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-
-        <div class="modal fade" id="newwallet" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="newwallet" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -52,65 +39,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <form data-action="/dashboard/newwallet" data-btn="#newwalletbtn" onsubmit="submitAjaxForm(this)" action="javascript:;" method="POST">
-                            <label>مبلغ شارژ (تومان)</label> 
-                            <select id="walletcoins" required style="width: 100%" name="type">
+                    <form data-action="/dashboard/newwallet" data-btn="#newwalletbtn" onsubmit="submitAjaxForm(this)" action="javascript:;" method="POST">
+
+                        <div class="modal-body">
+                            <label>نوع کیف پول</label> 
+                            <select id="walletcoins" required style="width: 100%;margin-bottom: 25px" name="type">
                                 <option value=""></option>
-                                @foreach($coins as $key => $value)
-                                <option value="{{ strtolower($key)  }}" data-icon="{{ url("/assets/icons/".strtolower($key).".png") }}">{{ $value['name'] }}</option>
+                                @foreach($coins as $coin)
+                                <option value="{{ $coin->symbol  }}" data-icon="{{ url("/assets/icons/".strtolower($coin->symbol).".png") }}">{{ $coin->name }}</option>
                                 @endforeach
                             </select>
                             <br>
                             <input type="hidden" name="name" id="coinname" />
-                            <input class="btn btn-primary my-2" id="newwalletbtn" type="submit" value="ایجاد" />
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary btn-rounded" type="button" data-dismiss="modal">انصراف</button>
+                            <input class="btn btn-primary btn-rounded my-2" id="newwalletbtn" type="submit" value="ایجاد" />
+                        </div>
 
-        <div class="modal fade" id="paycoinModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">شارژ کیف‌پول ارزی </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="/paycoin" method="GET">
-                            <label>میزان کوین</label>
-                            <input id="targetcoin" type="hidden" name="target" value="" />
-                            <input id="coinamount" type="number" step="0.000000001" min="0.0001" max="100000000" name="amount" class="form-control" value="" style="width: 100%;margin-bottom: 10px;" placeholder="میزان کوین مورد نظر خود را وارد کنید" />
-                            <input class="btn btn-primary" type="submit" value="پرداخت" />
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+                    </form>
 
-        <div class="modal fade" id="checkoutcoinModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">شارژ کیف‌پول ارزی </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="javascript:;" onsubmit="submitAjaxForm(this);" method="POST" data-action="/coin/checkoutrequest">
-                            @csrf
-                            <input id="checkouttargetcoin" type="hidden" name="target" value="" />
-                            <label>میزان کوین</label>
-                            <input id="checkoutcoinamount" type="number" step="0.000000001" required min="0.01" max="100000000" name="amount" class="form-control" value="" style="width: 100%;margin-bottom: 10px;" placeholder="میزان کوین مورد نظر خود را وارد کنید" />
-                            <label>آدرس کیف پول</label>
-                            <input id="coinwalletAddress" type="text" name="token" class="form-control" required value="" style="width: 100%;margin-bottom: 10px;" placeholder="آدرس کیف پول خود را وارد کنید" />
-                            <input class="btn btn-primary" type="submit" value="پرداخت" />
-                        </form>
-                    </div>
                 </div>
             </div>
         </div>
@@ -132,44 +80,78 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
+                            <div class="card-header justify-content-between">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h5 class="box-title mb-0"><i class="ti-wallet"></i> کیف پول‌ها</h5>
+                                    </div>
+                                </div>
+
+                                <a href="#newwallet" onclick="$('#newwallet').modal()" data-toggle="tooltip" title="ایجاد کیف پول جدید" class="btn btn-success btn-rounded rounded-circle d-flex align-items-center justify-content-center p-1" style="height: 40px;width: 40px;"><i class="ti-plus"></i></a>
+                            </div>
                             <div  class="card-body">
-                                <h6>تخمین ارزش دارایی</h6>
-                                <p class="text-muted"> <span class="mx-2">{{ number_format($wealth * $usdprice) }} تومان</span> <span class="mx-3">{{ number_format($wealth,2) }} $</span> <span class="mx-3">{{ number_format($wealth / $coinsprice['BTC']->priceUsd,8) }} BTC</span></p>
+                                <div class="w-100 d-flex justify-content-center align-items-center mb-4">
+                                    <div class="card">
+                                        <div class="card-body text-white" style="background-image: linear-gradient(45deg,#f39c12 0,#e91e63 100%);">
+                                            <div class="d-flex justify-content-between mb-5">
+                                                <div>
+                                                    <h5 class="box-title mb-2">تخمین میزان دارایی شما</h5>
+                                                </div><i class="ft-dollar-sign text-white-50 font-40"></i>
+                                            </div>
+                                            <div class="flexbox mb-2">
+                                                <div class="h1 mb-0">{{ number_format($wealth / $coinsprice['BTC']->priceUsd,8) }} BTC</div>
+                                                <span class="text-white font-18">
+
+                                                </span>
+                                            </div>
+                                            <div class="text-light">{{ number_format($wealth * $usdprice) }} تومان
+                                                <span class="float-left"> {{ number_format($wealth,2) }} $</span>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="table-responsive">
                                     <table class="table table-hover table-inbox w-100" id="market-table">
-                                        <thead>
+                                        <thead class="thead-light">
                                             <tr>
-                                                <th>نوع ارز</th>
-                                                <th>قیمت به تومان</th>
-                                                <th>موجودی (تومان)</th>
-                                                <th>موجودی (دلار)</th>
-                                                <th>موجودی (BTC)</th>
-                                                <th>قابل برداشت</th>
-                                                <th></th>
+                                                <th> ارز</th>
+                                                <th style="white-space: nowrap;">قیمت به تومان</th>
+                                                <th style="white-space: nowrap;">موجودی (تومان)</th>
+                                                <th style="white-space: nowrap;">موجودی (دلار)</th>
+                                                <th style="white-space: nowrap;">موجودی (BTC)</th>
+                                                <th style="white-space: nowrap;">قابل برداشت</th>
+                                                <th>عملیات</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td class="text-center"> <img src="{{ url("/assets/img/money.png") }}" style="max-width: 40px;">  <p>تومان</p></td>
-                                                <td>1 تومان</td>
-                                                <td>{{ number_format($rialWallet->credit) }}<br><span class="text-muted"> تومان </span></td>
+                                                <td class="text-center">
+                                                    <img src="{{ url("/assets/img/money.png") }}" style="max-width: 40px;" data-toggle="tooltip" title="تومان">  
+                                                </td>
+                                                <td>1 <span class="text-muted font-12 text-right"> تومان </span></td>
+                                                <td style="white-space: nowrap;">{{ number_format($rialWallet->credit) }} <span class="text-muted font-12"> تومان </span></td>
                                                 <td>{{ number_format($rialWallet->credit / $usdprice,2) }}</td>
-                                                <td>{{ number_format($rialWallet->credit / $coinsprice['BTC']->price_in_toman_int,4) }}</td>
+                                                <td>{{ number_format($rialWallet->credit / $coinsprice['BTC']->price_in_toman_int,8) }}</td>
                                                 <td>{{ number_format($rialWallet->cashable) }}</td>
                                                 <td>
-                                                    <a class="btn btn-danger btn-sm btn-rounded m-2 text-white" href="/dashboard/checkouts">برداشت</a>
-                                                    <a class="btn btn-primary btn-sm btn-rounded m-2 text-white" data-toggle="modal" data-target="#paymodal" href="#paymodal">واریز</a>
+                                                    <div class="btn-group">
+                                                        <a class="btn btn-outline-primary btn-sm d-flex justify-content-center align-items-center" data-toggle="tooltip" title="واریز" onclick="$('#paymodal').modal()" data-target="" href="#paymodal"><i class="ti-download"></i></a>
+                                                        <a class="btn btn-outline-danger btn-sm d-flex justify-content-center align-items-center" data-toggle="tooltip" title="برداشت" href="/dashboard/checkouts"><i class="ti-upload"></i></a>
+                                                    </div>
                                                 </td>
                                             </tr>
 
                                             @foreach($coinWallets as $coinWallet)
                                             <tr>
-                                                <td class="text-center"> <img src="{{ url("/assets/icons/". strtolower($coinWallet->type_name) .".png") }}" style="max-width: 40px;"> <p>{{ $coinWallet->name }}</p></td>
+                                                <td class="text-center"> 
+                                                    <img src="{{ url("/assets/icons/". strtolower($coinWallet->type_name) .".png") }}" style="max-width: 40px;" data-toggle="tooltip" title="{{ $coinWallet->name }}">
+                                                </td>
                                                 @if(isset($coinsprice[strtoupper($coinWallet->type_name)]))
                                                 <td>{!! $coinsprice[strtoupper($coinWallet->type_name)]->price_in_toman !!}</td>
-                                                <td>{{ number_format($coinsprice[strtoupper($coinWallet->type_name)]->price_in_toman_int * $coinWallet->credit) }}<br><span class="text-muted"> تومان </span></td>
+                                                <td style="white-space: nowrap;">{{ number_format($coinsprice[strtoupper($coinWallet->type_name)]->price_in_toman_int * $coinWallet->credit) }} <span class="text-muted font-12" style="white-space: nowrap"> تومان </span></td>
                                                 <td>{{ number_format($coinsprice[strtoupper($coinWallet->type_name)]->priceUsd * $coinWallet->credit,2) }}</td>
-                                                <td>{{ number_format(($coinsprice[strtoupper($coinWallet->type_name)]->priceUsd / $coinsprice['BTC']->priceUsd) * $coinWallet->credit,4) }}</td>
+                                                <td>{{ number_format(($coinsprice[strtoupper($coinWallet->type_name)]->priceUsd / $coinsprice['BTC']->priceUsd) * $coinWallet->credit,8) }}</td>
                                                 @else
                                                 <td>-</td>
                                                 <td>-</td>
@@ -178,55 +160,46 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                 @endif
                                                 <td>{{ $coinWallet->cashable }}</td>
                                                 <td>
-                                                    <a class="btn btn-success btn-sm btn-rounded m-2 text-white" href="/dashboard/myoffers">خرید و فروش</a>
-                                                    <a class="btn btn-warning btn-sm btn-rounded m-2 text-white" href="/dashboard/exchange">تبادل</a>
-                                                    <a class="btn btn-danger btn-sm btn-rounded m-2 text-white recievecoin"  data-coin="{{ $coinWallet->type_name }}">برداشت</a>
-                                                    <a class="btn btn-primary btn-sm btn-rounded m-2 text-white paycoin" data-coin="{{ $coinWallet->type_name }}">واریز</a>
+                                                    <div class="btn-group">
+                                                        <a class="btn btn-outline-success btn-sm d-flex justify-content-center align-items-center" data-toggle="tooltip" title="خرید و فروش" href="/dashboard/myoffers"><i class="ti-shopping-cart"></i></a>
+                                                        <a class="btn btn-outline-warning btn-sm d-flex justify-content-center align-items-center" data-toggle="tooltip" title="تبادل" href="/dashboard/exchange" style="border-radius: 0"><i class="ti-exchange-vertical"></i></a>
+                                                        <a class="btn btn-outline-primary btn-sm d-flex justify-content-center align-items-center paycoin" data-toggle="tooltip" title="واریز" data-coin="{{ $coinWallet->type_name }}" data-name="{{ $coinWallet->name }}" style="border-radius: 0"><i class="ti-download"></i></a>
+                                                        <a class="btn btn-outline-danger btn-sm d-flex justify-content-center align-items-center recievecoin" data-toggle="tooltip" title="برداشت" data-coin="{{ $coinWallet->type_name }}" data-name="{{ $coinWallet->name }}"><i class="ti-upload"></i></a>
+                                                    </div>
                                                 </td>
                                             </tr>
                                             @endforeach
                                         </tbody>
                                     </table>
                                 </div>
-                                <a href="#newwallet" data-toggle="modal" data-target="#newwallet" >
-                                    <div class="d-flex flex-column justify-content-center align-items-center">
-                                        افزودن کیف‌پول جدید 
-                                        <text class="my-1 font-40 btn btn-primary rounded-circle p-1" style="height: 60px;width:60px;text-align: center;vertical-align: middle;">+</text>
-                                    </div>
-                                </a> 
                             </div>
                         </div>
 
                     </div>
                     <div class="col-md-12">
                         <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between mb-4">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between">
                                     <div>
-                                        <h5 class="box-title mb-0">آخرین تراکنش ها</h5>
-                                    </div><a class="text-muted" href="#"><i class="ti-more-alt"></i></a>
-                                </div>
-                                <div class="card-fullwidth-block">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover">
-                                            <thead class="thead-light">
-                                                <tr>
-                                                    <th class="pl-4">واحد پول</th>
-                                                    <th>مبلغ</th>
-                                                    <th class="pr-4">نوع</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($transactions as $transaction)
-                                                <tr>
-                                                    <td class="pl-4"><b>{{ $transaction->coin }}</b></td>
-                                                    <td>{{ $transaction->amount}}</td>
-                                                    <td class="text-success">{{ $transaction->type }}</td>
-                                                </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
+                                        <h5 class="box-title mb-0"><i class="ft-menu"></i> تراکنش‌ها</h5>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table datatable-full table-hover w-100" data-ajax="/dashboard/gettransacions" data-columns='[{"data": "coin"},{"data": "amount"},{"data": "type"},{"data": "status"},{"data": "created_at"}]'>
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th class="pl-4">نوع ارز</th>
+                                                <th>میزان</th>
+                                                <th class="pr-4">عملیات</th>
+                                                <th class="pr-4">وضعیت</th>
+                                                <th class="pr-4">تاریخ</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -236,7 +209,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div><!-- BEGIN: Footer-->
 
         @include("includes.footer") 
-
         <script>
             function iformat(icon) {
                 if (!icon.id) {
@@ -247,7 +219,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
 
             $("#walletcoins").select2({
-                placeholder: "انتخاب یک کوین برای ارسال",
+                placeholder: "انتخاب کوین",
                 templateSelection: iformat,
                 templateResult: iformat,
                 allowHtml: true

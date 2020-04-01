@@ -25,6 +25,11 @@ $usdprice = Currency::where("code", "USD")->first()->price;
     <head>
         @include("includes.head")
         <title>Raya-EX | قیمت ارز دیجیتال</title>
+        <style>
+            th{
+                white-space: nowrap;
+            }
+        </style>
     </head>
     <body>
         <div class="modal fade" id="coinmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -60,8 +65,14 @@ $usdprice = Currency::where("code", "USD")->first()->price;
                     </ol>
                 </div>
             </div><!-- BEGIN: Page content-->
+
+            @include("includes.alert")
+
             <div>
-                <div class="card">
+                <div class="card"> 
+                    <div class="card-header">
+                        <h4 class="m-0"><i class="cc mx-2 BTC-alt font-18"></i>قیمت لحظه‌ای ارز دیجیتال</h4>
+                    </div>
                     <div class="card-body px-5">
                         <div class="card-fullwidth-block">
                             <div class="table-responsive">
@@ -69,26 +80,31 @@ $usdprice = Currency::where("code", "USD")->first()->price;
                                     <thead class="rowlinkx" data-link="row">
                                         <tr>
                                             <th>رتبه</th>
-                                            <th>#</th>
-                                            <th>نام ارز</th>
-                                            <th>قیمت به دلار</th>
-                                            <th>قیمت به تومان</th>
-                                            <th>حجم بازار (دلار)</th>
-                                            <th>میزان عرضه</th>
+                                            <th>نماد</th>
+                                            <th>نام</th>
+                                            <th>دلار</th>
+                                            <th>تومان</th>
+                                            <th>حجم بازار</th>
+                                            <th>عرضه</th>
                                             <th>روزانه</th>
                                             <th>هفتگی</th>
                                             <th>نمودار هفتگی</th>
-                                            <th></th>
+                                            <th>عملیات</th>
                                         </tr>
                                     </thead>
                                     <tbody class="rowlinkx" data-link="row">
-                                        <?php $i = 0*$page; ?>
+                                        <?php
+                                        $i = 0;
+                                        if ($page > 1) {
+                                            $i = (($page - 1) * 10);
+                                        }
+                                        ?>
                                         @foreach($coins as $coin)
                                         <?php $i++; ?>
                                         <tr data-coin="{{ $coin->id }}">
                                             <td class="coinrow clickable" data-coin="{{ $coin->id }}">{{ $i }}</td>
                                             <td class="coinrow clickable" data-coin="{{ $coin->id }}"><img src="{{ $coin->image }}" style="max-width: 30px"/></td>
-                                            <td class="showCoin coinrow clickable" data-coin="{{ $coin->id }}">{{ $coin->name }}</td>
+                                            <td class="showCoin coinrow clickable" style="font-size: 12px" data-coin="{{ $coin->id }}">{{ $coin->name }}</td>
                                             <td class="coinprice coinrow clickable" data-coin="{{ $coin->id }}" data-price="{{ round($coin->current_price,5) }}">{{ number_format(round($coin->current_price,5),2) }}$</td>
                                             <td class="coinprice-toman coinrow clickable" data-coin="{{ $coin->id }}"><?php
                                                 $priceInToman = (int) ($coin->current_price * $usdprice);
@@ -111,16 +127,16 @@ $usdprice = Currency::where("code", "USD")->first()->price;
                                                 $marketCapUsd = round(($coin->market_cap * $coin->current_price), 3);
                                                 if (($marketCapUsd >= 1000) & ($marketCapUsd < 1000000)) {
                                                     $cap = $marketCapUsd / 1000;
-                                                    echo $cap . "<br>" . "<div class='priceunit'>" . " هزار دلار" . "</div>";
+                                                    echo number_format($cap, 3) . "<br>" . "<div class='priceunit'>" . " هزار دلار" . "</div>";
                                                 } elseif ($marketCapUsd >= 1000000 & ($marketCapUsd < 1000000000)) {
                                                     $cap = $marketCapUsd / 1000000;
-                                                    echo $cap . "<br>" . "<div class='priceunit'>" . " میلیون دلار" . "</div>";
+                                                    echo number_format($cap, 3) . "<br>" . "<div class='priceunit'>" . " میلیون دلار" . "</div>";
                                                 } elseif ($marketCapUsd >= 1000000000) {
                                                     $cap = $marketCapUsd / 1000000000;
-                                                    echo $cap . "<br>" . "<div class='priceunit'>" . " میلیارد دلار" . "</div>";
+                                                    echo number_format($cap, 3) . "<br>" . "<div class='priceunit'>" . " میلیارد دلار" . "</div>";
                                                 } else {
                                                     $cap = $marketCapUsd;
-                                                    echo $cap . "<br>" . "<div class='priceunit'>" . " تومان" . "</div>";
+                                                    echo number_format($cap, 3) . "<br>" . "<div class='priceunit'>" . " تومان" . "</div>";
                                                 }
                                                 ?>
                                             </td>
@@ -129,16 +145,16 @@ $usdprice = Currency::where("code", "USD")->first()->price;
                                                 $supply = round($coin->circulating_supply, 4);
                                                 if (($supply >= 1000) & ($supply < 1000000)) {
                                                     $asupply = $supply / 1000;
-                                                    echo $asupply . "<br>" . "<div class='priceunit'>" . " هزار $coin->symbol" . "</div>";
+                                                    echo number_format($asupply, 3) . "<br>" . "<div class='priceunit'>" . " هزار $coin->symbol" . "</div>";
                                                 } elseif ($supply >= 1000000 & ($supply < 1000000000)) {
                                                     $asupply = $supply / 1000000;
-                                                    echo $asupply . "<br>" . "<div class='priceunit'>" . " میلیون $coin->symbol" . "</div>";
+                                                    echo number_format($asupply, 3) . "<br>" . "<div class='priceunit'>" . " میلیون $coin->symbol" . "</div>";
                                                 } elseif ($supply >= 1000000000) {
                                                     $asupply = $supply / 1000000000;
-                                                    echo $asupply . "<br>" . "<div class='priceunit'>" . " میلیارد $coin->symbol" . "</div>";
+                                                    echo number_format($asupply, 3) . "<br>" . "<div class='priceunit'>" . " میلیارد $coin->symbol" . "</div>";
                                                 } else {
                                                     $asupply = $supply;
-                                                    echo $asupply . "<br>" . "<div class='priceunit'>" . " $coin->symbol" . "</div>";
+                                                    echo number_format($asupply, 3) . "<br>" . "<div class='priceunit'>" . " $coin->symbol" . "</div>";
                                                 }
                                                 ?>
                                             </td>
@@ -157,8 +173,12 @@ $usdprice = Currency::where("code", "USD")->first()->price;
                                                 @endif
                                             </td>
                                             <td class="spark-line">{{ implode(",",$coin->sparkline_in_7d->price) }}</td>
-                                            <td><a href="/dashboard/exchange" class="btn btn-outline-primary"><i class="fas fa-exchange-alt font-16"></i></a>
-                                                <a href="/dashboard/buyoffer" class="btn btn-outline-secondary"><i class="ft-shopping-cart font-16"></i></a></td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <a class="btn btn-outline-success btn-sm d-flex justify-content-center align-items-center" data-toggle="tooltip" title="خرید و فروش" href="/dashboard/myoffers"><i class="ti-shopping-cart"></i></a>
+                                                    <a class="btn btn-outline-warning btn-sm d-flex justify-content-center align-items-center" data-toggle="tooltip" title="تبادل" href="/dashboard/exchange"><i class="ti-exchange-vertical"></i></a>
+                                                </div>
+                                            </td>
                                         </tr>
                                         @endforeach
                                     </tbody>
@@ -179,7 +199,7 @@ $usdprice = Currency::where("code", "USD")->first()->price;
         @include("includes.footer") 
         <style>
             canvas{
-                max-width: 150px !important;
+                max-width: 100px !important;
             }
             td{
                 text-align: center;

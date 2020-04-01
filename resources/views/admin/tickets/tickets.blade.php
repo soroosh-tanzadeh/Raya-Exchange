@@ -15,9 +15,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
+<?php
 
-<?php 
-    use Morilog\Jalali\Jalalian;
+use Morilog\Jalali\Jalalian;
 ?>
 
 <html lang="en">
@@ -41,31 +41,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </div><!-- BEGIN: Page content-->
             <div>
                 <div class="row">
-                    <div class="col-lg-3 col-md-4">
+                    <div class="col-lg-3 col-md-4"><a class="btn btn-danger btn-rounded btn-block shadow font-weight-strong" href="/dashboard/tickets/new"><span class="btn-icon"><i class="ti-plus font-18"></i>ایجاد تیکت جدید</span></a>
                         <div class="nav flex-column mt-5 mb-4">
                             <a class="flexbox py-2 hover-link mb-1" href="?"><span class="d-flex align-items-center"><i class="ft-inbox mr-3 font-16"></i>همه تیکت&zwnj;ها</span></a>
-                            <a class="flexbox py-2 hover-link mb-1" href="?type=1"><span class="d-flex align-items-center"><i class="ft-star mr-3 font-16"></i>پاسخ کاربر</span></a>
-                            <a class="flexbox py-2 hover-link mb-1" href="?type=2"><span class="d-flex align-items-center"><i class="ft-send mr-3 font-16"></i>پاسخ پیشتیبانی</span></a>
-                            <a class="flexbox py-2 hover-link mb-1" href="?type=3"><span class="d-flex align-items-center"><i class="ft-mail mr-3 font-16"></i>بسته شده</span></a>
+                            <a class="flexbox py-2 hover-link mb-1" href="?type=1"><span class="d-flex align-items-center"><i class="ft-user mr-3 font-16"></i>پاسخ کاربر</span></a>
+                            <a class="flexbox py-2 hover-link mb-1" href="?type=2"><span class="d-flex align-items-center"><i class="ft-user-check mr-3 font-16"></i>پاسخ پیشتیبانی</span></a>
+                            <a class="flexbox py-2 hover-link mb-1" href="?type=3"><span class="d-flex align-items-center"><i class="ft-check-square mr-3 font-16"></i>بسته شده</span></a>
                         </div>
                         <hr class="my-4">
+
                     </div>
                     <div class="col-lg-9 col-md-8">
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="box-title">تیکیت&zwnj;های شما</h5>
+                                <h5 class="box-title">
+                                    <i class="ft-inbox" style="font-size: 32px;"></i>
+                                </h5>
                             </div>
                             <div class="p-3">
-                                <div class="input-group-icon input-group-icon-left input-group-lg"><span class="input-icon input-icon-left"><i class="ti-search"></i></span><input id="searchticket" class="form-control font-weight-light border-0" type="text" placeholder="جستجو ..."  data-table="#table-inbox" style="box-shadow:0 3px 6px rgba(10,16,20,.15);"></div>
+                                <div class="input-group-icon input-group-icon-left input-group-lg"><span class="input-icon input-icon-left"><i class="ti-search"></i></span>
+                                    <input id="searchticket" class="form-control font-weight-light border-0" type="text" placeholder="جستجو ..."  data-table="#table-inbox" style="box-shadow:0 3px 6px rgba(10,16,20,.15);">
+                                </div>
                             </div>
                             <div class="card-body pt-0">
-                                <div class="card-fullwidth-block">
-                                    <div class="flexbox px-4 py-3 mb-3" style="background-color: #e9ecef;">
-
-                                    </div>
+                                <div class="card-fullwidth-block p-3">  
                                     <div class="table-responsive">
                                         @if(count($tickets) > 0)
-                                        <table class="table table-hover table-inbox" id="table-inbox">
+                                        <table class="table table-hover table-inbox w-100" id="table-inbox">
                                             <thead class="rowlinkx" data-link="row">
                                                 <tr>
                                                     <th>#</th>
@@ -74,36 +76,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                     <th>تاریخ ایجاد</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="rowlinkx" data-link="row">
-                                                @foreach($tickets as $ticket)
-                                                <tr data-id="1" class="filterable">
-                                                    <td class="check-cell rowlink-skip text-center"><label class="checkbox checkbox-danger check-single"><input class="mail-check" type="checkbox"><span></span></label></td>
-                                                    <td class="text-center"><a href="/admin/ticket/{{$ticket->id}}" class="link text-black">{{ $ticket->name }}</a></td>
-                                                    <td class="text-center">
-                                                        @if($ticket->type === '1')
-                                                        <span class="text-success">
-                                                            {{ $ticket->status }}
-                                                        </span>
-                                                        @elseif($ticket->type === '2')
-                                                        <span class="text-warning">
-                                                            {{ $ticket->status }}
-                                                        </span>
-                                                        @else
-                                                        <span class="text-danger">
-                                                            {{ $ticket->status }}
-                                                        </span>
-                                                        @endif
-                                                    </td>
-                                                    <td class="text-center">{{ Jalalian::forge($ticket->updated_at)->ago() }}</td>
-                                                </tr>
-                                                @endforeach
-                                            </tbody>
                                         </table>
                                         @else 
                                         <p class="px-5 m-0 text-center">هیچ تیکتی ثبت نشده.</p>
                                         @endif
                                     </div>
-                                   {{ $tickets->links() }}
                                 </div>
                             </div>
                         </div>
@@ -113,5 +90,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div><!-- BEGIN: Footer-->
 
         @include("includes.footer") 
+
+        <style>
+            .dataTables_filter{
+                display: none;
+            }
+        </style>
+
+        <script>
+            var table = $("#table-inbox").DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '/admin/gettickets',
+                columns: [
+                    {data: 'id'},
+                    {data: 'name'},
+                    {data: 'type'},
+                    {data: 'created_at'}
+                ],
+                "language": {
+                    "url": "/assets/persian.json"
+                },
+                "info": false,
+                "lengthChange": false
+            });
+
+
+            $("#searchticket").on("keyup", function () {
+                table.search(this.value).draw();
+            });
+        </script>
+
     </body>
 </html>

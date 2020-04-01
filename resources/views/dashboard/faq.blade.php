@@ -18,14 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html lang="en">
     <head>
         @include("includes.head")
-        <link href="/assets/css/pages/form-wizard.css" rel="stylesheet" />
-        <link href="/assets/vendors/feather-icons/feather.css" rel="stylesheet" />
-        <link href="/assets/vendors/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet" />
-        <link href="/assets/vendors/themify-icons/themify-icons.css" rel="stylesheet" />
-        <link href="/assets/vendors/line-awesome/css/line-awesome.min.css" rel="stylesheet" />
-        <link href="/assets/vendors/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet" /><!-- PAGE LEVEL VENDORS-->
         <title>Raya-EX | سوالات متداول</title><!-- GLOBAL VENDORS-->
-        <style>.faq-tabs .nav-link {
+        <style>
+            .faq-tabs .nav-link {
                 min-width: 100px;
                 padding: 1rem;
                 border: 1px dashed;
@@ -83,27 +78,45 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </style>
     </head>
     <body>
-        <div class="modal fade" id="paymodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        @if($user->is_admin)
+        <div class="modal fade" id="newCat" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">شارژ کیف‌پول ریالی</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">دسته‌بندی جدید</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="/payir/pay" method="GET">
-                            <label>مبلغ شارژ (تومان)</label>
-                            <input type="number" name="amount" class="form-control" value="" style="width: 100%;margin-bottom: 10px;" placeholder="مبلغ مورد نظر خود را وارد کنید" />
-                            <input class="btn btn-primary" type="submit" value="پرداخت" />
+                        <form action="javascript:;" data-btn="#submitcat" onsubmit="submitAjaxForm(this)" data-action="/admin/categories/new" method="POST">
+                            @csrf
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>نام</label>
+                                    <input type="text" name="name" value="" class="form-control" required/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>آیکون</label>
+                                    <input type="text" name="icon" value="" class="form-control" required />
+                                </div>
+                            </div>
+                            <div class="text-muted">
+                                برای انتخاب آیکون به وبسایت <a href="https://themify.me/themify-icons" target="_blank">Themify</a> مراجعه کنید و نام آیکون انتخابی را بدون پسوند ti- در فیلد آیکون وارد کنید.
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <input type="submit" id="submitcat" value="ایجاد" class="btn btn-primary" />
+                                </div>
+                            </div>
                         </form>
+
                     </div>
+
                 </div>
             </div>
         </div>
 
-        @if($user->is_admin)
         <div class="modal fade" id="new-question-dialog" aria-labelledby="new-question-dialog" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <form class="modal-content" method="POST" id="newfaq" action="javascript:;" data-action="/admin/newfaq">
@@ -150,12 +163,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     </ol>
                 </div>
             </div><!-- BEGIN: Page content-->
+            @include("includes.alert")
             <div>
                 <div class="row">
                     <div class="col-lg-3">
                         <div class="card">
-                            <div class="card-body">
+                            <div class="card-header justify-content-between">
                                 <h5 class="box-title">دسته بندی ها</h5>
+                                @if($user->is_admin)
+                                <button class="btn btn-primary btn-rounded" data-toggle="modal" data-target="#newCat">+</button>
+                                @endif
+                            </div>
+                            <div class="card-body">
                                 <div class="card-fullwidth-block px-3">
                                     <div class="nav nav-pills flex-column faq-tabs" role="tablist">
                                         @if(count($categories) > 0)
@@ -165,6 +184,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                             <div class="media-body">
                                                 <div class="mb-1 h6">{{ $category->name }}</div>
                                             </div>
+                                            @if($user->is_admin)
+                                            <button class="btn btn-danger deleteC" data-id="{{ $category->id }}">حذف</button>
+                                            @endif
                                         </a>
                                         @endforeach
                                         @else
@@ -177,16 +199,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     </div>
                     <div class="col-lg-9">
                         <div class="card">
-                            <div class="card-body">
-                                <div class="flexbox mb-4">
-                                    <h5 class="mb-0">سوالات متداول</h5>
+                            <div class="card-header">
+                                <div>
+                                    <i class="ft-help-circle" style="font-size: 34px"></i>
                                     @if($user->is_admin)
                                     <button class="btn btn-danger btn-rounded" data-toggle="modal" data-target="#new-question-dialog"><span class="btn-icon"><i class="ti-plus"></i>سوال جدید</span></button>
                                     @endif
                                 </div>
-                                <div class="input-group-icon input-group-icon-left input-group-lg mb-5">
-                                    <span class="input-icon input-icon-left"><i class="ti-search"></i></span>
-                                    <input class="form-control border-0" type="text" placeholder="جستجو ..." style="box-shadow:0 3px 6px rgba(10,16,20,.15);"></div>
+                            </div>
+                            <div class="card-body">
                                 <div class="tab-content">
                                     @foreach($categories as $category)
                                     <?php
@@ -196,16 +217,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         <ul class="list-unstyled faq-list">
                                             @if(count($questions) > 0)
                                             @foreach($questions as $question)
+
+                                            @if($user->is_admin)
+                                            <li class="row">
+                                                <div class="col-1">
+                                                    <button class="btn btn-danger btn-rounded mx-2 deleteQ" data-id="{{ $question->id }}">x</button>
+                                                </div>
+                                                <div class="col">
+                                                    <a data-toggle="collapse" href="#faq1-{{ $question->id }}" class="collapsed"> 
+                                                        {{ $question->question }}
+                                                    </a>
+                                                    <div class="collapse" id="faq1-{{ $question->id }}">
+                                                        <div class="faq-answer">
+                                                            {{ $question->answer }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            @else
                                             <li>
-                                                <a data-toggle="collapse" href="#faq1-1" class="collapsed" aria-expanded="true"> 
+                                                <a data-toggle="collapse" href="#faq1-{{ $question->id }}" class="collapsed"> 
                                                     {{ $question->question }}
                                                 </a>
-                                                <div class="collapse" id="faq1-1">
+                                                <div class="collapse" id="faq1-{{ $question->id }}">
                                                     <div class="faq-answer">
                                                         {{ $question->answer }}
                                                     </div>
                                                 </div>
                                             </li>
+                                            @endif
+
                                             @endforeach
                                         </ul>
                                         @else
@@ -222,8 +263,86 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         </div><!-- BEGIN: Footer-->
         @include("includes.footer")
+
+        @if ($user->is_admin)
+        <script>
+            $(".deleteQ").click(function () {
+                theresult = false;
+                thebtn = this;
+                var user = $(this).attr("data-id");
+                Swal.fire({
+                    title: 'آیا از حذف این سوال اطمینان دارید؟',
+                    text: "!این عملیات غیرقابل بازگشت است",
+                    icon: 'warning',
+                    showLoaderOnConfirm: true,
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'بله، حذف شود',
+                    cancelButtonText: 'انصراف',
+                    showLoaderOnConfirm: true,
+                    preConfirm: function () {
+                        return new Promise(function (resolve) {
+                            $.ajax({
+                                url: '/admin/questions/delete',
+                                type: 'POST',
+                                data: {_token: $('meta[name="csrf-token"]').attr('content'), id: user},
+                            }).done(function (response) {
+                                swal('با موفقیت حذف شد', response.message, response.status);
+                                $(thebtn).parent().parent().remove();
+                            }).fail(function () {
+                                swal('خطا..', 'مشکلی در ارتباط با سرور به وجود اومده!', 'error');
+                            });
+                        });
+                    }
+                }).then((result) => {
+                    if (result.value) {
+                        theresult = true;
+                    }
+                });
+            });
+
+            $(".deleteC").click(function () {
+                theresult = false;
+                thebtn = this;
+                var user = $(this).attr("data-id");
+                Swal.fire({
+                    title: 'آیا از حذف این دسته بندی اطمینان دارید؟',
+                    text: "!این عملیات غیرقابل بازگشت است",
+                    icon: 'warning',
+                    showLoaderOnConfirm: true,
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'بله، حذف شود',
+                    cancelButtonText: 'انصراف',
+                    showLoaderOnConfirm: true,
+                    preConfirm: function () {
+                        return new Promise(function (resolve) {
+                            $.ajax({
+                                url: '/admin/categories/delete',
+                                type: 'POST',
+                                data: {_token: $('meta[name="csrf-token"]').attr('content'), id: user},
+                            }).done(function (response) {
+                                swal('با موفقیت حذف شد', response.message, response.status);
+                                $(thebtn).parent().remove();
+                            }).fail(function () {
+                                swal('خطا..', 'مشکلی در ارتباط با سرور به وجود اومده!', 'error');
+                            });
+                        });
+                    }
+                }).then((result) => {
+                    if (result.value) {
+                        theresult = true;
+                    }
+                });
+            });
+
+        </script>
+        @endif
         <script>
             $(".tablinks:first").click();
+
             var form = document.querySelector('#newfaq');
             form.onsubmit = function () {
                 var action = $(form).data("action");

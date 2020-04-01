@@ -319,13 +319,7 @@ $(function () {
     }
 });
 $(document).ready(function () {
-    $("#searchticket").on("keyup", function () {
-        var value = $(this).val().toLowerCase();
-        var selector = $(this).attr("data-table");
-        $(selector + " .filterable").filter(function () {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-        });
-    });
+   
 });
 
 var DAYS_S = ["S", "M", "T", "W", "T", "F", "S"];

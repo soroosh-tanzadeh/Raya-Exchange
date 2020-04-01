@@ -18,14 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html lang="en">
     <head>
         @include("includes.head")
-        <link href="/assets/css/pages/form-wizard.css" rel="stylesheet" />
-        <link href="/assets/vendors/feather-icons/feather.css" rel="stylesheet" />
-        <link href="/assets/vendors/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet" />
-        <link href="/assets/vendors/themify-icons/themify-icons.css" rel="stylesheet" />
-        <link href="/assets/vendors/line-awesome/css/line-awesome.min.css" rel="stylesheet" />
-        <link href="/assets/vendors/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet" /><!-- PAGE LEVEL VENDORS-->
         <title>Raya-EX | پیشنهاد جدید</title><!-- GLOBAL VENDORS-->
-
     </head>
     <body>
         <div class="modal fade" id="paymodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -61,13 +54,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     </ol>
                 </div>
             </div><!-- BEGIN: Page content-->
+            @include("includes.alert")
             <div>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h5 class="box-title"><i class="ft-download"></i> پیشنهادات من</h5>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="card-body">
                                 <div class="table-responsive font-11">
-                                    <table class="table table-hover compact-table">
+                                    <table class="table table-hover compact-table  datatable-full w-100" data-ajax="/dashboard/getmyoffers" data-columns='[{"data": "id"},{"data": "coin"},{"data": "amount"},{"data": "price_in_toman"},{"data": "created_at"},{"data": "type"},{"data": "is_selled"},{"data":"actions"}]'>
                                         <thead class="thead-light">
                                             <tr>
                                                 <th>شماره سفارش</th>
@@ -77,61 +78,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                 <th>نوع معامله</th>
                                                 <th>تاریخ ایجاد</th>
                                                 <th>وضعیت</th>
-                                                <th></th>
+                                                <th>عملیات</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach($offers as $offer)
-                                            <tr>
-                                                <td>{{ $offer->id }}</td>
-                                                <td>
-                                                    {{ $offer->coin }}
-                                                    <img src="/assets/icons/{{ strtolower($coins[$offer->coin]->symbol) }}.png" style="max-width: 30px;"/>
 
-                                                </td>
-                                                <td>{{ $offer->amount }}</td>
-                                                <td><?php
-                                                    $priceInToman = ($offer->price_pre * $offer->amount) / $offer->max_buy;
-                                                    $price_in_toman = "";
-                                                    if (($priceInToman >= 1000) & ($priceInToman < 1000000)) {
-                                                        $price = $priceInToman / 1000;
-                                                        $price_in_toman = $price . " هزار تومان";
-                                                    } elseif ($priceInToman >= 1000000 & ($priceInToman < 1000000000)) {
-                                                        $price = $priceInToman / 1000000;
-                                                        $price_in_toman = $price . " میلیون تومان";
-                                                    } elseif ($priceInToman >= 1000000000) {
-                                                        $price = $priceInToman / 1000000000;
-                                                        $price_in_toman = $price . " میلیارد تومان";
-                                                    } else {
-                                                        $price = $priceInToman;
-                                                        $price_in_toman = $price . " تومان";
-                                                    }
-                                                    echo $price_in_toman;
-                                                    ?></td>
-                                                <td>{{ $offer->created_at }}</td>
-                                                <td>
-                                                    @if($offer->type === "sell")
-                                                    فروش
-                                                    @else
-                                                    خرید
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if($offer->is_selled)
-                                                    فروخته شده
-                                                    @else
-                                                    در انتظار خریدار
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <input type="button" class="btn btn-danger" value="لغو پیشنهاد" />
-                                                </td>
-                                            </tr>
-                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>
-                                {{ $offers->links() }}
                             </div>
                         </div>
                     </div>

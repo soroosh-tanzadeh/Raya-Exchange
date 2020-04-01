@@ -118,11 +118,11 @@
 
 
 toastr.options = {
-    "closeButton": true,
+    "closeButton": false,
     "debug": false,
     "newestOnTop": false,
-    "progressBar": true,
-    "positionClass": "toast-top-full-width",
+    "progressBar": false,
+    "positionClass": "toast-bottom-left",
     "preventDuplicates": false,
     "onclick": null,
     "showDuration": "300",
@@ -138,11 +138,70 @@ toastr.options = {
 
 $(document).ready(function () {
 
+    $("#notifcations").load("/notifications");
+
+    $(".datatable").DataTable({
+        "language": {
+            "url": "/assets/persian.json"
+        },
+        "searching": false,
+        "paging": false,
+        "info": false,
+        "lengthChange": false
+    });
+
+
+    $(".datatable-full").each(function () {
+        var url = $(this).attr("data-ajax");
+        var columns = JSON.parse($(this).attr("data-columns"));
+
+        $(this).DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: url,
+            columns: columns,
+            "language": {
+                "url": "/assets/persian.json"
+            }, drawCallback: function (settings) {
+                $('[data-toggle="tooltip"]').tooltip()
+            }
+        });
+    });
+
+    $(".numeric").on("keyup", function () {
+        var validChars = /[0-9 .]/;
+        var strIn = this.value;
+        var strOut = '';
+        for (var i = 0; i < strIn.length; i++) {
+            strOut += (validChars.test(strIn.charAt(i))) ? strIn.charAt(i) : '';
+        }
+        this.value = strOut;
+    });
 
     $("button[type='submit']").click(function () {
         if (!isVerified) {
             Swal.fire("خطا", "حساب شما احراز هویت نشده!", "error");
             return false;
+        }
+    });
+
+
+    $(".form-control").change(function () {
+        if (this.hasAttribute("pattern")) {
+            var regex = new RegExp($(this).attr("pattern"));
+            if ((regex.test($(this).val()))) {
+                $(this).removeClass("is-invalid");
+                $(this).parent().find('.text-danger').remove();
+                $(this).addClass("is-valid");
+            } else {
+                $(this).addClass("is-invalid");
+                $(this).parent().find('.text-danger').remove();
+                $('<small class="text-danger">' + $(this).attr("title") + '</small>').insertAfter(this);
+            }
+        } else {
+            $(this).removeClass("is-invalid");
+            $(this).parent().find('.text-danger').remove();
+            $(this).addClass("is-valid");
         }
     });
 
@@ -177,32 +236,43 @@ $(document).ready(function () {
     });
 
     $("#coin-num").on("input", function () {
+        $("#offerprice").trigger('input');
         var coin = parseFloat($("#coin-num").val());
         var coinsymbol = $("#coin-num").parent().parent().parent().parent().find(".coins_select :selected").data("symbol");
         if (coinsymbol !== undefined) {
-            var toman = coin * parseInt($("#coin-num").parent().parent().parent().parent().find(".coins_select :selected").attr("data-price"));
-            toman = (toman * 0.02) + toman;
-            var total = toman - (toman * adminfee);
-            $("#selloffercoin").text(coin + ""+coinsymbol.toUpperCase());
-            $("#price-toman").html("<span style='float:right' class='mx-1'>" + coin + "" + coinsymbol + " : </span> <span style='float:right;'>" + numeral(parseInt(toman)).format('0,0') + "</span");
+            var toman = coin * parseFloat($("#coin-num").parent().parent().parent().parent().find(".coins_select :selected").attr("data-price"));
+            if (!isNaN(toman)) {
+                toman = (toman * 0.02) + toman;
+                var total = toman - (toman * adminfee);
+                $("#priceINTOMAN").attr("style", "visibility: visible");
+                $("#selloffercoin").text(coin + "" + coinsymbol.toUpperCase());
+                $("#price-toman").html("<span style='float:right' class='mx-1'>" + coin + "" + coinsymbol + " : </span> <span style='float:right;'>" + numeral(parseInt(toman)).format('0,0') + "</span");
+            }
         }
     });
 
     $("#offerprice").on("input", function () {
-        toman = parseInt(numeral($(this).val()).value());
-        var total = toman - (toman * adminfee);
-        
-        $("#totalsellprice").text(numeral(parseInt(total)).format('0,0') + " تومان");
+        var coinsymbol = $("#coin-num").parent().parent().parent().parent().find(".coins_select :selected").data("symbol");
+        if (coinsymbol != undefined && parseFloat($("#coin-num").val())) {
+            toman = parseFloat(numeral($(this).val()).value());
+            if (!isNaN(toman)) {
+                var total = toman - (toman * adminfee);
+                $("#totalsellprice").val(numeral(parseInt(total)).format('0,0') + " تومان");
+            }
+        }
     });
 
     $("#coinbuy-num").on("input", function () {
+        $("#coinprice").trigger('input');
         var coin = parseFloat($("#coinbuy-num").val());
         var coinsymbol = $("#coinbuy-num").parent().parent().parent().parent().find(".coins_select :selected").data("symbol");
         if (coinsymbol !== undefined) {
             var toman = coin * parseInt($("#coinbuy-num").parent().parent().parent().parent().find(".coins_select :selected").attr("data-price"));
-            toman = toman - (toman * 0.02);
-            $("#pricebuy-toman").html("<span style='float:right' class='mx-1'>" + coin + "" + coinsymbol + " : </span> <span style='float:right;'>" + numeral(parseInt(toman)).format('0,0') + "</span");
-            //  $("#pricebuy-toman").val(numeral(parseInt(toman)).format('0,0'));
+            if (!isNaN(toman)) {
+                $("#priceINTOMANBUY").attr("style", "visibility: visible");
+                toman = toman - (toman * 0.02);
+                $("#pricebuy-toman").html("<span style='float:right' class='mx-1'>" + coin + "" + coinsymbol + " : </span> <span style='float:right;'>" + numeral(parseInt(toman)).format('0,0') + "</span");
+            }
         }
     });
 
@@ -226,12 +296,20 @@ $(document).ready(function () {
 
     $(".recievecoin").click(function () {
         var coin = $(this).attr("data-coin");
+        var name = $(this).attr("data-name");
+
         $("#checkouttargetcoin").val(coin);
+        $("#recievecoinsymbol").text(name)
+        $("#recievecoinimg").attr("src", "/assets/icons/" + coin + ".png");
+
         $("#checkoutcoinModal").modal();
     });
 
     $(".paycoin").click(function () {
         var coin = $(this).attr("data-coin");
+        var name = $(this).attr("data-name");
+        $("#paycoinsymbol").text(name)
+        $("#paycoinimg").attr("src", "/assets/icons/" + coin + ".png");
         $("#targetcoin").val(coin);
         $("#paycoinModal").modal();
     });
@@ -256,48 +334,160 @@ $(document).ready(function () {
 
 
 
+
+    jQuery.validator.addMethod("coinWallet", function (value, element) {
+        return WAValidator.validate(value, $("#checkouttargetcoin").val());
+    }, "آدرس کیف پول ورودی نامعتبر است.");
+
+    $("#receiveform").validate({
+        rules: {
+            token: {
+                required: true,
+                coinWallet: true
+            }
+        }
+    });
+
+
+    $("#coinexchange").validate({
+        rules: {
+            from: {
+                required: true,
+            },
+            to: {
+                required: true
+            },
+            amount: {
+                required: true
+            }
+        },
+        errorPlacement: function errorPlacement(error, element) {
+            error.insertAfter($(element).parent());
+        }
+    });
+
+
+
+    $("#paycoinform").validate();
+    $("#payrialform").validate();
+
     setInterval(function () {
         $(".coinpriceToman").each(function () {
             var coin_id = $(this).attr("data-coin");
             var element = this;
-            $.post("/getcoinIndex", {_token: $('meta[name="csrf-token"]').attr('content'), id: coin_id.toLowerCase()}, function (data) {
-                $(element).text(data.price_in_toman);
+            $.ajax({
+                type: 'POST',
+                url: "/getcoinIndex",
+                data: {_token: $('meta[name="csrf-token"]').attr('content'), id: coin_id.toLowerCase()},
+                processData: false,
+                cache: false,
+                error: function (jqXHR, textStatus, errorThrown) {
+                    if (jqXHR.status === 401) {
+                        window.location = "/";
+                    }
+                },
+                complete: function (jqXHR, textStatus) {
+
+                },
+                success: function (data, textStatus, jqXHR) {
+                    if (data.result) {
+                        $(element).text(data.price_in_toman);
+                    } else {
+
+                    }
+                }
             });
         });
-    }, 10000);
+    }, 15000);
+
+
+    setInterval(function () {
+        $("#notifcations").load("/notifications");
+    }, 15000);
+});
+
+$(".price-seprator").each(function () {
+    var element = this;
+    IMask(
+            $(element)[0], {
+        mask: Number,
+        thousandsSeparator: ','
+    });
 });
 
 
+$(".form-control").on("input", function () {
+    if (/([A-Z]|[a-z]|[0-9])/.test($(this).val())) {
+        $(this).attr("style", "text-align: left !important;");
+    } else {
+        $(this).attr("style", "text-align: right !important;");
+    }
+});
+
 function submitAjaxForm(form) {
-    var data = $(form).serialize();
+    var data = new FormData(form);
     var method = $(form).attr("method");
     var action = $(form).attr("data-action");
     var submitbtn = $(form).attr("data-btn");
     var target = $(form).attr("data-target");
-    $.ajax({
-        data: data,
-        url: action,
-        type: method,
-        beforeSend: function (xhr) {
-            $(submitbtn).prop("disable", true);
-        },
-        success: function (data, textStatus, jqXHR) {
-            if (data.result) {
-                toastr['success'](data.msg);
-                setTimeout(function () {
-                    if (target !== "" && target !== null && target !== undefined) {
-                        window.location = target;
-                    } else {
-                        location.reload();
-                    }
-                }, 2000);
-            } else {
-                toastr['error'](data.msg);
+
+    var canPass = true;
+
+    $(form).find("label.error").remove();
+    $(form).find("input").each(function () {
+        if (this.hasAttribute("required")) {
+            if ($(this).val() === "") {
+                $(this).addClass("is-invalid");
+                $('<label class="error text-danger active" for="amount" style=""> این فیلد اجباری است.</label>').insertAfter($(this).parent());
+                canPass = false;
             }
-        },
-        complete: function (jqXHR, textStatus) {
-            $(submitbtn).prop("disable", false);
+        }
+        if (this.hasAttribute("equal")) {
+            var equal = $(this).attr("equal");
+            if ($(this).val() !== $(equal).val()) {
+                $(this).addClass("is-invalid");
+                $('<label class="error text-danger active" for="amount" style=""> رمزعبور با تاییدیه آن برابر نیست!</label>').insertAfter($(this).parent());
+                canPass = false;
+            }
         }
     });
+    $(form).find("select").each(function () {
+        if (this.hasAttribute("required")) {
+            if ($(this).val() === null) {
+                $(this).addClass("is-invalid");
+                $('<label id="amount-error" class="error text-danger active" for="amount" style=""> این فیلد اجباری است.</label>').insertAfter($(this).parent());
+                canPass = false;
+            }
+        }
+    });
+    if (canPass) {
+        $.ajax({
+            data: data,
+            url: action,
+            type: method,
+            processData: false,
+            contentType: false,
+            beforeSend: function (xhr) {
+                $(submitbtn).prop("disabled", true);
+            },
+            success: function (data, textStatus, jqXHR) {
+                if (data.result) {
+                    toastr['success'](data.msg);
+                    setTimeout(function () {
+                        if (target !== "" && target !== null && target !== undefined) {
+                            window.location = target;
+                        } else {
+                            location.reload();
+                        }
+                    }, 2000);
+                } else {
+                    toastr['error'](data.msg);
+                }
+            },
+            complete: function (jqXHR, textStatus) {
+                $(submitbtn).prop("disabled", false);
+            }
+        });
+    }
     return false;
 }

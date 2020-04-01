@@ -41,17 +41,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <div class="col-md-12">
 
                         <div class="card">
-                            <div class="card-header p-0">
-                                <ul class="nav line-tabs nav-justified line-tabs-2x line-tabs-solid w-100">
-                                    <li class="nav-item"><a data-toggle="tab" href="#menu1" class="nav-link w-100 justify-content-center active show" style="border-top-right-radius: 0.6rem;">درخواست برداشت</a></li>
-                                    <li class="nav-item"><a data-toggle="tab" href="#menu2" class="nav-link w-100 justify-content-center" style="border-top-left-radius: 0.6rem;">انتقال به کیف پول</a></li>
-                                </ul>
+                            <div class="card-header">
+                                <h4>درخواست برداشت</h4>
                             </div>
                             <div class="card-body">
                                 <div class="tab-content">
                                     <div id="menu1" class="tab-pane fade active show">
                                         <div class="table-responsive font-11">
-                                            <table class="table table-hover compact-table">
+                                            <table class="table table-hover compact-table datatable-full w-100" data-ajax="/admin/datatable/getcoindeposits" data-columns='[{"data": "id"},{"data": "coin"},{"data": "amount"},{"data": "token"},{"data":"created_at"},{"data":"is_payed"}]'>
                                                 <thead class="thead-light">
                                                     <tr>
                                                         <th>شماره</th>
@@ -78,41 +75,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                             <text class="text-success">پرداخت شده</text>
                                                             @else
                                                             <input type="submit" value="تایید پرداخت" class="btn btn-success comfirmpay" data-checkout="{{ $checkout->id }}" />
-                                                            @endif
-                                                        </td>
-
-                                                    </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div id="menu2" class="tab-pane">
-                                        <div class="table-responsive font-11">
-                                            <table class="table table-hover compact-table">
-                                                <thead class="thead-light">
-                                                    <tr>
-                                                        <th>شماره</th>
-                                                        <th>ارز</th>
-                                                        <th>مقدار</th>
-                                                        <th>تاریخ</th>
-                                                        <th>وضعیت</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach($deposits as $deposit)
-                                                    <tr>
-                                                        <td>{{ $deposit->id }}</td>
-                                                        <td>
-                                                            <b>{{ $deposit->coin }}</b>
-                                                        </td>
-                                                        <td>{{ $deposit->amount }}</td>
-                                                        <td>{{ $deposit->created_at }}</td>                       
-                                                        <td>
-                                                            @if($deposit->confirmed)
-                                                            <text class="text-success">نهایی شده</text>
-                                                            @else
-                                                            <text class="text-warning">نهایی نشده</text>
                                                             @endif
                                                         </td>
 

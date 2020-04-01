@@ -15,17 +15,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
+
+<?php
+
+use App\Wallet;
+
+$wcoins = Wallet::getCoins();
+?>
+
 <html lang="en">
     <head>
         @include("includes.head")
-        <link href="/assets/css/pages/form-wizard.css" rel="stylesheet" />
-        <link href="/assets/vendors/feather-icons/feather.css" rel="stylesheet" />
-        <link href="/assets/vendors/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet" />
-        <link href="/assets/vendors/themify-icons/themify-icons.css" rel="stylesheet" />
-        <link href="/assets/vendors/line-awesome/css/line-awesome.min.css" rel="stylesheet" />
-        <link href="/assets/vendors/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet" /><!-- PAGE LEVEL VENDORS-->
         <title>Raya-EX | پیشنهاد جدید</title><!-- GLOBAL VENDORS-->
-
     </head>
     <body>
         <div class="modal fade" id="paymodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -61,55 +62,49 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     </ol>
                 </div>
             </div><!-- BEGIN: Page content-->
+            @include("includes.alert")
+
             <div>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card card-fullheight">
                             <!-- TradingView Widget BEGIN -->
-
                             <div class="card-header">
-                                <h4>ایجاد پیشنهاد جدید</h4>
+                                <h4 class="mb-0"><i class="ft-trending-up"></i> نمودار نوسانات قیمت بیت‌کوین</h4>
                             </div>
                             <div class="card-body">
-
-
-                                <div class="tab-content">
-                                    <div id="bitcoin" class="tab-pane fade active show">
-                                        <!-- TradingView Widget BEGIN -->
-                                        <div class="tradingview-widget-container">
-                                            <div id="tradingview_f7b3f" style="height: 600px"></div>
-                                            <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-                                            <script type="text/javascript">
-                                                new TradingView.widget(
-                                                        {
-                                                            "autosize": true,
-                                                            "symbol": "BITSTAMP:BTCUSD",
-                                                            "interval": "240",
-                                                            "timezone": "Asia/Tehran",
-                                                            "theme": "Dark",
-                                                            "style": "1",
-                                                            "locale": "en",
-                                                            "toolbar_bg": "#f1f3f6",
-                                                            "enable_publishing": false,
-                                                            "withdateranges": true,
-                                                            "hide_side_toolbar": false,
-                                                            "allow_symbol_change": true,
-                                                            "studies": [
-                                                                "MACD@tv-basicstudies",
-                                                                "MASimple@tv-basicstudies",
-                                                                "RSI@tv-basicstudies",
-                                                                "Volume@tv-basicstudies"
-                                                            ],
-                                                            "container_id": "tradingview_f7b3f"
-                                                        }
-                                                );
-                                            </script>
-                                        </div>
-                                        <!-- TradingView Widget END -->
-                                        <!-- TradingView Widget END -->
-                                    </div>
+                                <!-- TradingView Widget BEGIN -->
+                                <div class="tradingview-widget-container">
+                                    <div id="tradingview_f7b3f" style="height: 600px"></div>
+                                    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                                    <script type="text/javascript">
+                                        new TradingView.widget(
+                                                {
+                                                    "autosize": true,
+                                                    "symbol": "BITSTAMP:BTCUSD",
+                                                    "interval": "240",
+                                                    "timezone": "Asia/Tehran",
+                                                    "theme": "Dark",
+                                                    "style": "1",
+                                                    "locale": "en",
+                                                    "toolbar_bg": "#f1f3f6",
+                                                    "enable_publishing": false,
+                                                    "withdateranges": true,
+                                                    "hide_side_toolbar": false,
+                                                    "allow_symbol_change": true,
+                                                    "studies": [
+                                                        "MACD@tv-basicstudies",
+                                                        "MASimple@tv-basicstudies",
+                                                        "RSI@tv-basicstudies",
+                                                        "Volume@tv-basicstudies"
+                                                    ],
+                                                    "container_id": "tradingview_f7b3f"
+                                                }
+                                        );
+                                    </script>
                                 </div>
-
+                                <!-- TradingView Widget END -->
+                                <!-- TradingView Widget END -->
                             </div>
                         </div>
 
@@ -117,137 +112,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </div>
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="card card-fullheight">
-                            <div class="card-header p-0">
-                                <ul class="nav line-tabs nav-justified line-tabs-2x line-tabs-solid w-100">
-                                    <li class="nav-item"><a data-toggle="tab" href="#menu1" class="nav-link w-100 justify-content-center active show" style="border-top-right-radius: 0.6rem;">پیشنهاد فروش</a></li>
-                                    <li class="nav-item"><a data-toggle="tab" href="#menu2" class="nav-link w-100 justify-content-center" style="border-top-left-radius: 0.6rem;">پیشنهاد خرید</a></li>
-                                </ul>                                
-                            </div>
-
-                            <div class="card-body">
-                                <div class="tab-content">
-                                    <div id="menu1" class="tab-pane fade active show">
-                                        <h5 class="box-title mb-4"><i class="ft-zap"></i>ایجاد پیشنهاد فروش</h5>
-                                        <form action="/dashboard/newoffer" method="POST">
-                                            @csrf
-                                            <input type="hidden"  value="sell" name="type"/>
-                                            <div class="form-group mb-5">
-                                                <div class="form-row mt-1">
-                                                    <div class="col-md">
-                                                        <div style="width: 100%;">
-                                                            <select required name="coin" class="form-control coins_select" style="width: 100%">
-                                                                <option value=""></option>
-                                                                @foreach($offerablecoins as $offerablecoin)
-                                                                @if(isset($coins[strtolower($offerablecoin->name)]))
-                                                                <option value="{{ strtolower($offerablecoin->name) }}" data-symbol="{{ strtoupper($offerablecoin->type_name) }}" data-price="{{ $coins[strtolower($offerablecoin->name)]->price_in_toman_int }}" data-icon="{{ url("/assets/icons/".strtolower($offerablecoin->type_name).".png") }}">{{ $offerablecoin->name }}</option>
-                                                                @endif
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                        <div class="input-group-icon input-group-icon-right">
-                                                            <input class="form-control" type="text" name="coinـnum" required id="coin-num" placeholder="مقدار">
-                                                            <span class="input-icon input-icon-right coinicon"></span>
-                                                        </div>
-                                                        <input class="form-control mt-1" type="text" name="mincoin" required placeholder="حداقل سفارش">
-                                                    </div>
-                                                    <div class="col-md-1 d-inline-flex justify-content-center align-items-center"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
-                                                    <div class="col-md d-flex justify-content-center flex-column">
-                                                        <div class="input-group-icon input-group-icon-right w-100 my-2">
-                                                            <input class="form-control" type="text" placeholder="قیمت پیشنهادی شما" required name="price_toman" id="offerprice"><span class="input-icon input-icon-right">تومان</span>
-                                                        </div>
-                                                        <p>
-                                                            <span style="float:right;">قیمت پیشنهادی ما برای</span> <span id="price-toman"></span>
-                                                        </p>
-                                                        <div class="bg-warning text-white text-center rounded p-2 my-2" style="font-size: 12px;">
-                                                            مبلغی که شما از فروش <span id="selloffercoin"></span>  دریافت می‌کنید
-                                                            <p class="text-center" id="totalsellprice">
-                                                                 قیمت پیشنهادی خود را وارد کنید
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-8">
-                                                    <ul type="disc">
-                                                        <li>قیمت پیشنهادی ما همیشه با توجه نوسانات قیمت جهانی ارزهای دیجیتال و با نسبت ثابت تغییر خواهد کرد</li>
-                                                        <li>قیمت پیشنهادی ما همیشه ۱٪ بیشتر از قیمت جهانی ارز انتخابی خواهد بود.</li>
-                                                    </ul>
-
-                                                </div>
-                                                <div class="col-4 text-right">
-                                                    <button class="btn btn-danger btn-rounded" type="submit" style="min-width: 200px">تکمیل سفارش</button>
-                                                </div>
-                                            </div>                                       
-                                        </form>
-                                    </div>
-                                    <div id="menu2" class="tab-pane">
-                                        <h5 class="box-title mb-4"><i class="ft-zap"></i>ایجاد پیشنهاد خرید</h5>
-                                        <form action="/dashboard/newoffer" method="POST">
-                                            @csrf
-                                            <input type="hidden"  value="buy" name="type"/>
-                                            <div class="form-group mb-5">
-                                                <div class="form-row mt-1">
-                                                    <div class="col-md">
-                                                        <div style="width: 100%;">
-                                                            <select required name="coin" class="form-control coins_select" style="width: 100%">
-                                                                <option value=""></option>
-                                                                @foreach($offerablecoins as $offerablecoin)
-                                                                @if(isset($coins[strtolower($offerablecoin->name)]))
-                                                                <option value="{{ strtolower($offerablecoin->name) }}" data-symbol="{{ strtoupper($offerablecoin->type_name) }}" data-price="{{ $coins[strtolower($offerablecoin->name)]->price_in_toman_int }}" data-icon="{{ url("/assets/icons/".strtolower($offerablecoin->type_name).".png") }}">{{ $offerablecoin->name }}</option>
-                                                                @endif
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                        <div class="input-group-icon input-group-icon-right">
-                                                            <input class="form-control" type="text" name="coinـnum" required id="coinbuy-num" placeholder="مقدار">
-                                                            <span class="input-icon input-icon-right coinicon"></span></div>
-                                                        <input class="form-control mt-1" type="text" name="mincoin" required placeholder="حداقل سفارش">
-                                                    </div>
-                                                    <div class="col-md-1 d-inline-flex justify-content-center align-items-center"><i class="fas fa-exchange-alt text-muted font-16"></i></div>
-                                                    <div class="col-md d-flex justify-content-center flex-column">
-                                                        <div class="input-group-icon input-group-icon-right w-100 my-2">
-                                                            <input class="form-control" type="text" placeholder="قیمت به تومان" required name="price_toman"><span class="input-icon input-icon-right">تومان</span>
-                                                        </div>
-                                                        <p>
-                                                            <span style="float:right;">قیمت پیشنهادی ما برای</span> <span id="pricebuy-toman"></span>
-                                                        </p>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-8">
-                                                    <ul type="disc">
-                                                        <li>قیمت پیشنهادی ما همیشه با توجه نوسانات قیمت جهانی ارزهای دیجیتال و با نسبت ثابت تغییر خواهد کرد</li>
-                                                        <li>قیمت پیشنهادی ما همیشه ۱٪ کمتر از قیمت جهانی ارز انتخابی خواهد بود.</li>
-                                                    </ul>
-                                                </div>
-                                                <div class="col-md-4 text-right">
-                                                    <button class="btn btn-danger btn-rounded" type="submit" style="min-width: 200px">تکمیل سفارش</button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        @include("includes.offerCard")
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between mb-4">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between">
                                     <div>
-                                        <h5 class="box-title mb-2"><i class="ft-download"></i> آخرین پیشنهادات من</h5>
+                                        <h5 class="box-title"><i class="ft-download"></i> آخرین پیشنهادات من</h5>
                                     </div>
                                 </div>
-
+                            </div>
+                            <div class="card-body">
                                 <div class="table-responsive font-11">
-                                    <table class="table table-hover compact-table">
+                                    <table class="table datatable table-hover compact-table">
                                         <thead class="thead-light">
                                             <tr>
                                                 <th>شماره سفارش</th>
@@ -257,7 +138,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                 <th>نوع معامله</th>
                                                 <th>تاریخ ایجاد</th>
                                                 <th>وضعیت</th>
-                                                <th></th>
+                                                <th>عملیات</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -304,7 +185,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <input type="button" class="btn btn-danger" value="لغو پیشنهاد" />
+                                                    <input type="button" class="btn btn-danger canceloffer" value="لغو پیشنهاد" />
                                                 </td>
                                             </tr>
                                             @endforeach

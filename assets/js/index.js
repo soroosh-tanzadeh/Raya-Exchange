@@ -19,11 +19,11 @@ function iformat(icon) {
         return icon.text;
     }
     var originalOption = icon.element;
-    return $('<span><img style="max-width: 30px;" src="' + $(originalOption).data('icon') + '"/> ' + icon.text + '</span>');
+    return $('<span><img style="max-width: 18px;" src="' + $(originalOption).data('icon') + '"/> ' + icon.text + '</span>');
 }
 
 $(".coins_select").select2({
-    placeholder: "انتخاب یک کوین برای پیشنهاد",
+    placeholder: "کوین مورد نظر را انتخاب کنید",
     templateSelection: iformat,
     templateResult: iformat,
     allowHtml: true
@@ -48,7 +48,7 @@ $(document).ready(function () {
     sellersTable = $("#buyofferstable").DataTable({
         processing: true,
         serverSide: true,
-        ajax: '/dashboard/getbuyoffers',
+        ajax: '/dashboard/getbuyoffers?coin=bitcoin',
         columns: [
             {data: 'name'},
             {data: 'coin'},
@@ -70,7 +70,7 @@ $(document).ready(function () {
     buyersTable = $("#sellofferstable").DataTable({
         processing: true,
         serverSide: true,
-        ajax: '/dashboard/getselloffers',
+        ajax: '/dashboard/getselloffers?coin=bitcoin',
         columns: [
             {data: 'name'},
             {data: 'coin'},

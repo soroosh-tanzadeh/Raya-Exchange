@@ -18,6 +18,7 @@ class CreateTableTransactions extends Migration {
             $table->integer("amount");
             $table->string("coin");
             $table->string("type");
+            $table->string("trans_id");
             $table->string("status");
             $table->timestamps();
         });

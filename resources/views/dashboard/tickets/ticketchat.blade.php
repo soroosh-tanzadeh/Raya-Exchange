@@ -19,11 +19,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <head>
         @include("includes.head")
         <title>RayaEx | تیکت شماره - {{ $ticket->id }}</title>
+        <link href="/assets/css/newticket.css" rel="stylesheet" type="text/css"/>
+        <style>
+            .note-editor.note-frame .note-editing-area .note-editable {
+                min-height: 200px;
+            }
+        </style>
     </head>
     <body>
         @include("includes.header")
         <?php
         $messages = $ticket->getMessages();
+
+        use Morilog\Jalali\Jalalian;
         ?>
         <!-- BEGIN: Content-->
         <!-- END: Header-->
@@ -33,43 +41,71 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <div class="page-breadcrumb">
                     <h1 class="page-title page-title-sep">داشبورد</h1>
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item">تیکت شماره {{ $ticket->id }}</li>
+                        <li class="breadcrumb-item">تیکت</li>
                     </ol>
                 </div>
             </div>
-            <div class="ticketchat "  style="border-radius:0px 0px 0px;background:#F7F7F7;">
-                <div class="bodyticketchat">
-                    <table class="aboutticket w-100">
-                        <thead>
-                            <tr>
-                                <th>
-                                    @if($ticket->type === '1')
-                                    <span class="text-success">
-                                        {{ $ticket->status }}
-                                    </span>
-                                    @elseif($ticket->type === '2')
-                                    <span class="text-warning">
-                                        {{ $ticket->status }}
-                                    </span>
-                                    @else
-                                    <span class="text-danger">
-                                        {{ $ticket->status }}
-                                    </span>
-                                    @endif
-                                </th>
-                                <th>{{ $ticket->to }}</th>
-                                <th>{{ $ticket->name }}</th>
-                            </tr>
-                        </thead>
-                    </table>
-                    <div class="row chat m-0">
+            @include("includes.alert")
+
+            <div class="card">
+                <div class="card-header py-3 d-block">
+                    <h5 class="box-title mb-2">تیکت شماره {{ $ticket->id }}</h5>
+                    <div class="text-muted font-13"><i class="ft-clock" style="vertical-align: middle"></i> آخرین بروزرسانی :  {{ Jalalian::forge($ticket->updated_at)->ago()}} </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col">
+                            <div class="media p-4 align-items-center" style="background-color: #e3e3f2; border-radius: 8px"><i class="ft-mail align-self-center mr-4 font-30"></i>
+                                <div class="media-body">
+                                    <h6 class="mb-0x font-weight-bold">موضوع</h6>
+                                    <div class="text-muted font-13">  
+                                        {{ $ticket->name }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="media p-4 align-items-center" style="background-color: #e3e3f2; border-radius: 8px"><i class="ft-layers align-self-center mr-4 font-30"></i>
+                                <div class="media-body">
+                                    <h6 class="mb-0x font-weight-bold">بخش</h6>
+                                    <div class="text-muted font-13">  
+                                        {{ $ticket->to }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="media p-4 align-items-center" style="background-color: #e3e3f2; border-radius: 8px"><i class="ft-user align-self-center mr-4 font-30"></i>
+                                <div class="media-body">
+                                    <h6 class="mb-0x font-weight-bold">وضعیت</h6>
+                                    <div class="text-muted font-13">  
+                                        @if($ticket->type === '1')
+                                        <span class="text-success">
+                                            {{ $ticket->status }}
+                                        </span>
+                                        @elseif($ticket->type === '2')
+                                        <span class="text-warning">
+                                            {{ $ticket->status }}
+                                        </span>
+                                        @else
+                                        <span class="text-danger">
+                                            {{ $ticket->status }}
+                                        </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row chat m-0" id="chat">
                         @foreach($messages as $message)
 
-                        @if($message->from !== '-1')
+                        @if(!$message->is_admin)
                         <div class="col-md-12">
-                            <div class="card-message mr-2 my-2 mt-3"> 
-                                <div class="text-message pb-3">
-                                    <div class="p-3">
+                            <div class="card-message mr-2 my-2 p-2 mt-3"> 
+                                <b>من</b>
+                                <div class="text-message pb-3 mt-2">
+                                    <div class="px-3 pt-0">
                                         {!! $message->text !!}
                                     </div>
                                 </div>
@@ -82,9 +118,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         </div>
                         @else
                         <div class="col-md-12">
-                            <div class="card-message-2 mr-2 my-2 mt-3">
-                                <div class="text-message-2">
-                                    <div class="p-3">
+                            <div class="card-message-2 mr-2 my-2 p-2 mt-3"> 
+                                <b>پیشتیبان</b>
+                                <div class="text-message pb-3 mt-2">
+                                    <div class="px-3 pt-0">
                                         {!! $message->text !!}
                                     </div>
                                 </div>
@@ -99,35 +136,56 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         @endforeach
                     </div>
                 </div>
-                <div class="bg-white p-3">
-                    <input type="submit" value="ارسال پاسخ" class="btn btn-success" onclick="$('#sendmsg').slideDown();$(this).hide(1000)" />
-                    <form action="/dashbaord/ticket/{{ $ticket->id }}/sendmessage" method="POST" enctype="multipart/form-data" style="display: none" id='sendmsg' class="bg-white p-3">
-                        @csrf
-                        <select class="form-control border-0 d-none"  name="priority">
-                            <option value="1">کم</option>
-                        </select>
-                        <label for="text" class="mt-2">پیام</label>
-                        <input name="text" type="hidden" id="tickettext">
-                        <div id="editor-container">
-                            <p></p>
-                        </div>
-                        <div class="col-12 py-2">
-                            <h4>ضمینه</h4>
-                            <p class="text-muted">امکان انتخاب چند فایل وجود دارد</p>
-                            <input type="file" id="pin" name="files[]" multiple>
-                            <div class="d-block d-sm-none">
+                <div class="card-footer p-0">
+                    <div class=" text-center w-100 py-4">
+                        <input type="submit" value="ارسال پاسخ" class="btn btn-success btn-rounded" onclick="$('#msgdiv').slideDown();$(this).hide(1000)" />
+                    </div>
+                    <div id="msgdiv" style="display: none">
+
+                        <form action="javascript:;" method="POST" enctype="multipart/form-data" class="p-4"  id='sendmsg'>
+                            @csrf
+                            <select class="form-control border-0 d-none"  name="priority">
+                                <option value="1">کم</option>
+                            </select>
+                            <label for="text" class="mt-2">متن پیام</label>
+                            <input name="text" type="hidden" id="tickettext">
+                            <div id="editor-container">
+                                <p></p>
                             </div>
+
+                            <div id="startupload" style="display: none">
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" id="uploadprogress" role="progressbar" aria-valuenow="70"
+                                         aria-valuemin="0" aria-valuenow="0" aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="py-2">
+                                <div class="upload-btn-wrapper">
+                                    <button class="btn btn-rounded" onclick="$('#file').click()" id="file-btn">بارگذاری فایل</button>
+                                    <input type="file" name="files[]" style="display: none" multiple id="file" accept="image/png, image/jpeg, application/zip, application/msword, application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+                                </div>
+                            </div>
+
+                            <div style="display: none;" id="ticketerror">
+                                <div class="alert alert-warning alert-bordered has-icon"  role="alert"><i class="la la-warning alert-icon"></i> <span id="errtext"></span></div>
+                            </div>                       
+                        </form>
+                        <div class="clearfix w-100 border-top p-3 text-center">
+                            <button class="btn btn-primary btn-rounded" id="sendbtn" type="button">ارسال پیام</button>
                         </div>
-                        <div>
-                            <button class="btn btn-primary float-left" type="submit">ارسال پیام</button>
-                        </div>
-                    </form>
-                </div>>
+                    </div>
+                </div>
             </div>            
         </div>
         <!-- END: Quick sidebar-->
         @include("includes.footer")
         <script>
+
+            var objDiv = document.getElementById("chat");
+            objDiv.scrollTop = objDiv.scrollHeight;
+
             $('#editor-container').summernote({
                 toolbar: [
                     // [groupName, [list of button]]
@@ -139,13 +197,87 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     ['height', ['height']]
                 ]
             });
-            var form = document.querySelector('#sendmsg');
-            form.onsubmit = function () {
+
+            $("#file").change(function (e) {
+                var fileName = e.target.files.length;
+                $("#file-btn").text(fileName + " فایل انتخاب شده")
+
+            })
+
+            $(".form-control").change(function () {
+                if (this.hasAttribute("pattern")) {
+                    var regex = new RegExp($(this).attr("pattern"));
+                    if ((regex.test($(this).val()))) {
+                        $(this).removeClass("is-invalid");
+                        $(this).parent().find('.text-danger').remove();
+                        $(this).addClass("is-valid");
+                    } else {
+                        $(this).addClass("is-invalid");
+                        $(this).parent().find('.text-danger').remove();
+                        $('<small class="text-danger">' + $(this).attr("title") + '</small>').insertAfter(this);
+                    }
+                } else {
+                    $(this).removeClass("is-invalid");
+                    $(this).parent().find('.text-danger').remove();
+
+                }
+            });
+
+            $("#sendbtn").click(function (e) {
+                $("#ticketerror").hide();
+                var form = document.querySelector('#sendmsg');
                 // Populate hidden form on submit
                 var html = $('#editor-container').summernote('code');
-                $("#tickettext").val(html);
-                return true;
-            };
+                if ($("<p>" + $('#editor-container').summernote('code') + "</p>").text().replace(/\s/g, '') != '') {
+                    $("#tickettext").val(html);
+                    var data = new FormData(form);
+                    $.ajax({
+                        xhr: function () {
+                            var xhr = new window.XMLHttpRequest();
+
+                            xhr.upload.addEventListener("progress", function (e) {
+                                if (e.lengthComputable) {
+                                    var percetaget = parseInt((e.loaded / e.total) * 100);
+                                    $("#uploadprogress").attr("aria-valuenow", percetaget)
+                                    $("#uploadprogress").attr("style", "width: " + percetaget + "%");
+                                    $("#uploadprogress").text(percetaget + "%");
+                                }
+                            });
+
+                            return xhr;
+                        },
+                        url: "/dashboard/ticket/{{ $ticket->id }}}/sendmessage",
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        type: "POST",
+                        beforeSend: function (xhr) {
+                            $("#startupload").show();
+                            $("#sendbtn").prop("disabled", true);
+                        },
+                        success: function (data, textStatus, jqXHR) {
+                            if (data.result) {
+                                window.location = data.redirect;
+                            } else {
+                                $("#ticketerror").show();
+                                $("#errtext").text(data.msg);
+                            }
+                            $("#sendbtn").prop("disabled", false);
+
+                        },
+
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            $("#startupload").hide();
+                            $("#ticketerror").hide();
+                            Swal.fire("خطا", "خطا در برقراری ارتباط!", "error");
+                            $("#sendbtn").prop("disabled", false);
+                        }
+                    });
+                } else {
+                    Swal.fire("اخطار", "متن پیام اجباری است", "warning");
+                }
+                return false;
+            });
         </script>
     </body>
 </html>

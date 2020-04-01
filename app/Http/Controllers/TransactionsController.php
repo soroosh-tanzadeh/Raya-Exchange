@@ -87,8 +87,8 @@ class TransactionsController extends Controller {
             return response()->json(array("result" => false, "msg" => "موجودی کیف پول کافی نیست!"));
         }
     }
-
-    public function rialCheckouts(Request $request) {
+ 
+   public function rialCheckouts(Request $request) {
         $bankaccount_id = $request->bankaccount;
         $amount = $request->amount;
         $user_id = session()->get("user")->id;

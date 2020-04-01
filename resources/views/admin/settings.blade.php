@@ -43,21 +43,31 @@ $activities = Activity::getActivities();
             </div>
             <!-- BEGIN: Page content-->
             <div>
-                <div class="row">
+                <div class="row my-2">
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="/admin/save-settings" method="POST" enctype="multipart/form-data">
+                                <form action="/admin/save-settings" method="POST" enctype="multipart/form-data" id="savesettings">
                                     @csrf
                                     <div class="form-row">
                                         @foreach($options as $option)
-                                        <div class="col-md-4 my-2">
+                                            @if($option->key !== "laws")
+                                        <div class="col-md-4">
                                             <label>{{ $option->label }}</label>
                                             <input class="form-control" type='number' step="0.01" name="key[{{ $option->key }}]" value="{{ $option->value }}" required />
                                         </div>
+                                        @else
+                                        <div class="col-md-12 my-2">
+                                            <label for="text" class="mt-2">{{ $option->label }}</label>
+                                            <input type="hidden" id="lawstext" name="key[{{ $option->key }}]">
+                                            <div id="editor-container">
+                                                {!! $option->value !!}
+                                            </div>
+                                        </div>
+                                        @endif
                                         @endforeach
                                     </div>
-                                    <input class="btn btn-primary mt-2" type="submit" value="ثبت اطلاعات" />
+                                    <input class="btn btn-primary mt-2" type="submit" id="sendbtn" value="ثبت اطلاعات" />
                                 </form>
                             </div>
                         </div>
@@ -68,6 +78,44 @@ $activities = Activity::getActivities();
         </div>
         <!-- END: Quick sidebar-->
         @include("includes.footer")
+        <script>
+            $('#editor-container').summernote({
+                toolbar: [
+                    // [groupName, [list of button]]
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']]
+                ]
+            });
+            var form = document.querySelector('#savesettings');
+            form.onsubmit = function () {
+                // Populate hidden form on submit
+                var html = $('#editor-container').summernote('code');
+                $("#lawstext").val(html);
+                console.log("Submitted", $(form).serialize(), $(form).serializeArray());
+                $.ajax({
+                    url: "/admin/save-settings",
+                    data: $(form).serialize(),
+                    type: "POST",
+                    beforeSend: function (xhr) {
+                        $("#sendbtn").prop("disabled", true);
+                    },
+                    complete: function (jqXHR, textStatus) {
+                        $("#sendbtn").prop("disabled", false);
 
+                    },
+                    success: function (data, textStatus, jqXHR) {
+                        toastr["success"]("اطلاعات با موفقیت ثبت شد");
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr["error"]("خطا در برقراری ارتباط");
+                    }
+                });
+                return false;
+            };
+        </script>
     </body>
 </html>

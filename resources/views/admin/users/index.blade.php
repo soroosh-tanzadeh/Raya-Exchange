@@ -23,8 +23,20 @@ use Morilog\Jalali\Jalalian;
     <head>
         @include("includes.head")
         <title>Raya-EX | کاربران</title><!-- GLOBAL VENDORS-->
-
-    </head>
+        <style>
+            th{
+                white-space: nowrap;
+            }
+            #users{
+                min-width: 100%;
+            }
+            @media screen and (min-width: 600px){
+                #users{
+                    max-width: 100% !important;
+                }
+            }
+        </style>
+    </head> 
     <body>
         @include("includes.adminheader")
         <!-- BEGIN: Content-->
@@ -32,7 +44,7 @@ use Morilog\Jalali\Jalalian;
             <!-- BEGIN: Page heading-->
             <div class="page-heading">
                 <div class="page-breadcrumb">
-                    <h1 class="page-title page-title-sep">کابران</h1>
+                    <h1 class="page-title page-title-sep">کاربران</h1>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="/index"><i class="ft-home font-20"></i></a></li>
                         <li class="breadcrumb-item">کاربران</li>
@@ -44,7 +56,7 @@ use Morilog\Jalali\Jalalian;
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
-                            <div class="card-body">
+                            <div class="card-body p-4">
                                 <div class="table-responsive font-11">
                                     <table class="table table-hover compact-table" id="users">
                                         <thead class="thead-light">
@@ -52,13 +64,13 @@ use Morilog\Jalali\Jalalian;
                                                 <th>شماره</th>
                                                 <th>نام و نام‌خانوادگی</th>
                                                 <th>شماره موبایل</th>
-                                                <th> ایمیل</th>
                                                 <th>تاریخ ثبت‌نام</th>
                                                 <th>وضعیت تایید</th>
+                                                <th>عملیات</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -81,15 +93,61 @@ use Morilog\Jalali\Jalalian;
                         {data: 'id'},
                         {data: 'name'},
                         {data: 'phone_number'},
-                        {data: 'email'},
                         {data: 'signup_date'},
                         {data: 'status'},
+                        {data: 'actions'},
                     ],
                     "language": {
                         "url": "/assets/persian.json"
+                    },
+                    responsive: {
+                        details: false
+                    },
+                    drawCallback: function (settings) {
+                        $('[data-toggle="tooltip"]').tooltip()
                     }
                 });
             });
+
+
+            function deactiveUser(user, element) {
+                $.ajax({
+                    url: "/admin/deactiveuser",
+                    data: {user_id: user, _token: $('meta[name="csrf-token"]').attr('content')},
+                    type: 'POST',
+                    beforeSend: function (xhr) {
+                        $(element).prop("disabled", true);
+                    },
+                    complete: function (jqXHR, textStatus) {
+                        $(element).prop("disabled", false);
+                    },
+                    success: function (data, textStatus, jqXHR) {
+                        $(element).replaceWith("<button class='btn btn-sm rounded-0 btn-outline-success' onclick='activeUser(" + user + ",this)' data-toggle='tooltip' title='فعالسازی'><i class='ft-check'></i></button>");
+                        $(".tooltip").remove();
+                        $('[data-toggle="tooltip"]').tooltip();
+                    }
+                })
+            }
+
+            function activeUser(user, element) {
+                $.ajax({
+                    url: "/admin/activeuser",
+                    data: {user_id: user, _token: $('meta[name="csrf-token"]').attr('content')},
+                    type: 'POST',
+                    beforeSend: function (xhr) {
+                        $(element).prop("disabled", true);
+                    },
+                    complete: function (jqXHR, textStatus) {
+                        $(element).prop("disabled", false);
+                    },
+                    success: function (data, textStatus, jqXHR) {
+                        $(element).replaceWith("<button class='btn btn-sm rounded-0 btn-outline-danger' onclick='deactiveUser(" + user + ",this)' data-toggle='tooltip' title='غیرفعالسازی'><i class='ft-slash'></i></button>");
+                        $(".tooltip").remove();
+                        $('[data-toggle="tooltip"]').tooltip();
+                    }
+                })
+            }
+
         </script>
     </body>
 </html>

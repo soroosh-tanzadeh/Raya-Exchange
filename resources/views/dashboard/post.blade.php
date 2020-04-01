@@ -40,6 +40,7 @@ use Morilog\Jalali\Jalalian;
                 </div>
             </div>
             <!-- BEGIN: Page content-->
+            @include("includes.alert")
             <div>
                 <div class="row">
                     <div class="col-md-12">

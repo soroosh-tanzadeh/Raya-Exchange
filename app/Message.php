@@ -11,4 +11,9 @@ class Message extends Model {
         return $files;
     }
 
+    public function getSender() {
+        $user = User::find($this->from);
+        return $user;
+    }
+
 }

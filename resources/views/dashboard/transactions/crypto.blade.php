@@ -15,8 +15,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<?php 
-    use Morilog\Jalali\Jalalian;
+<?php
+
+use Morilog\Jalali\Jalalian;
 ?>
 <html lang="en">
     <head>
@@ -39,6 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </div>
             </div>
             <!-- BEGIN: Page content-->
+            @include("includes.alert")
             <div>
                 <div class="row">
                     <div class="col-md-12">
@@ -54,7 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                 <div class="tab-content">
                                     <div id="menu1" class="tab-pane fade active show">
                                         <div class="table-responsive font-11">
-                                            <table class="table table-hover compact-table">
+                                            <table class="table table-hover compact-table datatable-full w-100" data-ajax="/dashboard/coinpayments" data-columns='[{"data": "id"},{"data": "coin"},{"data": "amount"},{"data": "token"},{"data":"created_at"},{"data":"is_payed"}]'>
                                                 <thead class="thead-light">
                                                     <tr>
                                                         <th>شماره</th>
@@ -66,33 +68,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach($checkouts as $checkout)
-                                                    <tr>
-                                                        <td>{{ $checkout->id }}</td>
-
-                                                        <td>
-                                                            <b>{{ $checkout->coin }}</b>
-                                                        </td>
-                                                        <td>{{ $checkout->amount }}</td>
-                                                        <td>{{ $checkout->token }}</td>
-                                                        <td>{{ Jalalian::forge($checkout->created_at)->ago() }}</td>
-                                                        <td>
-                                                            @if($checkout->is_payed)
-                                                            <text class="text-success">پرداخت شده</text>
-                                                            @else
-                                                            <text class="text-warning">پرداخت نشده</text>
-                                                            @endif
-                                                        </td>
-
-                                                    </tr>
-                                                    @endforeach
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
                                     <div id="menu2" class="tab-pane">
                                         <div class="table-responsive font-11">
-                                            <table class="table table-hover compact-table">
+                                            <table class="table table-hover compact-table datatable-full w-100" data-ajax="/dashboard/deposits" data-columns='[{"data": "id"},{"data": "coin"},{"data": "amount"},{"data": "token"},{"data":"created_at"},{"data":"is_payed"}]'>
                                                 <thead class="thead-light">
                                                     <tr>
                                                         <th>شماره</th>
@@ -103,24 +85,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach($deposits as $deposit)
-                                                    <tr>
-                                                        <td>{{ $deposit->id }}</td>
-                                                        <td>
-                                                            <b>{{ $deposit->coin }}</b>
-                                                        </td>
-                                                        <td>{{ $deposit->amount }}</td>
-                                                        <td>{{ Jalalian::forge($deposit->created_at)->ago() }}</td>
-                                                        <td>
-                                                            @if($deposit->confirmed)
-                                                            <text class="text-success">نهایی شده</text>
-                                                            @else
-                                                            <text class="text-warning">نهایی نشده</text>
-                                                            @endif
-                                                        </td>
-
-                                                    </tr>
-                                                    @endforeach
                                                 </tbody>
                                             </table>
                                         </div>

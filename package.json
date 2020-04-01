@@ -16,12 +16,17 @@
         "lodash": "^4.17.13",
         "resolve-url-loader": "^2.3.1",
         "sass": "^1.15.2",
-        "sass-loader": "^7.1.0"
+        "sass-loader": "^7.1.0",
+        "vue-template-compiler": "^2.6.11"
     },
     "dependencies": {
+        "imask": "^6.0.3",
+        "iran-shetab": "^1.2.0",
         "npm": "^6.13.4",
         "quill": "^1.3.6",
         "quill-delta-to-html": "^0.11.0",
-        "sweetalert2": "^9.6.0"
+        "string-mask": "^0.3.0",
+        "sweetalert2": "^9.6.0",
+        "wallet-address-validator": "^0.2.4"
     }
 }

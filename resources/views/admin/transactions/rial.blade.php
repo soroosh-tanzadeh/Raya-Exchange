@@ -23,7 +23,6 @@ use Morilog\Jalali\Jalalian;
     <head>
         @include("includes.head")
         <title>Raya-EX | تراکنش‌های ریالی </title><!-- GLOBAL VENDORS-->
-
     </head>
     <body>
         @include("includes.adminheader")
@@ -55,74 +54,42 @@ use Morilog\Jalali\Jalalian;
                                 <div class="tab-content">
                                     <div id="menu1" class="tab-pane fade active show">
                                         <div class="table-responsive font-11">
-                                            <table class="table table-hover compact-table">
+                                            <table class="table table-hover compact-table datatable-full w-100" data-ajax="/admin/datatable/getrialdeposits" data-columns='[{"data": "id"},{"data": "IBAN"},{"data": "card_number"},{"data": "account_number"},{"data": "amount"},{"data": "user_name"},{"data": "created_at"},{"data": "is_payed"},{"data": "actions"}]'>
                                                 <thead class="thead-light">
                                                     <tr>
                                                         <th>شماره</th>
-                                                        <th>شماره کارت</th>
                                                         <th>شماره شبا</th>
+                                                        <th>شماره کارت</th>
                                                         <th>شماره حساب</th>
                                                         <th>مقدار</th>
+                                                        <th>نام کاربر</th>
                                                         <th>تاریخ</th>
                                                         <th>وضعیت پرداخت</th>
+                                                        <th>عملیات</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach($checkouts as $checkout)
-                                                    <tr>
-                                                        <td>{{ $checkout->id }}</td>
-                                                        <td>
-                                                            <b>{{ $checkout->IBAN }}</b>
-                                                        </td>
-                                                        <td>
-                                                            <b>{{ $checkout->card_number }}</b>
-                                                        </td>
-                                                        <td>
-                                                            <b>{{ $checkout->account_number }}</b>
-                                                        </td>
-                                                        <td>{{ $checkout->amount }}</td>
-                                                        <td>{{ Jalalian::forge($checkout->created_at)->ago() }}</td>
-                                                        <td>
-                                                            @if($checkout->is_payed)
-                                                            <text class="text-success">پرداخت شده</text>
-                                                            @else
-                                                            <input type="submit" value="تایید پرداخت" class="btn btn-success comfirmpay" data-checkout="{{ $checkout->id }}" />
-                                                            @endif
-                                                        </td>
-                                                    </tr>
-                                                    @endforeach
                                                 </tbody>
-                                                {{ $checkouts->links() }}
                                             </table>
                                         </div>
                                     </div>
                                     <div id="menu2" class="tab-pane">
                                         <div class="table-responsive font-11">
-                                            <table class="table table-hover compact-table">
+                                            <table class="table table-hover compact-table datatable-full w-100" data-ajax="/admin/datatable/getrialpayments" data-columns='[{"data": "id"},{"data": "coin"},{"data": "amount"},{"data": "user_id"},{"data": "user_name"},{"data":"trans_id"},{"data": "created_at"}]'>
                                                 <thead class="thead-light">
                                                     <tr>
                                                         <th>شماره</th>
                                                         <th>ارز</th>
                                                         <th>مقدار</th>
                                                         <th>کد کاربر</th>
+                                                        <th>نام کاربر</th>
+                                                        <th>شماره تراکنش</th>
                                                         <th>تاریخ</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach($deposits as $deposit)
-                                                    <tr>
-                                                        <td>{{ $deposit->id }}</td>
-                                                        <td>
-                                                            <b>{{ $deposit->coin }}</b>
-                                                        </td>
-                                                        <td>{{ $deposit->amount }}</td>
-                                                        <td>{{ $deposit->user_id }}</td>
-                                                        <td>{{ Jalalian::forge($deposit->created_at)->ago() }}</td>
-                                                    </tr>
-                                                    @endforeach
                                                 </tbody>
                                             </table>
-                                            {{ $deposits->links() }}
                                         </div>
 
                                     </div>

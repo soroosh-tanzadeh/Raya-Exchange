@@ -10,7 +10,7 @@
 <link href="/assets/vendors/line-awesome/css/line-awesome.min.css" rel="stylesheet" />
 <link href="/assets/vendors/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet" /><!-- PAGE LEVEL VENDORS-->
 <link href="/assets/vendors/cryptocoins/cryptocoins.css" rel="stylesheet" /><!-- THEME STYLES-->
-<link href="/assets/css/app.min.css" rel="stylesheet" /><!-- PAGE LEVEL STYLES-->
+<link href="/assets/css/app.min.css" rel="stylesheet"/>
 <link href="/assets/css/style.css" rel="stylesheet" /><!-- PAGE RTL STYLES-->
 <link href="/assets/css/toastr.css" rel="stylesheet" /><!-- PAGE RTL STYLES-->
 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -20,3 +20,4 @@
 <link href="/assets/vendors/sweetalert2/dist/sweetalert2.css" rel="stylesheet" type="text/css"/> 
 <link href="/assets/vendors/select2/dist/css/select2.min.css" rel="stylesheet" /><!-- THEME STYLES-->
 <link href="/assets/css/ticker.css" rel="stylesheet" />
+<link href="/assets/css/pages/form-wizard.css" rel="stylesheet" />

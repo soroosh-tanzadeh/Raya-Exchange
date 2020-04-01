@@ -25,7 +25,7 @@ $(document).ready(function() {
 var loadProvinces = function() {
 	var element = $(this);
 	element.empty();
-	element.append($('<option>یک استان را انتخاب کنید</option>').attr('value', ''));
+	element.append($('<option>انتخاب استان</option>').attr('value', ''));
 	$.each(data, function(province, list) {
 		var option = $('<option></option>').attr('value', province).text(province);
 		element.append(option);
@@ -38,7 +38,7 @@ var loadCities = function() {
 	var cityList = data[selectedProvince];
 	citySelector.empty();
 	$.each(cityList, function(index, city) {
-		var option = $('<option>یک شهر را انتخاب کنید</option>').attr('value', city).text(city);
+		var option = $('<option>انتخاب شهر</option>').attr('value', city).text(city);
 		citySelector.append(option);
 	});
 };

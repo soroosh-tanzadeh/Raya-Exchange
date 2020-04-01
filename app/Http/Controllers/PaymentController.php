@@ -21,6 +21,7 @@ use App\Notification;
 use App\AffilateWallet;
 use App\AffilateTransaction;
 use App\coinPayments\CoinpaymentsAPI;
+use App\SMS;
 
 class PaymentController extends Controller {
 
@@ -142,7 +143,7 @@ class PaymentController extends Controller {
         $payir->token = $request->token; // Pay.ir returns this token to your redirect url
         try {
             $verify = $payir->verify(); // returns verify result from pay.ir like (transId, cardNumber, ...)
-            if ($result->status == 1) {
+            if ($request->status == 1) {
                 $payment = Payment::where("transId", $verify['transId'])->first();
                 $user = session()->get("user");
                 if ($payment === null) {
@@ -160,16 +161,20 @@ class PaymentController extends Controller {
                             $transaction->coin = "تومان";
                             $transaction->type = "شارژ حساب";
                             $transaction->status = "موفق";
+                            $transaction->trans_id = $verify['transId'];;
                             $transaction->save();
 
                             $rialWallet = Wallet::where("user_id", $user->id)->where("type", "rial")->first();
                             $rialWallet->credit += $verify['amount'];
+                            $rialWallet->cashable += $verify['amount'];
+
+                            $sms = new SMS($user->phone_number);
+                            $sms->chargeWallet("تومان");
+
                             $rialWallet->save();
                         }
                     } else {
                         if (session()->pull("coin_wallet", false)) {
-                            $fee = Option::where("key", "sell_fee")->first()->value;
-
                             $offer = session()->get("coin_offer");
                             $transaction = new Transaction();
                             $transaction->user_id = $user->id;
@@ -243,7 +248,7 @@ class PaymentController extends Controller {
         $wallet = Wallet::where("type_name", $order->coin)->where("user_id", session()->get("user")->id)->first();
         $wallet->credit += $request->amount;
         $transaction = $coinp->CreateCustomTransaction(array("amount" => $request->amount, "buyer_email" => "soroosh081@gmail.com", "currency1" => $request->target, "currency2" => $request->target, "invoice" => "$order->id", "ipn_url" => url("/coinpayment/ipn")));
-        return redirect($transaction['result']['checkout_url']);
+        return redirect($transaction['result']);
     }
 
     public function webhook(Request $request) {

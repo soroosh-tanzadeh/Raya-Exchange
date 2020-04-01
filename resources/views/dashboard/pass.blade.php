@@ -40,31 +40,42 @@ use Morilog\Jalali\Jalalian;
                 </div>
             </div>
             <!-- BEGIN: Page content-->
+            @include("includes.alert")
             <div>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
-
+                            <div class="card-header">
+                                <h4><i class="ft-lock"></i> تغییر رمزعبور</h4>
+                            </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-4">
-                                        <label>رمزعبور فعلی</label>
-                                        <input type="password" class="form-control" id="current" />
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-12 mt-4">
+                                                <label>رمزعبور فعلی</label>
+                                                <input type="password" class="form-control" id="current" />
+                                            </div>
+                                            <div class="col-md-12 mt-4">
+                                                <label>رمزعبور جدید</label>
+                                                <input type="password" class="form-control" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="رمزعبور حداقل از ۸ کاراکتر و شامل حروف کوچک ، بزرگ و عدد باشد." id="pass1"/>
+                                            </div>
+                                            <div class="col-md-12 mt-4">
+                                                <label>تکرار رمزعبور جدید</label>
+                                                <input type="password" class="form-control" id="pass2"/>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <label>رمزعبور جدید</label>
-                                        <input type="password" class="form-control" id="pass1"/>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>تکرار رمزعبور جدید</label>
-                                        <input type="password" class="form-control" id="pass2"/>
+                                    <div class="col-md-6 text-center p-5">
+                                        <img src="/assets/img/change-password.png" style="max-width: 75%;"/>
+
                                     </div>
                                 </div>
                             </div>
                             <div class="card-footer justify-content-end d-flex">
-                                <input type="submit" class="changePass btn btn-success" value="تغییر رمزعبور" />
+                                <input type="submit" class="changePass btn btn-primary btn-rounded" value="تغییر رمزعبور" />
                             </div>
-                            
+
                         </div>
                     </div>
                 </div>

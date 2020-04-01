@@ -19,6 +19,8 @@
         "laravel/socialite": "^4.3",
         "laravel/tinker": "^1.0",
         "morilog/jalali": "^3.1",
+        "pusher/pusher-php-server": "~4.0",
+        "ronmelkhior/coinpayments-ipn": "^1.0",
         "saeedvaziry/payir": "dev-master",
         "yajra/laravel-datatables-oracle": "^9.8"
     },

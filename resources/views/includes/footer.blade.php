@@ -4,7 +4,12 @@ use App\Option;
 ?>
 <!-- BEGIN: Footer-->
 <footer class="page-footer flexbox">
-    <div class="text-muted"><strong><a href="webflax.ir">وب فلکس</a></strong>   تمامی حقوق محفوظ است. </div><div class="text-muted"><a href="#" class="text-muted">شرایط و قوانین</a> | <a href="#" class="text-muted">حریم خصوصی</a></div>
+    <div class="text-muted">طراحی و توسعه توسط <a href="webflax.ir">وب فلکس</a> 2019 - 2020 </div>
+    <div class="text-muted">
+        @if($user->is_admin)
+        <a href="#lawsmodal" data-toggle="modal" data-target="#lawsmodal" class="text-muted">شرایط و قوانین</a> | <a href="/dashboard/faq" class="text-muted">سوالات متداول</a>
+        @endif
+    </div>
 </footer><!-- END: Footer-->
 </div><!-- END: Content-->
 </div>
@@ -17,7 +22,7 @@ use App\Option;
         </ul>
     </div>
     <div class="tab-content">
-        <div class="tab-pane active h-100 p-4" id="sidenav-tab-settings">
+        <div class="tab-pane active h-100 p-4" id="sidenav-tab-settings"> 
             <div class="position-relative custom-scroll h-100"> 
                 <h5 class="mb-4">تنظیمات اعلان</h5>
                 <div class="flexbox py-3">فعال سازی اعلانات<label class="ui-switch switch-solid"><input type="checkbox" checked=""><span></span></label></div>
@@ -39,11 +44,13 @@ use App\Option;
 
 <script> var adminfee = {{ Option::getOption("admin_fee") }};</script>
 
-<script> var isVerified = {{ Option::isVerified() }}; </script>
+<script> var isVerified = {{ Option::isVerified() }};</script>
 
 <link href="/assets/vendors/DataTables/datatables.min.css" rel="stylesheet" type="text/css"/>
 <script src="/assets/vendors/jquery/dist/jquery.min.js"></script>
 <script src="/assets/vendors/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/assets/vendors/summernote/dist/summernote-bs4.min.js"></script><!-- CORE SCRIPTS-->
 <script src="/assets/vendors/metismenu/dist/metisMenu.min.js"></script>
 <script src="/assets/vendors/perfect-scrollbar/dist/perfect-scrollbar.min.js"></script><!-- PAGE LEVEL PLUGINS-->
 <script src="/assets/vendors/Flot/jquery.flot.js"></script>
@@ -52,6 +59,7 @@ use App\Option;
 <script src="/assets/js/app.min.js"></script><!-- PAGE LEVEL SCRIPTS-->
 <script src="/assets/vendors/moment/moment.js"></script>
 <script src="/assets/vendors/chart.js/dist/Chart.js"></script>
+<script src="/node_modules/iran-shetab/index.js"></script>
 <script src="/assets/js/toastr.js"></script>
 <script src="/assets/vendors/sweetalert2/dist/sweetalert2.js"></script>
 <script src="/assets/vendors/slick/slick.js" type="text/javascript"></script>
@@ -64,11 +72,14 @@ use App\Option;
 <script src="/assets/vendors/perfect-scrollbar/dist/perfect-scrollbar.min.js"></script><!-- PAGE LEVEL PLUGINS-->
 <script src="/assets/vendors/chart.js/dist/Chart.min.js"></script>
 <script src="/assets/vendors/apexcharts/dist/apexcharts.min.js"></script><!-- CORE SCRIPTS-->
-<script src="/assets/vendors/select2/dist/js/select2.full.min.js"></script><!-- CORE SCRIPTS-->
+<script src="/assets/vendors/select2/dist/js/select2.js"></script><!-- CORE SCRIPTS-->
+<script src="/node_modules/wallet-address-validator/dist/wallet-address-validator.js"></script><!-- CORE SCRIPTS-->
 <script src="/assets/js/numeral.js"></script><!-- CORE SCRIPTS-->
+<script src="/assets/vendors/jquery-validation/dist/jquery.validate.js"></script><!-- CORE SCRIPTS-->
+<script src="/assets/vendors/jquery-validation/dist/localization/messages_fa.js"></script><!-- CORE SCRIPTS-->
 <script src="/assets/js/qrcode.js"></script><!-- CORE SCRIPTS-->
 <script src="/assets/js/app.js"></script><!-- PAGE LEVEL SCRIPTS-->
-<script src="/assets/vendors/summernote/dist/summernote-bs4.min.js"></script><!-- CORE SCRIPTS-->
+<script src="/node_modules/imask/dist/imask.js"></script><!-- PAGE LEVEL SCRIPTS-->
 <script src="/assets/js/admin.js"></script>
 <script src="/assets/js/ticker.js" type="text/javascript"></script>
 <script src="/assets/js/scripts.js" type="text/javascript"></script>

@@ -17,7 +17,7 @@ class CreateExchanges extends Migration {
             $table->string("from");
             $table->string("to");
             $table->string("to_address");
-            $table->integer("amount");
+            $table->double("amount");
             $table->integer("user_id");
             $table->timestamps();
         });

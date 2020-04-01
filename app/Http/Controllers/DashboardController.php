@@ -21,11 +21,29 @@ use App\FaqCategory;
 use App\coinPayments\CoinpaymentsAPI;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Cache;
+use App\TCategories;
+use Illuminate\Support\Facades\Validator;
+use Morilog\Jalali\Jalalian;
+use App\SMS;
+use App\WalletCoin;
 
 class DashboardController extends Controller {
 
     public function index() {
-        $currencies = Curl::to("https://api.simpleswap.io/get_all_currencies")->asJson()->get();
+        $currencyDATA = Curl::to("https://api.simpleswap.io/get_all_currencies")->asJson()->get();
+        $currencies_all = array();
+        if ($currencyDATA !== null) {
+            foreach ($currencyDATA as $currency) {
+                $currencies_all[$currency->symbol] = $currency;
+            }
+        }
+
+        $currenciesData = (array) Curl::to("https://api.simpleswap.io/fixed/get_all_pairs")->asJson()->get();
+        $currencies = array();
+        foreach ($currenciesData as $key => $value) {
+            $currencies[] = $currencies_all[$key];
+        }
+
         $response = Cache::remember('coin-assets', 10000, function () {
                     $requestURL = "https://api.coincap.io/v2/assets";
                     return Curl::to($requestURL)
@@ -82,13 +100,17 @@ class DashboardController extends Controller {
         foreach ($chart as $value) {
             $liteoutputChart .= "{x: new Date($value->time),y: $value->priceUsd},";
         }
+
+        $myoffers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("user_id", session()->get('user')->id)->select('users.name', 'coin_offers.*')->limit(10)->get();
+
+
         $liteoutputChart .= "]";
         $user = session()->get("user");
         $offers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("is_active", true)->where("is_selled", false)->where("user_id", "!=", $user->id)->select('users.name', 'coin_offers.*')->latest()->limit(10)->get();
         $buyoffers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("type", "buy")->where("is_active", true)->where("is_selled", false)->where("user_id", "!=", $user->id)->select('users.name', 'coin_offers.*')->latest()->paginate(25);
         $transactions = Transaction::where("user_id", $user->id)->limit(7)->get();
 
-        return view("dashboard.index", array("user" => session()->get("user"), "offerablecoins" => $offerablecoins, "coins" => $coins, "chart" => $outputChart, "litechart" => $liteoutputChart, "offers" => $offers, "buyoffers" => $buyoffers, "currencies" => $currencies, "transactions" => $transactions));
+        return view("dashboard.index", array("user" => session()->get("user"), "myoffers" => $myoffers, "offerablecoins" => $offerablecoins, "coins" => $coins, "chart" => $outputChart, "litechart" => $liteoutputChart, "offers" => $offers, "buyoffers" => $buyoffers, "currencies" => $currencies, "transactions" => $transactions));
     }
 
     public function getUSD() {
@@ -111,22 +133,28 @@ class DashboardController extends Controller {
             $priceInToman = (int) ($coin->priceUsd * $usdprice);
             if (($priceInToman >= 1000) & ($priceInToman < 1000000)) {
                 $price = $priceInToman / 1000;
-                $coin->price_in_toman = $price . '<br><span class="text-muted"> هزار تومان </span>';
+                $coin->price_in_toman = $price . '<span class="text-muted font-12" style="white-space: nowrap"> هزار تومان </span>';
             } elseif ($priceInToman >= 1000000 & ($priceInToman < 1000000000)) {
                 $price = $priceInToman / 1000000;
-                $coin->price_in_toman = $price . '<br><span class="text-muted"> میلیون تومان </span>';
+                $coin->price_in_toman = $price . '<span class="text-muted font-12" style="white-space: nowrap"> میلیون تومان </span>';
             } elseif ($priceInToman >= 1000000000) {
                 $price = $priceInToman / 1000000000;
-                $coin->price_in_toman = $price . '<br><span class="text-muted"> میلیارد تومان </span>';
+                $coin->price_in_toman = $price . '<span class="text-muted font-12" style="white-space: nowrap"> میلیارد تومان </span>';
             } else {
                 $price = $priceInToman;
-                $coin->price_in_toman = $price . '<br><span class="text-muted"> تومان</span>';
+                $coin->price_in_toman = $price . '<span class="text-muted font-12" style="white-space: nowrap"> تومان</span>';
             }
             $coin->price_in_toman_int = $priceInToman;
             $coins[$coin->symbol] = $coin;
         }
         $coinp = new CoinpaymentsAPI();
-        $coinslist = $coinp->GetRatesWithAccepted()['result'];
+        $coinslistData = WalletCoin::all();
+        $coinlist = array();
+        foreach ($coinslistData as $wallet) {
+            if (!Wallet::where("user_id", session()->get("user")->id)->where("name", $wallet->name)->exists()) {
+                $coinslist[] = $wallet;
+            }
+        }
         $user = session()->get("user");
         $rialWallet = Wallet::where("user_id", $user->id)->where("type", "rial")->first();
         $coinWallets_data = Wallet::where("user_id", $user->id)->where("type", "coin")->get();
@@ -138,6 +166,9 @@ class DashboardController extends Controller {
                 $wealth += $coins[strtoupper($wallet->type_name)]->priceUsd * $wallet->credit;
             }
         }
+
+
+
         $transactions = Transaction::where("user_id", $user->id)->limit(10)->get();
         //  return response()->json($coinp->GetRatesWithAccepted());
         return view("dashboard.wallet.index", array("usdprice" => $usdprice, "wealth" => $wealth, "user" => $user, "coinsprice" => $coins, "coins" => $coinslist, "coinWallets" => $coinWallets, "rialWallet" => $rialWallet, "transactions" => $transactions));
@@ -216,13 +247,13 @@ class DashboardController extends Controller {
         $offers = CoinOffer::join("users", "users.id", "=", "coin_offers.user_id")->where("user_id", session()->get('user')->id)->select('users.name', 'coin_offers.*')->paginate(10);
         $buyoffers = CoinOffer::join("users", "users.id", "=", "coin_offers.buy_by")->where("is_active", true)->where("is_selled", true)->select('users.name', 'coin_offers.*')->limit(10)->get();
         $accounts = BankAccount::where("user_id", session()->get("user")->id)->get();
-        
+
         $toRun = "";
-        if($request->has("error")){ 
+        if ($request->has("error")) {
             $toRun = "<script> Swal.fire('خطا', '$request->error', 'error'); </script>";
         }
-        
-        return view("dashboard.offers.index", array("user" => session()->get("user"), "toRun" => $toRun,"offerablecoins" => $offerablecoins, "coins" => $coins, "chart" => $outputChart, "offers" => $offers, "buyoffers" => $buyoffers, "bankaccounts" => $accounts));
+
+        return view("dashboard.offers.index", array("user" => session()->get("user"), "toRun" => $toRun, "offerablecoins" => $offerablecoins, "coins" => $coins, "chart" => $outputChart, "offers" => $offers, "buyoffers" => $buyoffers, "bankaccounts" => $accounts));
     }
 
     public function myoffers(Request $request) {
@@ -299,10 +330,9 @@ class DashboardController extends Controller {
     public function newoffer(Request $request) {
         if ($request->type == "buy") {
             $user = session()->get("user");
-            $fee = Option::where("key", "sell_fee")->first()->value;
             $coin_type = $request->coin;
             $coin_num = $request->coinـnum;
-            $price = $request->price_toman;
+            $price = str_replace(",", "", $request->price_toman);
             $minbuy = $request->mincoin;
             $wallet = Wallet::where("user_id", $user->id)->where("type", "rial")->first();
             if ($wallet->cashable >= $price) {
@@ -313,26 +343,25 @@ class DashboardController extends Controller {
                 $coin->price_pre = $price;
                 $coin->min_buy = $minbuy;
                 if ($minbuy > $coin_num) {
-                    return redirect("/dashboard/buyoffer?error=حداقل خرید نمی‌تواند از مقدار بیشتر باشد!");
+                    return response()->json(array("result" => false, "msg" => "حداقل فروش نمی‌تواند از مقدار بیشتر باشد!"));
                 }
                 $coin->max_buy = $coin_num;
                 $coin->type = "buy";
                 $wallet->cashable -= $price;
                 if ($coin->save() && $wallet->save()) {
                     Activity::addActivity("ایجاد پیشنهاد خرید جدید");
-                    return redirect("/dashboard/mywallet");
+                    return response()->json(array("result" => true, "msg" => "با موفقیت ایجاد شد"));
                 } else {
-                    return redirect("/dashboard/buyoffer?error=خطا در ذخیره اطلاعات");
+                    return response()->json(array("result" => false, "msg" => "خطا در ذخیره اطلاعات"));
                 }
             } else {
-                return redirect("/dashboard/buyoffer?error=کیف پول ریالی خود را به اندازه مبلغ پیشنهاد شارژ کنید");
+                return response()->json(array("result" => false, "msg" => "موجودی کیف پول ریالی شما کافی نیست"));
             }
         } elseif ($request->type == "sell") {
             $user = session()->get("user");
-            $fee = Option::where("key", "sell_fee")->first()->value;
             $coin_type = $request->coin;
             $coin_num = $request->coinـnum;
-            $price = $request->price_toman;
+            $price = str_replace(",", "", $request->price_toman);
             $minbuy = $request->mincoin;
             $wallet = Wallet::where("user_id", $user->id)->where("name", $coin_type)->first();
             if ($wallet->cashable >= $coin_num) {
@@ -343,7 +372,7 @@ class DashboardController extends Controller {
                 $coin->price_pre = $price;
                 $coin->min_buy = $minbuy;
                 if ($minbuy > $coin_num) {
-                    return redirect("/dashboard/buyoffer?error=حداقل خرید نمی‌تواند از مقدار بیشتر باشد!");
+                    return response()->json(array("result" => false, "msg" => "حداقل خرید نمی‌تواند از مقدار بیشتر باشد!"));
                 }
                 $coin->max_buy = $coin_num;
                 $coin->type = "sell";
@@ -351,12 +380,12 @@ class DashboardController extends Controller {
 
                 if ($coin->save() && $wallet->save()) {
                     Activity::addActivity("ایجاد پیشنهاد فروش جدید");
-                    return redirect("/dashboard/mywallet");
+                    return response()->json(array("result" => true, "msg" => "با موفقیت ایجاد شد"));
                 } else {
-                    return redirect("/dashboard/buyoffer?error=خطا در ذخیره اطلاعات");
+                    return response()->json(array("result" => false, "msg" => "خطا در ذخیره اطلاعات"));
                 }
             } else {
-                return redirect("/dashboard/buyoffer?error=موجودی حساب کافی نیست");
+                return response()->json(array("result" => false, "msg" => "موجودی حساب کافی نیست"));
             }
         }
     }
@@ -373,16 +402,16 @@ class DashboardController extends Controller {
             $priceInToman = (int) ($coin->priceUsd * $usdprice);
             if (($priceInToman >= 1000) & ($priceInToman < 1000000)) {
                 $price = $priceInToman / 1000;
-                $coin->price_in_toman = $price . " هزار تومان";
+                $coin->price_in_toman = $price . "<span class='text-muted font-toman'>هزار تومان</span>";
             } elseif ($priceInToman >= 1000000 & ($priceInToman < 1000000000)) {
                 $price = $priceInToman / 1000000;
-                $coin->price_in_toman = $price . " میلیون تومان";
+                $coin->price_in_toman = $price . "<span class='text-muted font-toman'>میلیون تومان</span>";
             } elseif ($priceInToman >= 1000000000) {
                 $price = $priceInToman / 1000000000;
-                $coin->price_in_toman = $price . " میلیارد تومان";
+                $coin->price_in_toman = $price . "<span class='text-muted font-toman'>میلیارد تومان</span>";
             } else {
                 $price = $priceInToman;
-                $coin->price_in_toman = $price . " تومان";
+                $coin->price_in_toman = $price . "<span class='text-muted font-toman'> تومان</span>";
             }
             $coin->price_in_toman_int = $priceInToman;
             $coins[$coin->id] = $coin;
@@ -441,7 +470,11 @@ class DashboardController extends Controller {
 
     public function tickets(Request $request) {
         $user = session()->get("user");
-        $tickets = Ticket::where("user_id", $user->id)->latest()->paginate(10);
+        $tickets = Ticket::where("user_id", $user->id);
+        if ($request->has("type")) {
+            $tickets = $tickets->where("type", $request->type);
+        }
+        $tickets = $tickets->latest()->paginate(10);
         return view("dashboard.tickets.tickets", array("user" => session()->get("user"), "tickets" => $tickets));
     }
 
@@ -489,14 +522,14 @@ class DashboardController extends Controller {
             $ticket->status = "پاسخ کاربر";
             $ticket->addMessage($request->text, $files);
             $ticket->save();
-            return redirect("/dashboard/ticket/$ticket_id");
+            return response()->json(array("result" => true, "redirect" => "/dashboard/ticket/$ticket->id"));
         } else {
-            return redirect("/dashboard/ticket/$ticket_id");
+            return abort(404);
         }
     }
 
     public function getFile($filename, Request $request) {
-        return Storage::download("usersfiles/$filename");
+        return Storage::download("files/$filename", $request->name, array());
     }
 
     // Type 1 - Waiting for Admin
@@ -513,18 +546,30 @@ class DashboardController extends Controller {
         $ticket->type = 1;
         if ($ticket->save()) {
             $files = array();
-            if ($request->has('files')) {
-                $request->file('files');
-                foreach ($request->file('files') as $file) {
+            if ($request->hasFile('files')) {
+//                $validator = Validator::make($request->all(), [
+//                            'files' => 'mimes:jpeg,bmp,png,zip,rar,doc,docx,pdf'
+//                ]);
+//                if (true) {
+                $attachments = $request->file('files');
+
+                foreach ($attachments as $file) {
                     $name = $file->getClientOriginalName();
-                    $path = $file->store('usersfiles');
+                    $path = $file->store('files');
                     $files[] = array("link" => url("/$path"), "name" => $name);
                 }
+//                } else {
+//                    return response()->json(array("result" => false, "redirect" => "/dashboard/tickets/new", "msg" => "فرمت‌های مجاز - jpeg, bmp, png, zip, rar, doc, docx, pdf می‌باشید و حداکثر حجم مجاز ۱۰۰ مگابیت "));
+//                }
             }
             $ticket->addMessage($request->text, $files);
+
+            $sms = new SMS($user->phone_number);
+            $sms->newTicekt($ticket->name);
+
             return response()->json(array("result" => true, "redirect" => "/dashboard/ticket/$ticket->id"));
         } else {
-            return response()->json(array("result" => false, "redirect" => "/dashboard/tickets/new"));
+            return response()->json(array("result" => false, "redirect" => "/dashboard/tickets/new", "msg" => "خطا در ثبت اطلاعات"));
         }
     }
 
@@ -678,9 +723,35 @@ class DashboardController extends Controller {
         return view("dashboard.faq", array("user" => session()->get("user"), "categories" => $categories));
     }
 
-    public function knowledgePage(Request $request) {
-        $categories = FaqCategory::all();
-        return view("dashboard.knowledge", array("user" => session()->get("user"), "categories" => $categories));
+    public function tutorialPage(Request $request) {
+        $categories = TCategories::all();
+        return view("dashboard.tutorials", array("user" => session()->get("user"), "categories" => $categories));
+    }
+
+    public function getTickets(Request $request) {
+        $user = session()->get("user");
+        $tickets = Ticket::where("user_id", $user->id);
+        if ($request->has("type")) {
+            $tickets = $tickets->where("type", $request->type);
+        }
+        return DataTables::of($tickets)
+                        ->editColumn("type", function($ticket) {
+                            if ($ticket->type === '1') {
+                                return "<span class=\"text-success\">$ticket->status</span>";
+                            } elseif ($ticket->type === '2') {
+                                return "<span class=\"text-warning\">$ticket->status</span>";
+                            } else {
+                                return "<span class=\"text-danger\">$ticket->status</span>";
+                            }
+                        })
+                        ->addColumn("created_at", function($ticket) {
+                            return Jalalian::forge($ticket->created_at)->ago();
+                        })
+                        ->addColumn("name", function ($ticket) {
+                            return "<a href=\"/dashboard/ticket/$ticket->id\" class=\"link text-black\">$ticket->name</a>";
+                        })
+                        ->rawColumns(["type", "created_at", "name"])
+                        ->make(true);
     }
 
 }

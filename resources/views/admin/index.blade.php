@@ -42,45 +42,41 @@ $activities = Activity::getActivities();
                 </div>
             </div>
             <!-- BEGIN: Page content-->
-            <div><div class="row">
-                    <div class="col-lg-4 text-right">
-                        <div class="card card-chart">
-                            <div class="card-header text-center">
-                                <h2 class="card-title m-auto pt-2">تعداد کاربران</h2>
-                            </div>
+            <div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="card">
                             <div class="card-body text-center">
-                                <i class="fas fa-users text-primary fa-9x mb-3"></i>
-                                <br>
-                                <h3>{{ count($users) }}</h3>
-                            </div>
-                        </div> 
-                    </div>
-                    <div class="col-lg-4 text-right">
-                        <div class="card card-chart">
-                            <div class="card-header text-center">
-                                <h2 class="card-title m-auto pt-2">درخواست‌های فروش</h2>
-                            </div>
-                            <div class="card-body text-center">
-                                <i class="fas fa-bell text-primary fa-9x mb-3"></i>
-                                <br>
-                                <h3>{{ count($selloffersall) }}</h3>
+                                <div class="mb-4 pb-3"><i class="ti-user text-muted font-40"></i></div>
+                                <h5 class="mb-3">کاربران</h5>
+                                <p>{{ count($users) }}</p>
+                                <div><a class="d-inline-flex align-items-center text-danger" href="/admin/users"><span class="mr-2">مشاهده بیشتر</span><i class="fas fa-angle-right font-16"></i></a></div>
                             </div>
                         </div>
-                    </div><div class="col-lg-4 text-right">
-                        <div class="card card-chart">
-                            <div class="card-header text-center">
-                                <h2 class="card-title m-auto pt-3">درخواست‌های خرید</h2>
-                            </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
                             <div class="card-body text-center">
-                                <i class="fas fa-map-marker-alt text-primary fa-9x mb-3"></i>
-                                <br>
-                                <h3>{{ count($buyoffersall) }}</h3>
+                                <div class="mb-4 pb-3"><i class="ti-shopping-cart text-muted font-40"></i></div>
+                                <h5 class="mb-3">پشنهادات فروش</h5>
+                                <p>{{ count($selloffersall) }}</p>
+                                <div><a class="d-inline-flex align-items-center text-danger" href="/admin/offers"><span class="mr-2">مشاهده بیشتر</span><i class="fas fa-angle-right font-16"></i></a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <div class="mb-4 pb-3"><i class="ti-download text-muted font-40"></i></div>
+                                <h5 class="mb-3">پیشنهادات خرید</h5>
+                                <p>{{ count($buyoffersall) }}</p>
+                                <div><a class="d-inline-flex align-items-center text-danger" href="/admin/offers?buyers"><span class="mr-2">مشاهده بیشتر</span><i class="fas fa-angle-right font-16"></i></a></div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between mb-4">
@@ -91,13 +87,13 @@ $activities = Activity::getActivities();
                                 <div class="table-responsive font-11">
                                     <div class="table-responsive font-11">
                                         <div class="table-responsive font-11">
-                                            <table class="table table-hover compact-table">
+                                            <table class="table datatable table-hover compact-table">
                                                 <thead class="thead-light">
                                                     <tr>
                                                         <th>نام کاربری</th>
                                                         <th>ارز</th>
                                                         <th>موجودی</th>
-                                                        <th>حداقل فروش</th>
+                                                        <th>حداقل خرید</th>
                                                         <th>واحد (تومان)</th>
                                                         <th>تاریخ</th>
                                                     </tr>
@@ -140,7 +136,7 @@ $activities = Activity::getActivities();
                             </div>
                         </div>
                     </div>        
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between mb-4">
@@ -149,13 +145,13 @@ $activities = Activity::getActivities();
                                     </div>
                                 </div>
                                 <div class="table-responsive font-11">
-                                    <table class="table table-hover compact-table">
+                                    <table class="table table-hover datatable compact-table">
                                         <thead class="thead-light">
                                             <tr>
                                                 <th>نام کاربری</th>
                                                 <th>ارز</th>
                                                 <th>موجودی</th>
-                                                <th>حداقل خرید</th>
+                                                <th>حداقل فروش</th>
                                                 <th>واحد (تومان)</th>
                                                 <th>تاریخ</th>
                                             </tr>

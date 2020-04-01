@@ -18,6 +18,7 @@ class CreateMessages extends Migration {
             $table->text("text");
             $table->integer("from");
             $table->integer("ticket_id");
+            $table->boolean("is_admin")->default(false);
             $table->timestamps();
         });
     }

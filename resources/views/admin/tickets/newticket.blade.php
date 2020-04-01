@@ -20,6 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <head>
         @include("includes.head")
         <title>RayaEx | تیکت جدید</title>
+        <style>
+            .note-editable{
+                min-height: 330px;
+            }
+        </style>
     </head>
     <body>
         @include("includes.header")
@@ -37,6 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <div class="card-body">
                     <form action="/admin/ticket/newticket" id="newticket" method="POST" enctype="multipart/form-data">
                         @csrf
+                        <input type="hidden" value="{{ $touser }}" name="user_id"/>
                         <select class="form-control border-0 d-none"  name="priority">
                             <option value="1">کم</option>
                         </select>
@@ -46,13 +52,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                 <input class="form-control" name="name" type="text" required="">
                             </div>
                             <div class="col-6">
-                                <label for="to">بخش</label>
+                                 <label for="to">بخش</label>
                                 <select class="form-control border-0 w-100" name="to" required="">
-                                    <option value="" disabled selected>بخش</option>
-                                    <option value="خرید و فروش">خرید و فروش</option>
-                                    <option value="تبادل ارز">تبادل ارز</option>
-                                    <option value="پشتیبانی فنی">پشتیبانی فنی</option>
-                                    <option value="غیره">غیره</option>
+                                    @foreach($user->getTicketTypes() as $ticket_type)
+                                    <option value="{{ $ticket_type }}">{{ $ticket_type }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -69,7 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             </div>
                         </div>
                         <div>
-                            <button class="btn btn-primary float-left" type="submit">ارسال تیکت</button>
+                            <button class="btn btn-primary float-left" id="sendticket">ارسال تیکت</button>
                         </div>                        
                     </form>
                 </div>
@@ -89,24 +93,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 ]
             });
             var form = document.querySelector('#newticket');
-            form.onsubmit = function () {
-                // Populate hidden form on submit
+            $("#sendticket").click(function () {
                 var html = $('#editor-container').summernote('code');
                 $("#tickettext").val(html);
-                console.log("Submitted", $(form).serialize(), $(form).serializeArray());
-                $.ajax({
-                    url: "/admin/ticket/newticket",
-                    data: $(form).serialize(),
-                    type: "POST",
-                    success: function (data, textStatus, jqXHR) {
-                        window.location = data.redirect;
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        Swal.fire("خطا", "خطا در برقراری ارتباط!", "error");
-                    }
-                });
-                return false;
-            };
+                form.submit();
+            });
+
         </script>
     </body>
 </html>

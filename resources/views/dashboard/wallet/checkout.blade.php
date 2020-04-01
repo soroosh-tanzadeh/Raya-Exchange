@@ -22,35 +22,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     </head>
     <body>
-        <div class="modal fade" id="paymodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">شارژ کیف‌پول ریالی</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form onsubmit="submitAjaxForm(this)" data-action="/payir/pay" method="GET">
-                            <label>مبلغ شارژ (تومان)</label>
-                            <input type="number" name="amount" class="form-control" value="" style="width: 100%;margin-bottom: 10px;" placeholder="مبلغ مورد نظر خود را وارد کنید" />
-                            <input class="btn btn-primary" type="submit" value="پرداخت" />
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+
         @include("includes.header")
         <!-- BEGIN: Content-->
         <div class="page-content fade-in-up">
             <!-- BEGIN: Page heading-->
             <div class="page-heading"> 
                 <div class="page-breadcrumb">
-                    <h1 class="page-title page-title-sep">رمز‌ارزها</h1>
+                    <h1 class="page-title page-title-sep">امور مالی</h1>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html"><i class="la la-home font-20"></i></a></li>
-                        <li class="breadcrumb-item">کیف پول من</li>
+                        <li class="breadcrumb-item">تسویه حساب</li>
                     </ol>
                 </div>
             </div><!-- BEGIN: Page content-->
@@ -59,79 +41,67 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <div class="col-md-7">
                         <div class="card">
                             <div class="card-header">
-                                <h3>ثبت درخواست تسویه حساب</h3>
+                                <h3>تسویه حساب</h3>
                             </div>
-                            <div class="card-body">
-                                <form action="javascript:;" onsubmit="checkoutRequest();return false;" id="checkout-request" >
+                            <form action="javascript:;" onsubmit="submitAjaxForm(this);" method="POST" data-action="/checkoutrequest" data-btn="#requestpay" novalidate id="checkout-request" >
+                                <div class="card-body">
                                     @csrf
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label>
-                                                مقدار
-                                            </label>
-                                            <input type="text" maxlength="28" name="amount" required value="" id="iban" class="form-control w-100" />
+                                            <div class="from-group">
+                                                <label>
+                                                    مقدار
+                                                </label>
+                                                <input type="text" maxlength="28" name="amount" required value="" class="form-control numberic w-100" >
+                                            </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <label>
-                                                حساب بانکی
-                                            </label>
-                                            <select name="bankaccount" required class="form-control">
-                                                <option value="" disabled selected>یک حساب را انتخاب کنید</option>
-                                                @foreach($bankaccounts as $bankaccount)
-                                                <option value="{{ $bankaccount->id }}">{{ $bankaccount->IBAN }} - {{ $bankaccount->owner }}</option>
-                                                @endforeach
-                                            </select>
+                                            <div class="from-group">
+                                                <label>
+                                                    حساب بانکی
+                                                </label>
+                                                <select name="bankaccount" required class="form-control">
+                                                    <option value="" disabled selected>یک حساب را انتخاب کنید</option>
+                                                    @foreach($bankaccounts as $bankaccount)
+                                                    <option value="{{ $bankaccount->id }}">{{ $bankaccount->IBAN }} - {{ $bankaccount->owner }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
-                                        <input type="submit" class="btn btn-primary" value="ثبت درخواست" />
-                                </form>
+                                    </div>
+                                </div>
+                                <div class="card-footer text-right">
+                                    <input type="submit" id="requestpay" class="btn btn-rounded btn-primary" value="ثبت درخواست" />
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <div class="mb-4 py-2"><i class="badge-lg-primary text-primary ti-wallet" style="height: 54px;width: 54px;font-size: 26px;"></i></div>
+                                <div class="mb-3 text-muted font-16">کیف پول ریالی</div>
+                                <div class="mb-5">
+                                    <div class="h3">
+                                        <span>{{ $rialWallet->credit }}</span><span class="font-weight-normal text-muted" style="font-size: 14px"> تومان</span>
+                                    </div>
+                                    <small style="font-size: 14px">
+                                        <b class="bold">قابل برداشت</b> <span class="font-16">{{ $rialWallet->cashable }}</span><span class="font-weight-normal text-muted"  style="font-size: 12px"> تومان</span>
+                                    </small>
+                                </div>
+
+                                <a class="btn btn-outline-primary btn-rounded btn-block" data-toggle="modal" data-target="#paymodal" href="#paymodal">شارژ کیف پول</a>
                             </div>
                         </div>
+
                     </div>
                 </div>
-                <div class="col-md-5">
-                    <div class="card">
-                        <div class="card-body text-center">
-                            <div class="mb-3"><i class="badge-lg-primary text-primary ti-wallet" style="height: 54px;width: 54px;font-size: 26px;"></i></div>
-                            <div class="mb-3 text-muted font-16">کیف پول ریالی</div>
-                            <div class="h3 mb-4"><span>{{ $rialWallet->credit }}</span><span class="font-weight-normal"> تومان</span></div>
-                            <div>
-                                قابل برداشت : <span>{{ $rialWallet->cashable }}</span><span class="font-weight-normal"> تومان</span></div>
-                            <hr>
-                            <div class="flexbox"><a data-toggle="modal" data-target="#paymodal" href="#paymodal">واریز</a></div>
-                        </div>
-                    </div>
+            </div><!-- END: Page content-->
+        </div><!-- BEGIN: Footer-->
 
-                </div>
-            </div>
-        </div><!-- END: Page content-->
-    </div><!-- BEGIN: Footer-->
+        @include("includes.footer") 
 
-    @include("includes.footer") 
-
-    <script>
-        function checkoutRequest() {
-            var form = $("#checkout-request").serialize();
-            $.ajax({
-                url: "/checkoutrequest",
-                data: form,
-                type: 'POST',
-                cache: false,
-                beforeSend: function (xhr) {
-                    $("#addaccountbtn").prop("disabled", true);
-                },
-                success: function (data, textStatus, jqXHR) {
-                    if (data.result) {
-                        toastr['success'](data.msg, "موفقیت آمیز");
-                        window.location = "/dashboard/rials";
-                    } else {
-                        toastr['error'](data.msg, "خطا");
-                    }
-                    $("#addaccountbtn").prop("disabled", false);
-
-                }
-            });
-        }
-    </script>
-
-</body>
+    </body>
 </html>

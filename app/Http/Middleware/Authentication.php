@@ -8,7 +8,7 @@ use App\User;
 class Authentication {
 
     /**
-     * Handle an incoming request.
+     * Handle an incoming request. 
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
@@ -22,9 +22,15 @@ class Authentication {
                 session()->put('user', $select);
             } else {
                 session()->remove("user");
+                if ($request->isMethod('post')) {
+                    return abort(401);
+                }
                 return redirect('/');
             }
         } else {
+            if ($request->isMethod('post')) {
+                return abort(401);
+            }
             return redirect('/');
         }
         return $next($request);

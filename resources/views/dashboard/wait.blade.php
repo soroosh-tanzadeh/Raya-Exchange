@@ -30,7 +30,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <link href="/assets/css/style.css" rel="stylesheet" /><!-- PAGE RTL STYLES-->
         <link href="/assets/css/pages/form-wizard.css" rel="stylesheet" />
         <link href="/assets/vendors/dropzone/dist/min/dropzone.min.css" rel="stylesheet" /><!-- THEME STYLES-->
-
+        <style>
+            .btn-outline-light:hover{
+                background: transparent !important;
+                color: #FFF !important;
+            }
+        </style>
+        <title>RayaEX |‌ احراز هویت</title>
     </head>
     <body data-cache="null">
         @include("includes.header")
@@ -48,11 +54,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </div>
             <!-- BEGIN: Page content-->
             <div>
-                <div class="card">
-                    <div class="card-body">
-                          اطلاعات شما ثبت شده و در دست بررسی قرار دارد پس از تایید به شما اطلاع داده می‌شود.
-                          <br>
-                          از طریق تیکت مشکلات احتمالی به شما اعلام می‌شود.
+                <div class="alert alert-success has-icon" style="direction: rtl;" role="alert">
+                    <i class="la la-check alert-icon"></i>
+                    <strong>اطلاعات شما با موفقیت ثبت شد</strong>
+                    <br> 
+                    نتیجه بررسی از طریق تیکت به شما اعلام می‌شود.
+                    <div class="float-left px-2" style="margin-top: -20px;">
+                        <a href="/dashboard" class="btn border-white text-white btn-outline-light btn-rounded">بازگشت به داشبورد</a>
                     </div>
                 </div>
             </div>

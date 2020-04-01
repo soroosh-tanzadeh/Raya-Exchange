@@ -32,7 +32,7 @@ use Morilog\Jalali\Jalalian;
             <!-- BEGIN: Page heading-->
             <div class="page-heading">
                 <div class="page-breadcrumb">
-                    <h1 class="page-title page-title-sep">ادمین</h1>
+                    <h1 class="page-title page-title-sep">حساب‌های بانکی</h1>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="/index"><i class="ft-home font-20"></i></a></li>
                         <li class="breadcrumb-item">حساب‌های بانکی</li>
@@ -46,15 +46,17 @@ use Morilog\Jalali\Jalalian;
                         <div class="card">
                             <div class="card-body">
                                 <div class="table-responsive font-11">
-                                    <table class="table table-hover compact-table" id="accounts">
+                                    <table class="table table-hover w-100 compact-table" id="accounts">
                                         <thead class="thead-light">
                                             <tr>
                                                 <th>شماره</th>
+                                                <th>نام صاحب حساب</th>
                                                 <th>شماره شبا</th>
                                                 <th>شماره کارت</th>
                                                 <th>شماره حساب</th>
                                                 <th>تاریخ ثبت</th>
                                                 <th>وضعیت تایید</th>
+                                                <th>عملیات</th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -68,8 +70,8 @@ use Morilog\Jalali\Jalalian;
         <!-- END: Page content-->
         <!-- END: Quick sidebar-->
         @include("includes.footer")
-        
-        
+
+
         <script>
             $(document).ready(function () {
                 $("#accounts").DataTable({
@@ -78,18 +80,22 @@ use Morilog\Jalali\Jalalian;
                     ajax: '/admin/getbankaccounts',
                     columns: [
                         {data: 'id'},
+                        {data: "owner"},
                         {data: 'IBAN'},
                         {data: 'card_number'},
                         {data: 'account_number'},
                         {data: 'created_at'},
                         {data: 'is_active'},
+                        {data: 'actions'}
                     ],
                     "language": {
                         "url": "/assets/persian.json"
+                    }, drawCallback: function (settings) {
+                        $('[data-toggle="tooltip"]').tooltip()
                     }
                 });
             });
         </script>
-        
+
     </body>
 </html>

@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     </ol>
                 </div>
             </div><!-- BEGIN: Page content-->
+            @include("includes.alert")
             <div>
                 <div class="card">
                     <div class="card-body invoice px-sm-5">
@@ -90,7 +91,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         <script>
             var variables = {
-                    fee: {{ $fee }}
+            fee: {{ $fee }}
             }
         </script>
 

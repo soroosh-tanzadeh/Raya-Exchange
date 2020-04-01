@@ -25,7 +25,6 @@ sellersTable = $("#buyofferstable").DataTable({
         {data: 'min_buy'},
         {data: 'price_pre'},
         {data: 'created_at'},
-        {data: 'action', orderable: false, searchable: false}
     ],
     "language": {
         "url": "/assets/persian.json"
@@ -47,7 +46,6 @@ buyersTable = $("#sellofferstable").DataTable({
         {data: 'min_buy'},
         {data: 'price_pre'},
         {data: 'created_at'},
-        {data: 'action', orderable: false, searchable: false}
     ],
     "language": {
         "url": "/assets/persian.json"

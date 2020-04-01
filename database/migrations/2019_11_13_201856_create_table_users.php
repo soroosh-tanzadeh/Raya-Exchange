@@ -20,6 +20,7 @@ class CreateTableUsers extends Migration {
             $table->string("nationalcode")->nullable();
             $table->string("bank_account")->nullable();
             $table->text("address")->nullable();
+            $table->string("telephone")->nullable();
             $table->string("city")->nullable();
             $table->string("province")->nullable();
             $table->string("postalcode")->nullable();
@@ -29,6 +30,8 @@ class CreateTableUsers extends Migration {
             $table->string("password")->nullable();
             $table->text("files")->nullable();
             $table->boolean("is_admin")->default(false)->nullable();
+            $table->integer("permissions")->nullable();
+            $table->boolean("active")->default(true);
             $table->timestamps();
         });
     }

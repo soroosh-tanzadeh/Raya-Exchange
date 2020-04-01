@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     </ol>
                 </div>
             </div><!-- BEGIN: Page content-->
+            @include("includes.alert")
             <div>
                 <div class="card">
                     <div class="card-body invoice px-sm-5">
@@ -55,7 +56,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         <h2 class="text-danger mb-3"></h2>
                                         <div class="font-15 text-muted">
                                             <div><b>قیمت</b> : {{ $offer->amount }}</div>
-                                            <div><b>کارمز وب‌سایت</b> : {{ $offer->min_buy }}</div>
                                             <div><b>مبلغ دریافتی</b> : {{ number_format($offer->price_pre) }} تومان</div>
                                             <input type="submit" class="btn btn-primary float-left" value="فروش" />
                                         </div>

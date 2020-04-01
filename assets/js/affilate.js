@@ -14,39 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-$(document).ready(function () {
-    $(".convert2btc").click(function () {
-        var amount = $(this).data("credit");
-        Swal.fire({
-            title: 'تبدیل درآمد به بیت کوین',
-            input: 'number',
-            showCancelButton: true,
-            confirmButtonText: 'ثبت درخواست',
-            cancelButtonText: "لغو",
-            showLoaderOnConfirm: true,
-            preConfirm: (amount) => {
-                return fetch(`/dashboard/convert2btc?amount=${amount}`)
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error(response.statusText)
-                            }
-                            return response.json();
-                        })
-                        .catch(error => {
-                            Swal.showValidationMessage(
-                                    `خطا در برقراری ارتباط: ${error}`
-                                    );
-                        })
-            },
-            allowOutsideClick: () => !Swal.isLoading()
-        }).then((result) => {
-            if (result.value) {
-                if (result.value.result) {
-                    Swal.fire("با موفقیت انجام شد", result.value.msg, "success");
-                } else {
-                    Swal.fire("خطا", result.value.msg, "error");
-                }
-            }
-        })
-    });
-});
+function copy(element) {
+  /* Get the text field */
+  var copyText = document.getElementById("affilateurl");
+
+  /* Select the text field */
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+  /* Copy the text inside the text field */
+  document.execCommand("copy");
+
+  /* Alert the copied text */
+  $(element).val("کپی شد!")
+} 

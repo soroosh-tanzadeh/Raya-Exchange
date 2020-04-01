@@ -11,6 +11,20 @@ class Option extends Model {
         return $option->value;
     }
 
+    public static function setOption($key, $value) {
+        $option = Option::where("key", $key)->first();
+        if ($option instanceof Option) {
+            $option->value = $value;
+            return $option->save();
+        } else {
+            $option = new Option();
+            $option->key = $key;
+            $option->label = $key;
+            $option->value = $value;
+            return $option->save();
+        }
+    }
+
     public static function isVerified() {
         if (session()->has('user')) {
             $user = session()->get('user');
@@ -18,8 +32,6 @@ class Option extends Model {
             if ($select !== null) {
                 if ($select->verified_at !== null) {
                     session()->put('user', $select);
-                } elseif ($select->name !== null) {
-                    return "false";
                 } else {
                     return "false";
                 }
@@ -27,6 +39,8 @@ class Option extends Model {
                 session()->remove("user");
                 return false;
             }
+        } elseif (session()->has("user_admin")) {
+            return "true";
         } else {
             return "false";
         }
